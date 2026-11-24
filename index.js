@@ -566,9 +566,17 @@ bot2.on('text', async (ctx) => {
 // ----------------------------------------------------
 // 5. BOT INITIALIZATION & RETRY MANAGER
 // ----------------------------------------------------
-async function connectBot(botInstance, name, commands, statusKey) {
+async function connectBot(botInstance, name, commands, statusKey, delayStartMs = 0) {
+  if (delayStartMs > 0) {
+    console.log(`⏱️ [${name}] Staggering startup by ${delayStartMs / 1000}s to prevent IP flood...`);
+    await new Promise((resolve) => setTimeout(resolve, delayStartMs));
+  }
+
   let connected = false;
+  let attempts = 0;
+
   while (!connected) {
+    attempts++;
     try {
       const me = await botInstance.telegram.getMe();
       console.log(`🤖 Connected [${name}] to Telegram as @${me.username} (${me.first_name})`);
@@ -598,27 +606,32 @@ async function connectBot(botInstance, name, commands, statusKey) {
       connected = true;
     } catch (err) {
       const retryMatch = err.message && err.message.match(/retry after (\d+)/i);
-      const waitSec = retryMatch ? parseInt(retryMatch[1], 10) + 1 : 5;
-      console.log(`⏳ [${name}] Connection waiting (${err.message}). Retrying in ${waitSec}s...`);
+      // Add a generous safety buffer of at least 15 seconds plus jitter to prevent Telegram clock drift
+      const baseSec = retryMatch ? parseInt(retryMatch[1], 10) : 30;
+      const jitter = Math.floor(Math.random() * 5);
+      const waitSec = baseSec + 15 + jitter;
+
+      console.log(`⏳ [${name}] Rate-limited by Telegram (429). Pausing for ${waitSec}s to allow flood lock to clear...`);
       await new Promise((resolve) => setTimeout(resolve, waitSec * 1000));
     }
   }
 }
 
 async function initBots() {
-  // Connect Bot 1
-  connectBot(
+  // Connect Bot 1 first
+  await connectBot(
     bot1,
     'Bot 1: Avniffanbasebot',
     [
       { command: 'free', description: 'Access free content and channels' },
       { command: 'help', description: 'Bot commands and support' },
     ],
-    'bot1'
+    'bot1',
+    0
   );
 
-  // Connect Bot 2
-  connectBot(
+  // Once Bot 1 connects, connect Bot 2 with a 3-second gap
+  await connectBot(
     bot2,
     'Bot 2: avnifanbbot',
     [
@@ -626,7 +639,8 @@ async function initBots() {
       { command: 'video', description: 'Get timed video message' },
       { command: 'help', description: 'Bot information and help' },
     ],
-    'bot2'
+    'bot2',
+    3000
   );
 }
 

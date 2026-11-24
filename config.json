@@ -49,27 +49,86 @@
   },
   "bot2": {
     "bot_name": "avnifanbbot",
-    "video": {
-      "videoPath": "",
-      "videoUrl": "",
-      "message": "🎬 Hello {username}!\n\nHere is your requested video message.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}! Please watch or save it before time runs out.",
-      "buttons": [
-        {
-          "id": "b2_btn_1",
-          "text": "📢 Alerts & Updates Channel",
-          "type": "url",
-          "url": "https://t.me/"
-        }
-      ]
-    },
-    "timer": {
+    "deliveryMode": "rotate",
+    "defaultTimer": {
       "enabled": true,
       "seconds": 60,
       "preset": "1min",
       "warningMessage": "⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!"
     },
+    "messages": [
+      {
+        "id": "msg_1",
+        "title": "Drop #1 - Featured Video",
+        "status": "active",
+        "videoPath": "",
+        "videoUrl": "",
+        "message": "🎬 Hello {username}!\n\nHere is your requested video message #1.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}! Please watch or save it before time runs out.",
+        "timer": {
+          "enabled": true,
+          "seconds": 60,
+          "preset": "1min",
+          "warningMessage": "⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!"
+        },
+        "buttons": [
+          {
+            "id": "b2_btn_1",
+            "text": "📢 Alerts & Updates Channel",
+            "type": "url",
+            "url": "https://t.me/"
+          }
+        ],
+        "createdAt": "2026-11-24T08:00:00.000Z"
+      },
+      {
+        "id": "msg_2",
+        "title": "Drop #2 - Special Release",
+        "status": "active",
+        "videoPath": "",
+        "videoUrl": "",
+        "message": "🔥 Exclusive Content Drop #2 for {username}!\n\nEnjoy this video before the timer expires.\n\n⏳ Disappears in {timer_text}!",
+        "timer": {
+          "enabled": true,
+          "seconds": 120,
+          "preset": "2min",
+          "warningMessage": "⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!"
+        },
+        "buttons": [
+          {
+            "id": "b2_btn_2",
+            "text": "🔒 Backup Channel",
+            "type": "url",
+            "url": "https://t.me/"
+          }
+        ],
+        "createdAt": "2026-11-24T08:05:00.000Z"
+      },
+      {
+        "id": "msg_3",
+        "title": "Drop #3 - Archived Example",
+        "status": "archived",
+        "videoPath": "",
+        "videoUrl": "",
+        "message": "✨ Exclusive Archive Drop #3.\n\nThis is an archived message example that can be reactivated anytime from the dashboard.",
+        "timer": {
+          "enabled": true,
+          "seconds": 60,
+          "preset": "1min",
+          "warningMessage": "⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!"
+        },
+        "buttons": [
+          {
+            "id": "b2_btn_3",
+            "text": "📢 Main Community",
+            "type": "url",
+            "url": "https://t.me/"
+          }
+        ],
+        "createdAt": "2026-11-24T07:30:00.000Z"
+      }
+    ],
     "help": {
-      "message": "🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive the video message with auto-delete timer\n• /video - Fetch the video message\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}\nMessages will be permanently deleted once the timer runs out."
+      "message": "🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive a video message with auto-delete timer\n• /video - Fetch the next video message\n• /list - View all active drops\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}\nMessages will be permanently deleted once the timer runs out."
     }
   },
   "bot_name": "Avniffanbasebot",
