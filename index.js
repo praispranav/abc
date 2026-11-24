@@ -45,22 +45,35 @@ const DEFAULT_CONFIG = {
   },
   bot2: {
     bot_name: 'avnifanbbot',
-    video: {
-      videoPath: '',
-      videoUrl: '',
-      message: '🎬 Hello {username}!\n\nHere is your requested video message.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}! Please watch or save it before time runs out.',
-      buttons: [
-        { id: 'b2_btn_1', text: '📢 Alerts & Updates Channel', type: 'url', url: 'https://t.me/' }
-      ]
-    },
-    timer: {
+    deliveryMode: 'rotate',
+    defaultTimer: {
       enabled: true,
       seconds: 60,
       preset: '1min',
       warningMessage: '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!'
     },
+    messages: [
+      {
+        id: 'msg_1',
+        title: 'Drop #1 - Featured Video',
+        status: 'active',
+        videoPath: '',
+        videoUrl: '',
+        message: '🎬 Hello {username}!\n\nHere is your requested video message #1.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}! Please watch or save it before time runs out.',
+        timer: {
+          enabled: true,
+          seconds: 60,
+          preset: '1min',
+          warningMessage: '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!'
+        },
+        buttons: [
+          { id: 'b2_btn_1', text: '📢 Alerts & Updates Channel', type: 'url', url: 'https://t.me/' }
+        ],
+        createdAt: new Date().toISOString()
+      }
+    ],
     help: {
-      message: '🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive the video message with auto-delete timer\n• /video - Fetch the video message\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}\nMessages will be permanently deleted once the timer runs out.'
+      message: '🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive a video message with auto-delete timer\n• /video - Fetch the next video message\n• /list - View all active drops\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}\nMessages will be permanently deleted once the timer runs out.'
     }
   }
 };
@@ -75,7 +88,7 @@ function getConfig() {
     const raw = fs.readFileSync(CONFIG_PATH, 'utf-8');
     const data = JSON.parse(raw);
 
-    // Normalize bot1 if older config structure is present
+    // Normalize bot1
     if (!data.bot1) {
       data.bot1 = {
         bot_name: data.bot_name || DEFAULT_CONFIG.bot1.bot_name,
@@ -86,9 +99,27 @@ function getConfig() {
       };
     }
 
-    // Normalize bot2 if missing
+    // Normalize bot2
     if (!data.bot2) {
       data.bot2 = DEFAULT_CONFIG.bot2;
+    }
+
+    // Normalize bot2 messages array
+    if (!data.bot2.messages || !Array.isArray(data.bot2.messages) || data.bot2.messages.length === 0) {
+      const fallbackVideo = data.bot2.video || {};
+      data.bot2.messages = [
+        {
+          id: 'msg_1',
+          title: 'Drop #1 - Default Message',
+          status: 'active',
+          videoPath: fallbackVideo.videoPath || '',
+          videoUrl: fallbackVideo.videoUrl || '',
+          message: fallbackVideo.message || '🎬 Hello {username}!\n\nHere is your requested video message.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}!',
+          timer: data.bot2.timer || { enabled: true, seconds: 60, preset: '1min', warningMessage: '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!' },
+          buttons: fallbackVideo.buttons || [{ id: 'b2_btn_1', text: '📢 Alerts Channel', type: 'url', url: 'https://t.me/' }],
+          createdAt: new Date().toISOString()
+        }
+      ];
     }
 
     // Keep legacy top-level keys synchronized
@@ -106,7 +137,6 @@ function getConfig() {
 }
 
 function saveConfig(data) {
-  // Ensure top-level legacy keys match bot1
   if (data.bot1) {
     data.bot_name = data.bot1.bot_name;
     data.welcome = data.bot1.welcome;
@@ -121,9 +151,93 @@ function saveConfig(data) {
 // 1. EXPRESS WEB SERVER & MULTI-BOT DASHBOARD
 // ----------------------------------------------------
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3789;
 
-app.use(express.json());
+// ====================================================
+// API CALL TRACKER & LOGGER
+// ====================================================
+const MAX_LOGS = 100;
+const apiCallLogs = [];
+const apiHitCounts = {
+  outbound: {},
+  inbound: {}
+};
+
+function recordApiCall(entry) {
+  apiCallLogs.unshift(entry);
+  if (apiCallLogs.length > MAX_LOGS) apiCallLogs.pop();
+
+  if (entry.direction === 'outbound') {
+    const key = `${entry.bot || 'Bot'} -> ${entry.method}`;
+    apiHitCounts.outbound[key] = (apiHitCounts.outbound[key] || 0) + 1;
+  } else {
+    const key = `${entry.method} ${entry.path.split('?')[0]}`;
+    apiHitCounts.inbound[key] = (apiHitCounts.inbound[key] || 0) + 1;
+  }
+}
+
+function attachTelegramApiLogger(botInstance, botLabel) {
+  const originalCallApi = botInstance.telegram.callApi.bind(botInstance.telegram);
+  botInstance.telegram.callApi = async function (method, data, options) {
+    const start = Date.now();
+    const timeStr = new Date().toLocaleTimeString();
+    try {
+      const result = await originalCallApi(method, data, options);
+      const duration = Date.now() - start;
+      console.log(`📡 [TG API OUTBOUND ${timeStr}] [${botLabel}] Method: ${method} | 200 OK (${duration}ms)`);
+      recordApiCall({
+        time: timeStr,
+        direction: 'outbound',
+        bot: botLabel,
+        method,
+        status: 200,
+        duration: `${duration}ms`
+      });
+      return result;
+    } catch (err) {
+      const duration = Date.now() - start;
+      const status = err.response?.error_code || err.code || 429;
+      console.error(`🚨 [TG API OUTBOUND ${timeStr}] [${botLabel}] Method: ${method} | Status: ${status} | Error: ${err.message} (${duration}ms)`);
+      recordApiCall({
+        time: timeStr,
+        direction: 'outbound',
+        bot: botLabel,
+        method,
+        status,
+        error: err.message,
+        duration: `${duration}ms`
+      });
+      throw err;
+    }
+  };
+}
+
+// Inbound Request Logger Middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  const timeStr = new Date().toLocaleTimeString();
+  res.on('finish', () => {
+    const url = req.originalUrl || req.url;
+    // Don't clutter logs with static asset fetches
+    if (!url.startsWith('/assets') && !url.endsWith('.ico') && !url.endsWith('.css') && !url.endsWith('.js')) {
+      const duration = Date.now() - start;
+      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      console.log(`📥 [HTTP INBOUND ${timeStr}] ${req.method} ${url} | Status: ${res.statusCode} (${duration}ms) | IP: ${clientIp}`);
+      recordApiCall({
+        time: timeStr,
+        direction: 'inbound',
+        method: req.method,
+        path: url,
+        status: res.statusCode,
+        ip: clientIp,
+        duration: `${duration}ms`
+      });
+    }
+  });
+  next();
+});
+
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
@@ -165,6 +279,14 @@ app.get('/api/config', (req, res) => {
   res.json(getConfig());
 });
 
+// API: Live API Call Tracker & Traffic Stats
+app.get('/api/logs', (req, res) => {
+  res.json({
+    counts: apiHitCounts,
+    recent: apiCallLogs.slice(0, 50)
+  });
+});
+
 // API: Save updated config
 app.post('/api/config', (req, res) => {
   try {
@@ -175,7 +297,7 @@ app.post('/api/config', (req, res) => {
   }
 });
 
-// API: Upload custom image (e.g. for Bot 1 welcome)
+// API: Upload custom image
 app.post('/api/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -184,13 +306,69 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.json({ success: true, path: relativePath });
 });
 
-// API: Upload custom video (e.g. for Bot 2 timed video)
+// API: Upload custom video
 app.post('/api/upload-video', upload.single('video'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No video file uploaded' });
   }
   const relativePath = path.posix.join('assets', req.file.filename);
-  res.json({ success: true, path: relativePath });
+  res.json({ success: true, path: relativePath, originalName: req.file.originalname });
+});
+
+// API: Toggle Message Status (Archive / Active)
+app.post('/api/bot2/toggle-status', (req, res) => {
+  const { id, status } = req.body;
+  if (!id) return res.status(400).json({ error: 'Message ID is required' });
+
+  const config = getConfig();
+  const messages = config.bot2?.messages || [];
+  const target = messages.find((m) => m.id === id);
+
+  if (!target) return res.status(404).json({ error: 'Message not found' });
+
+  target.status = status || (target.status === 'active' ? 'archived' : 'active');
+  saveConfig(config);
+
+  res.json({ success: true, status: target.status, message: target });
+});
+
+// API: Duplicate Message
+app.post('/api/bot2/duplicate-message', (req, res) => {
+  const { id } = req.body;
+  const config = getConfig();
+  const messages = config.bot2?.messages || [];
+  const source = messages.find((m) => m.id === id);
+
+  if (!source) return res.status(404).json({ error: 'Message not found' });
+
+  const newId = `msg_${Date.now()}`;
+  const copy = JSON.parse(JSON.stringify(source));
+  copy.id = newId;
+  copy.title = `${source.title || 'Message'} (Copy)`;
+  copy.status = 'active';
+  copy.createdAt = new Date().toISOString();
+
+  messages.unshift(copy);
+  saveConfig(config);
+
+  res.json({ success: true, message: copy });
+});
+
+// API: Delete Message
+app.post('/api/bot2/delete-message', (req, res) => {
+  const { id } = req.body;
+  const config = getConfig();
+  if (!config.bot2?.messages) return res.status(404).json({ error: 'No messages found' });
+
+  const initialLen = config.bot2.messages.length;
+  config.bot2.messages = config.bot2.messages.filter((m) => m.id !== id);
+
+  if (config.bot2.messages.length === initialLen) {
+    return res.status(404).json({ error: 'Message not found' });
+  }
+
+  saveConfig(config);
+  res.json({ success: true });
 });
 
 // API: Bot status endpoint
@@ -211,19 +389,26 @@ app.listen(PORT, () => {
 // ----------------------------------------------------
 // 2. HELPER UTILITIES
 // ----------------------------------------------------
-function buildInlineKeyboard(buttons) {
-  if (!buttons || !Array.isArray(buttons) || buttons.length === 0) {
-    return null;
+function buildInlineKeyboard(buttons, extraRow = null) {
+  const rows = [];
+
+  if (buttons && Array.isArray(buttons) && buttons.length > 0) {
+    buttons
+      .filter((b) => b.text && b.text.trim() !== '')
+      .forEach((b) => {
+        if (b.type === 'terms') {
+          rows.push([Markup.button.callback(b.text, 'view_terms')]);
+        } else if (b.type === 'callback') {
+          rows.push([Markup.button.callback(b.text, b.url || 'action')]);
+        } else {
+          rows.push([Markup.button.url(b.text, b.url || 'https://t.me/')]);
+        }
+      });
   }
 
-  const rows = buttons
-    .filter((b) => b.text && b.text.trim() !== '')
-    .map((b) => {
-      if (b.type === 'terms') {
-        return [Markup.button.callback(b.text, 'view_terms')];
-      }
-      return [Markup.button.url(b.text, b.url || 'https://t.me/')];
-    });
+  if (extraRow && Array.isArray(extraRow) && extraRow.length > 0) {
+    rows.push(extraRow);
+  }
 
   return rows.length > 0 ? Markup.inlineKeyboard(rows) : null;
 }
@@ -237,6 +422,7 @@ const token1 =
   '9051597768:AAEsG3DJE8tYTrF3Kk8jSqpR5hRx5yhUDaE';
 
 const bot1 = new Telegraf(token1.trim());
+attachTelegramApiLogger(bot1, 'Bot 1: Avniffanbasebot');
 
 function formatBot1Message(template, ctx) {
   const config = getConfig();
@@ -255,7 +441,7 @@ async function sendBot1Welcome(ctx) {
   const welcome = config.bot1?.welcome || config.welcome || {};
   const caption = formatBot1Message(
     welcome.message ||
-      'NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??',
+      'NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel...',
     ctx
   );
   const keyboard = buildInlineKeyboard(welcome.buttons);
@@ -310,9 +496,7 @@ bot1.command('help', async (ctx) => {
 });
 
 bot1.action('view_terms', async (ctx) => {
-  try {
-    await ctx.answerCbQuery();
-  } catch (_) {}
+  try { await ctx.answerCbQuery(); } catch (_) {}
   const config = getConfig();
   const terms = config.bot1?.terms || config.terms || {};
   const text = `📜 *${terms.title || 'Terms & Policy'}*\n\n${terms.content || ''}`;
@@ -328,9 +512,7 @@ bot1.action('view_terms', async (ctx) => {
 });
 
 bot1.action('back_to_main', async (ctx) => {
-  try {
-    await ctx.answerCbQuery();
-  } catch (_) {}
+  try { await ctx.answerCbQuery(); } catch (_) {}
   await sendBot1Welcome(ctx);
 });
 
@@ -345,42 +527,76 @@ bot1.on('text', async (ctx) => {
 });
 
 // ----------------------------------------------------
-// 4. BOT 2: @avnifanbbot (Timed Video Message Bot)
+// 4. BOT 2: @avnifanbbot (Timed Video & Multi-Message Bot)
 // ----------------------------------------------------
 const token2 =
   process.env.TELEGRAM_BOT_TOKEN_2 ||
   '9202863846:AAHgjTadO-qhllGFg_0bmPoLXO9NV70e3Mc';
 
 const bot2 = new Telegraf(token2.trim());
+attachTelegramApiLogger(bot2, 'Bot 2: avnifanbbot');
 
-// Helper to send video with auto-delete timer
-async function sendBot2TimedVideo(ctx) {
+// Track per-user rotation pointer for cycling through active drops
+const userCursors = new Map();
+
+// Helper to deliver a specific message or next active message with auto-delete timer
+async function sendBot2TimedMessage(ctx, targetMsgId = null) {
   const config = getConfig();
   const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
-  const videoConfig = bot2Config.video || {};
-  const timerConfig = bot2Config.timer || { enabled: true, seconds: 60 };
+  const allMessages = bot2Config.messages || [];
+  const activeMessages = allMessages.filter((m) => m.status === 'active');
+
+  let chosen = null;
+
+  if (targetMsgId) {
+    chosen = allMessages.find((m) => m.id === targetMsgId);
+    if (!chosen) {
+      return ctx.reply('❌ This video drop was not found.');
+    }
+    if (chosen.status === 'archived') {
+      return ctx.reply('🔒 This video drop has been archived and is no longer available.');
+    }
+  } else {
+    if (activeMessages.length === 0) {
+      return ctx.reply('📭 There are currently no active video drops. Please check back later or join our alerts channel!');
+    }
+
+    const userId = ctx.from?.id || 'default';
+    const deliveryMode = bot2Config.deliveryMode || 'rotate';
+
+    if (deliveryMode === 'random') {
+      const randIdx = Math.floor(Math.random() * activeMessages.length);
+      chosen = activeMessages[randIdx];
+    } else {
+      // Rotation / Sequential
+      const lastCursor = userCursors.get(userId) ?? -1;
+      const nextCursor = (lastCursor + 1) % activeMessages.length;
+      userCursors.set(userId, nextCursor);
+      chosen = activeMessages[nextCursor];
+    }
+  }
 
   const username = ctx.from?.username
     ? `@${ctx.from.username}`
     : ctx.from?.first_name || 'Friend';
   const botName = bot2Config.bot_name || 'avnifanbbot';
 
+  // Timer calculation
+  const timerConfig = chosen.timer || bot2Config.defaultTimer || { enabled: true, seconds: 60 };
   const timerSeconds = Number(timerConfig.seconds) || 60;
   const timerText =
     timerSeconds >= 60
       ? `${Math.round(timerSeconds / 60)} min`
       : `${timerSeconds} sec`;
 
-  let caption = (
-    videoConfig.message ||
-    '🎬 Hello {username}!\n\nHere is your requested video message.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}!'
-  )
+  // Caption formatting
+  let caption = (chosen.message || '🎬 Exclusive Video Drop!\n\n⚠️ Self-destructs in {timer_text}!')
     .replace(/{username}/g, username)
     .replace(/{bot_name}/g, botName)
     .replace(/{timer_text}/g, timerText)
     .replace(/{timer}/g, timerText);
 
-  // Append warning notice if enabled and not already present
+  // Warning text
   if (
     timerConfig.enabled &&
     timerConfig.warningMessage &&
@@ -392,14 +608,17 @@ async function sendBot2TimedVideo(ctx) {
     caption = `${caption}\n\n${warning}`;
   }
 
-  const keyboard = buildInlineKeyboard(videoConfig.buttons);
+  // Interactive buttons
+  let extraRow = null;
+  if (activeMessages.length > 1) {
+    extraRow = [Markup.button.callback('▶️ Next Video Drop', 'next_drop')];
+  }
+  const keyboard = buildInlineKeyboard(chosen.buttons, extraRow);
 
   let sentMessage = null;
-  const videoPath = videoConfig.videoPath
-    ? path.join(__dirname, videoConfig.videoPath)
-    : null;
+  const videoPath = chosen.videoPath ? path.join(__dirname, chosen.videoPath) : null;
 
-  // 1. Try sending local uploaded video file
+  // 1. Send Local File if available
   if (videoPath && fs.existsSync(videoPath)) {
     try {
       sentMessage = await ctx.replyWithVideo(
@@ -411,14 +630,11 @@ async function sendBot2TimedVideo(ctx) {
         }
       );
     } catch (err) {
-      console.warn('[Bot 2] Failed with markdown formatting, retrying plain text:', err.message);
+      console.warn('[Bot 2] Failed Markdown parse, retrying plain text:', err.message);
       try {
         sentMessage = await ctx.replyWithVideo(
           { source: videoPath },
-          {
-            caption,
-            ...(keyboard ? keyboard : {}),
-          }
+          { caption, ...(keyboard ? keyboard : {}) }
         );
       } catch (err2) {
         console.error('[Bot 2] Failed to send local video:', err2.message);
@@ -426,17 +642,17 @@ async function sendBot2TimedVideo(ctx) {
     }
   }
 
-  // 2. Try sending video via URL or Telegram File ID
-  if (!sentMessage && videoConfig.videoUrl && videoConfig.videoUrl.trim() !== '') {
+  // 2. Send via direct URL or Telegram file_id
+  if (!sentMessage && chosen.videoUrl && chosen.videoUrl.trim() !== '') {
     try {
-      sentMessage = await ctx.replyWithVideo(videoConfig.videoUrl.trim(), {
+      sentMessage = await ctx.replyWithVideo(chosen.videoUrl.trim(), {
         caption,
         parse_mode: 'Markdown',
         ...(keyboard ? keyboard : {}),
       });
     } catch (err) {
       try {
-        sentMessage = await ctx.replyWithVideo(videoConfig.videoUrl.trim(), {
+        sentMessage = await ctx.replyWithVideo(chosen.videoUrl.trim(), {
           caption,
           ...(keyboard ? keyboard : {}),
         });
@@ -446,7 +662,7 @@ async function sendBot2TimedVideo(ctx) {
     }
   }
 
-  // 3. Fallback: Send caption as text message if no video source is configured or sending failed
+  // 3. Fallback: Text message if no video file
   if (!sentMessage) {
     try {
       sentMessage = await ctx.reply(caption, {
@@ -467,7 +683,7 @@ async function sendBot2TimedVideo(ctx) {
       try {
         await ctx.telegram.deleteMessage(chatId, messageId);
         console.log(
-          `🗑️ [Bot 2: @avnifanbbot] Message ${messageId} deleted in chat ${chatId} after ${timerSeconds}s timer.`
+          `🗑️ [Bot 2] Auto-deleted "${chosen.title || 'video'}" (msgId: ${messageId}) in chat ${chatId} after ${timerSeconds}s.`
         );
       } catch (delErr) {
         console.warn(`[Bot 2] Could not delete message ${messageId}:`, delErr.message);
@@ -478,28 +694,55 @@ async function sendBot2TimedVideo(ctx) {
 
 // Bot 2 Commands
 bot2.start(async (ctx) => {
-  await sendBot2TimedVideo(ctx);
+  // Support deep-linking like /start msg_12345
+  const payload = ctx.startPayload;
+  if (payload && payload.trim() !== '') {
+    await sendBot2TimedMessage(ctx, payload.trim());
+  } else {
+    await sendBot2TimedMessage(ctx);
+  }
 });
 
 bot2.command('video', async (ctx) => {
-  await sendBot2TimedVideo(ctx);
+  await sendBot2TimedMessage(ctx);
 });
 
-// Bot 2 Help Command
+bot2.command('next', async (ctx) => {
+  await sendBot2TimedMessage(ctx);
+});
+
+// Bot 2 /list Command - Displays all active drops
+bot2.command('list', async (ctx) => {
+  const config = getConfig();
+  const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
+  const activeMessages = (bot2Config.messages || []).filter((m) => m.status === 'active');
+
+  if (activeMessages.length === 0) {
+    return ctx.reply('📭 There are currently no active video drops.');
+  }
+
+  let text = `🎬 *Active Video Drops (${activeMessages.length})*\n\nSelect a drop below to view with auto-delete timer:\n`;
+  const buttons = activeMessages.map((m, idx) => {
+    const tSec = m.timer?.seconds || 60;
+    const tText = tSec >= 60 ? `${Math.round(tSec / 60)}m` : `${tSec}s`;
+    return [Markup.button.callback(`▶️ ${idx + 1}. ${m.title || 'Drop'} (${tText})`, `view_drop_${m.id}`)];
+  });
+
+  await ctx.replyWithMarkdown(text, Markup.inlineKeyboard(buttons));
+});
+
+// Bot 2 /help Command
 bot2.command('help', async (ctx) => {
   const config = getConfig();
   const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
-  const timerConfig = bot2Config.timer || { enabled: true, seconds: 60 };
-  const timerSeconds = Number(timerConfig.seconds) || 60;
-  const timerText =
-    timerSeconds >= 60
-      ? `${Math.round(timerSeconds / 60)} min`
-      : `${timerSeconds} sec`;
+  const defTimer = bot2Config.defaultTimer || { seconds: 60 };
+  const timerSeconds = Number(defTimer.seconds) || 60;
+  const timerText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
 
   const help = bot2Config.help || {};
   const text = (
     help.message ||
-    '🤖 *avnifanbbot Help & Information*\n\nAvailable commands:\n• /start - Receive timed video message\n• /video - Get timed video message\n• /help - Bot information\n\n⏱ Default Timer: {timer_text}'
+    '🤖 *avnifanbbot Help & Information*\n\nAvailable commands:\n• /start - Receive video drop\n• /video - Get next video drop\n• /list - Browse all active drops\n• /help - Bot information\n\n⏱ Default Timer: {timer_text}'
   )
     .replace(/{timer_text}/g, timerText)
     .replace(/{timer}/g, timerText)
@@ -512,16 +755,25 @@ bot2.command('help', async (ctx) => {
   }
 });
 
-// Support user or admin sending/forwarding a video to Bot 2
+// Callback Actions for Bot 2
+bot2.action('next_drop', async (ctx) => {
+  try { await ctx.answerCbQuery('Fetching next drop...'); } catch (_) {}
+  await sendBot2TimedMessage(ctx);
+});
+
+bot2.action(/view_drop_(.+)/, async (ctx) => {
+  try { await ctx.answerCbQuery(); } catch (_) {}
+  const targetId = ctx.match[1];
+  await sendBot2TimedMessage(ctx, targetId);
+});
+
+// Support forwarding / sending videos to Bot 2
 bot2.on('video', async (ctx) => {
   const config = getConfig();
   const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
-  const timerConfig = bot2Config.timer || { enabled: true, seconds: 60 };
-  const timerSeconds = Number(timerConfig.seconds) || 60;
-  const timerText =
-    timerSeconds >= 60
-      ? `${Math.round(timerSeconds / 60)} min`
-      : `${timerSeconds} sec`;
+  const defTimer = bot2Config.defaultTimer || { enabled: true, seconds: 60 };
+  const timerSeconds = Number(defTimer.seconds) || 60;
+  const timerText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
 
   const videoFileId = ctx.message.video.file_id;
   const userCaption = ctx.message.caption ? `${ctx.message.caption}\n\n` : '';
@@ -533,7 +785,7 @@ bot2.on('video', async (ctx) => {
       parse_mode: 'Markdown',
     });
 
-    if (timerConfig.enabled && timerSeconds > 0) {
+    if (defTimer.enabled && timerSeconds > 0) {
       setTimeout(async () => {
         try {
           await ctx.telegram.deleteMessage(sent.chat.id, sent.message_id);
@@ -551,32 +803,23 @@ bot2.on('video', async (ctx) => {
   }
 });
 
-// Bot 2 Text Handler / Fallback
+// Fallback for Bot 2
 bot2.on('text', async (ctx) => {
   if (ctx.message.text.startsWith('/')) {
     await ctx.reply(
-      '❓ Unknown command.\nAvailable commands are:\n• /start - Get timed video\n• /video - Get timed video\n• /help - Help & Information'
+      '❓ Unknown command.\nAvailable commands are:\n• /start - Get video drop\n• /video - Get next video drop\n• /list - Browse active drops\n• /help - Help & Information'
     );
   } else {
-    // Deliver timed video on generic text trigger
-    await sendBot2TimedVideo(ctx);
+    await sendBot2TimedMessage(ctx);
   }
 });
 
 // ----------------------------------------------------
 // 5. BOT INITIALIZATION & RETRY MANAGER
 // ----------------------------------------------------
-async function connectBot(botInstance, name, commands, statusKey, delayStartMs = 0) {
-  if (delayStartMs > 0) {
-    console.log(`⏱️ [${name}] Staggering startup by ${delayStartMs / 1000}s to prevent IP flood...`);
-    await new Promise((resolve) => setTimeout(resolve, delayStartMs));
-  }
-
+async function connectBot(botInstance, name, commands, statusKey) {
   let connected = false;
-  let attempts = 0;
-
   while (!connected) {
-    attempts++;
     try {
       const me = await botInstance.telegram.getMe();
       console.log(`🤖 Connected [${name}] to Telegram as @${me.username} (${me.first_name})`);
@@ -584,7 +827,7 @@ async function connectBot(botInstance, name, commands, statusKey, delayStartMs =
 
       if (commands && commands.length > 0) {
         await botInstance.telegram.setMyCommands(commands);
-        console.log(`✅ [${name}] Registered commands with Telegram: ${commands.map(c => `/${c.command}`).join(', ')}`);
+        console.log(`✅ [${name}] Registered commands: ${commands.map(c => `/${c.command}`).join(', ')}`);
       }
 
       const webhookDomain = process.env.WEBHOOK_DOMAIN;
@@ -600,53 +843,46 @@ async function connectBot(botInstance, name, commands, statusKey, delayStartMs =
         botInstance.launch({ dropPendingUpdates: true }).catch((err) => {
           console.error(`[${name}] Polling error:`, err.message);
         });
-        console.log(`🚀 [${name}] @${me.username} is now live with long polling!`);
+        console.log(`🚀 [${name}] @${me.username} is live with long polling!`);
       }
 
       connected = true;
     } catch (err) {
       const retryMatch = err.message && err.message.match(/retry after (\d+)/i);
-      // Add a generous safety buffer of at least 15 seconds plus jitter to prevent Telegram clock drift
-      const baseSec = retryMatch ? parseInt(retryMatch[1], 10) : 30;
-      const jitter = Math.floor(Math.random() * 5);
-      const waitSec = baseSec + 15 + jitter;
-
-      console.log(`⏳ [${name}] Rate-limited by Telegram (429). Pausing for ${waitSec}s to allow flood lock to clear...`);
+      const waitSec = retryMatch ? parseInt(retryMatch[1], 10) + 1 : 5;
+      console.log(`⏳ [${name}] Connection waiting (${err.message}). Retrying in ${waitSec}s...`);
       await new Promise((resolve) => setTimeout(resolve, waitSec * 1000));
     }
   }
 }
 
 async function initBots() {
-  // Connect Bot 1 first
-  await connectBot(
+  connectBot(
     bot1,
     'Bot 1: Avniffanbasebot',
     [
       { command: 'free', description: 'Access free content and channels' },
       { command: 'help', description: 'Bot commands and support' },
     ],
-    'bot1',
-    0
+    'bot1'
   );
 
-  // Once Bot 1 connects, connect Bot 2 with a 3-second gap
-  await connectBot(
+  connectBot(
     bot2,
     'Bot 2: avnifanbbot',
     [
-      { command: 'start', description: 'Receive timed video message' },
-      { command: 'video', description: 'Get timed video message' },
-      { command: 'help', description: 'Bot information and help' },
+      { command: 'start', description: 'Receive video drop (auto-deletes)' },
+      { command: 'video', description: 'Get next video drop' },
+      { command: 'list', description: 'View all active video drops' },
+      { command: 'help', description: 'Bot information and commands' },
     ],
-    'bot2',
-    3000
+    'bot2'
   );
 }
 
 initBots();
 
-// Graceful stop
+// Graceful shutdown
 process.once('SIGINT', () => {
   bot1.stop('SIGINT');
   bot2.stop('SIGINT');

@@ -20,6 +20,7 @@
       --danger-hover: #ef4444;
       --success: #34d399;
       --warning: #fbbf24;
+      --archive: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -30,7 +31,7 @@
       padding: 30px 20px;
     }
     .wrapper {
-      max-width: 1240px;
+      max-width: 1280px;
       margin: 0 auto;
     }
     header {
@@ -130,10 +131,10 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 1fr 420px;
       gap: 25px;
     }
-    @media (max-width: 960px) {
+    @media (max-width: 980px) {
       .grid { grid-template-columns: 1fr; }
     }
     .card {
@@ -158,6 +159,7 @@
       color: var(--text-muted);
       margin-top: -10px;
       margin-bottom: 16px;
+      line-height: 1.4;
     }
     label {
       display: block;
@@ -186,7 +188,7 @@
     }
     textarea {
       resize: vertical;
-      min-height: 100px;
+      min-height: 90px;
     }
     .hint {
       font-size: 0.8rem;
@@ -206,11 +208,11 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
+      gap: 6px;
+      padding: 9px 16px;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
       border: none;
       transition: all 0.2s;
@@ -230,11 +232,28 @@
     .btn-secondary:hover {
       background: #253354;
     }
+    .btn-success {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+    .btn-success:hover {
+      background: var(--success);
+      color: #0b0f19;
+    }
+    .btn-warning {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+    }
+    .btn-warning:hover {
+      background: var(--warning);
+      color: #0b0f19;
+    }
     .btn-danger {
       background: rgba(248, 113, 113, 0.15);
       color: var(--danger);
       border: 1px solid rgba(248, 113, 113, 0.3);
-      padding: 6px 12px;
     }
     .btn-danger:hover {
       background: var(--danger);
@@ -247,50 +266,168 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
 
+    /* Filter Bar for Bot 2 Messages */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+      background: #0d1322;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      color: var(--text);
+    }
+    .filter-btn.active {
+      background: #1c2742;
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Message Item Card in Library */
+    .msg-card {
+      background: #0d1322;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .msg-card:hover {
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .msg-card.archived {
+      opacity: 0.78;
+      border-left: 4px solid var(--archive);
+    }
+    .msg-card.active-card {
+      border-left: 4px solid var(--success);
+    }
+    .msg-card.selected-for-preview {
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+    .msg-header {
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .msg-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 220px;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-active {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: var(--success);
+    }
+    .badge-archived {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--archive);
+    }
+    .msg-title-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .msg-meta-pill {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: #151d30;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .msg-header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .msg-body-editor {
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      background: #111827;
+      display: none;
+    }
+    .msg-body-editor.open {
+      display: block;
+    }
+
     /* Buttons builder */
     .button-item {
       display: grid;
       grid-template-columns: 1fr 1fr 1.5fr auto;
       gap: 10px;
       background: #0d1322;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       align-items: center;
     }
     @media (max-width: 650px) {
       .button-item { grid-template-columns: 1fr; }
     }
-    .button-item input, .button-item select {
-      margin-bottom: 0;
-    }
+    .button-item input, .button-item select { margin-bottom: 0; }
 
     /* Timer Selector Pills */
     .timer-pill-group {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .timer-pill {
       flex: 1;
-      min-width: 90px;
-      padding: 10px;
+      min-width: 75px;
+      padding: 8px;
       text-align: center;
       background: #0d1322;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-muted);
       transition: all 0.2s;
     }
-    .timer-pill:hover {
-      border-color: var(--primary);
-      color: var(--text);
-    }
+    .timer-pill:hover { border-color: var(--primary); color: var(--text); }
     .timer-pill.selected {
       background: rgba(56, 189, 248, 0.15);
       border-color: var(--primary);
@@ -301,20 +438,20 @@
     .upload-zone {
       border: 2px dashed var(--border);
       background: #0d1322;
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 10px;
+      padding: 18px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     .upload-zone:hover {
       border-color: var(--primary);
       background: rgba(56, 189, 248, 0.05);
     }
     .upload-icon {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
+      font-size: 1.8rem;
+      margin-bottom: 4px;
       color: var(--primary);
     }
     .file-chip {
@@ -327,7 +464,7 @@
       border-radius: 6px;
       font-size: 0.85rem;
       color: var(--primary);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     /* Live Preview Mockup */
@@ -347,15 +484,15 @@
       padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
+      color: #fff;
       font-weight: 600;
       font-size: 0.95rem;
-      color: #fff;
     }
     .tg-body {
       padding: 16px;
       background: #0e1621;
-      min-height: 380px;
+      min-height: 420px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -419,7 +556,7 @@
     .tg-btn-preview {
       background: #2b5278;
       color: #fff;
-      padding: 9px 12px;
+      padding: 8px 12px;
       text-align: center;
       border-radius: 6px;
       font-size: 0.85rem;
@@ -444,28 +581,24 @@
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-    .tab-section {
-      display: none;
-    }
-    .tab-section.active {
-      display: block;
-    }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
   </style>
 </head>
 <body>
   <div class="wrapper">
     <header>
       <div class="logo">
-        🤖 <span>Multi-Bot Configuration Hub</span>
+        🤖 <span>Multi-Bot & Message Control Hub</span>
       </div>
       <div class="header-badges">
         <div class="status-badge">
           <div class="status-dot"></div>
-          <span>Bot 1: @Avniffanbasebot (Active)</span>
+          <span>Bot 1: @Avniffanbasebot</span>
         </div>
         <div class="status-badge" style="background: rgba(129, 140, 248, 0.1); border-color: rgba(129, 140, 248, 0.3); color: var(--accent);">
           <div class="status-dot" style="background: var(--accent); box-shadow: 0 0 8px var(--accent);"></div>
-          <span>Bot 2: @avnifanbbot (Active)</span>
+          <span>Bot 2: @avnifanbbot (Timed Videos)</span>
         </div>
       </div>
     </header>
@@ -476,7 +609,7 @@
         📢 Bot 1: @Avniffanbasebot <span class="tab-pill">Community & Welcome</span>
       </button>
       <button class="tab-btn" id="tabBtn2" onclick="switchTab('bot2')">
-        ⏱️ Bot 2: @avnifanbbot <span class="tab-pill">Timed Video (Auto-Delete)</span>
+        ⏱️ Bot 2: @avnifanbbot <span class="tab-pill" id="b2_tabCounter">Multiple Messages Library</span>
       </button>
     </div>
 
@@ -492,12 +625,11 @@
             <div class="card-title">⚙️ General Bot 1 Identity</div>
             <label>Bot Display Name</label>
             <input type="text" id="b1_botName" oninput="updateB1Preview()" />
-            <div class="hint">Will replace the {bot_name} placeholder in welcome messages.</div>
+            <div class="hint">Replaces the {bot_name} placeholder in Bot 1 messages.</div>
           </div>
 
           <div class="card">
             <div class="card-title">👋 Welcome Message & Banner</div>
-            
             <div class="checkbox-row">
               <input type="checkbox" id="b1_useImage" onchange="toggleB1Image()" />
               <label for="b1_useImage" style="margin-bottom:0; cursor:pointer;">Show Banner Image on Welcome</label>
@@ -527,10 +659,8 @@
             <div class="card-title">🎁 /free Command Settings</div>
             <label>Message Content</label>
             <textarea id="b1_freeMsg" rows="3"></textarea>
-
             <label>Channel Button Text</label>
             <input type="text" id="b1_freeBtnText" />
-
             <label>Channel Button URL</label>
             <input type="text" id="b1_freeBtnUrl" />
           </div>
@@ -545,91 +675,107 @@
             <div class="card-title">📜 Terms & Policy Modal</div>
             <label>Popup Title</label>
             <input type="text" id="b1_termsTitle" />
-
             <label>Terms & Conditions Body</label>
             <textarea id="b1_termsContent" rows="6"></textarea>
-            <div class="hint">Also viewable directly at <a href="/terms" target="_blank" style="color: var(--primary);">/terms</a>.</div>
           </div>
         </div>
 
         <!-- ============================================== -->
-        <!-- TAB 2: BOT 2 (@avnifanbbot - TIMED VIDEO)      -->
+        <!-- TAB 2: BOT 2 (@avnifanbbot - MULTIPLE MESSAGES)-->
         <!-- ============================================== -->
         <div id="sectionBot2" class="tab-section">
-          <div class="card">
-            <div class="card-title">⚙️ Bot 2 Identity & Information</div>
-            <label>Bot Display Name / Tag</label>
-            <input type="text" id="b2_botName" oninput="updateB2Preview()" />
-            <div class="hint">Official Telegram Link: <a href="https://t.me/avnifanbbot" target="_blank" style="color:var(--primary);">t.me/avnifanbbot</a></div>
+          
+          <!-- Library Overview & Filter Toolbar -->
+          <div class="card" style="border-color: rgba(56, 189, 248, 0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 12px;">
+              <div>
+                <div class="card-title" style="margin-bottom: 4px;">🎬 Bot 2 Video Messages Library</div>
+                <div class="card-subtitle" style="margin-bottom:0;">
+                  Configure 10+ messages, archive older drops, and reactivate them at any time.
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="addNewB2Message()">
+                ➕ New Video Message
+              </button>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 16px;">
+              <div>
+                <label>Bot Display Name</label>
+                <input type="text" id="b2_botName" style="margin-bottom: 6px;" oninput="updateB2GlobalSettings()" />
+              </div>
+              <div>
+                <label>Telegram Delivery Mode</label>
+                <select id="b2_deliveryMode" style="margin-bottom: 6px;" onchange="updateB2GlobalSettings()">
+                  <option value="rotate">🔄 Rotate sequentially (cycles with "Next Drop" button)</option>
+                  <option value="random">🎲 Random selection among active messages</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">⏱️ Auto-Delete Timer Settings</div>
-            <div class="card-subtitle">Default timer to automatically delete the video and message from the user's chat.</div>
-
-            <div class="checkbox-row">
-              <input type="checkbox" id="b2_timerEnabled" checked onchange="updateB2TimerSelection()" />
-              <label for="b2_timerEnabled" style="margin-bottom:0; cursor:pointer;">Enable Automatic Message Deletion</label>
+          <!-- Filter Bar -->
+          <div class="filter-bar">
+            <div class="filter-tabs">
+              <button class="filter-btn active" id="fbtn_all" onclick="setB2Filter('all')">All (<span id="cnt_all">0</span>)</button>
+              <button class="filter-btn" id="fbtn_active" onclick="setB2Filter('active')">🟢 Active (<span id="cnt_active">0</span>)</button>
+              <button class="filter-btn" id="fbtn_archived" onclick="setB2Filter('archived')">📦 Archived (<span id="cnt_archived">0</span>)</button>
             </div>
-
-            <label>Quick Preset Duration</label>
-            <div class="timer-pill-group">
-              <div class="timer-pill" id="pill_30s" onclick="setB2Timer(30, '30s')">⚡ 30s</div>
-              <div class="timer-pill selected" id="pill_1min" onclick="setB2Timer(60, '1min')">⏱️ 1 Min</div>
-              <div class="timer-pill" id="pill_2min" onclick="setB2Timer(120, '2min')">⏱️ 2 Min</div>
-              <div class="timer-pill" id="pill_5min" onclick="setB2Timer(300, '5min')">⏳ 5 Min</div>
-              <div class="timer-pill" id="pill_custom" onclick="setB2TimerCustom()">✏️ Custom</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              Telegram link: <a href="https://t.me/avnifanbbot" target="_blank" style="color:var(--primary);">t.me/avnifanbbot</a>
             </div>
-
-            <div id="b2_customTimerRow" style="display:none; margin-bottom: 16px;">
-              <label>Custom Duration (Seconds)</label>
-              <input type="number" id="b2_customSeconds" min="5" max="86400" placeholder="e.g. 90" oninput="onCustomSecondsInput()" />
-            </div>
-
-            <label>Countdown / Warning Message Attached to Video</label>
-            <input type="text" id="b2_warningMsg" oninput="updateB2Preview()" />
-            <div class="hint">Variables: <code>{timer_text}</code> (e.g. "1 min" or "2 min")</div>
           </div>
 
-          <div class="card">
-            <div class="card-title">🎬 Video & Caption Configuration</div>
-            <div class="card-subtitle">Configure the video file or link delivered to users with the self-destruct timer.</div>
+          <!-- Messages Container -->
+          <div id="b2_messagesContainer"></div>
 
-            <label>Upload Video File (MP4, MOV, WebM - Max 100MB)</label>
-            <div class="upload-zone" onclick="document.getElementById('b2_videoFileInput').click()">
-              <input type="file" id="b2_videoFileInput" accept="video/mp4,video/quicktime,video/webm,video/*" style="display:none;" onchange="uploadB2Video()" />
-              <div class="upload-icon">🎥</div>
-              <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Click to select or upload video file</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Supports standard video formats up to 100MB</div>
-            </div>
-            <div id="b2_videoFileChip" style="display:none;">
-              <span class="file-chip">
-                <span>📹 Uploaded: <b id="b2_uploadedVideoName">video.mp4</b></span>
-                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 0.75rem;" onclick="removeB2VideoFile()">Remove</button>
-              </span>
-            </div>
-
-            <label>Or External Video URL / Telegram File ID (Optional Alternative)</label>
-            <input type="text" id="b2_videoUrl" placeholder="https://example.com/video.mp4 or BAACAgIAAxkBAA..." oninput="updateB2Preview()" />
-            <div class="hint">If you prefer using an external HTTPS direct video URL or Telegram <code>file_id</code> instead of uploading.</div>
-
-            <label>Video Message / Caption</label>
-            <textarea id="b2_videoCaption" rows="5" oninput="updateB2Preview()"></textarea>
-            <div class="hint">Variables: <code>{username}</code>, <code>{bot_name}</code>, <code>{timer_text}</code></div>
-
-            <label style="margin-top: 15px;">Interactive Buttons Below Video</label>
-            <div id="b2_buttonsContainer"></div>
-            <button class="btn btn-secondary" style="font-size: 0.85rem; margin-top: 5px;" onclick="addB2Button()">
-              ➕ Add Button
-            </button>
-          </div>
-
+          <!-- Global Bot 2 Help Command Settings -->
           <div class="card">
             <div class="card-title">ℹ️ Bot 2 /help Command Information</div>
             <div class="card-subtitle">Information shown when users send /help to @avnifanbbot.</div>
             <label>Help Message Body</label>
-            <textarea id="b2_helpMsg" rows="6"></textarea>
-            <div class="hint">Supports Markdown and <code>{timer_text}</code></div>
+            <textarea id="b2_helpMsg" rows="5"></textarea>
+            <div class="hint">Supports Markdown and variables: <code>{timer_text}</code>, <code>{bot_name}</code></div>
+          </div>
+
+        </div>
+
+        <!-- Live API Call & Rate Limit Monitor -->
+        <div class="card" style="border: 1px solid rgba(56, 189, 248, 0.3); background: #0c1220;">
+          <div class="card-title" style="justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📡 Live Server API Traffic & Rate Limit Inspector</span>
+              <span id="logCounterBadge" style="font-size: 0.75rem; background: rgba(56, 189, 248, 0.2); color: var(--primary); padding: 2px 8px; border-radius: 9999px;">Auto-Refresh: ON</span>
+            </div>
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="fetchLogs()">🔄 Refresh Now</button>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; font-size: 0.8rem;">
+            <div style="background: #111827; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">Top Telegram Outbound Calls:</div>
+              <div id="topOutboundCalls" style="color: #38bdf8;">No calls recorded yet</div>
+            </div>
+            <div style="background: #111827; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">Top Inbound Requests:</div>
+              <div id="topInboundCalls" style="color: #34d399;">No requests recorded yet</div>
+            </div>
+          </div>
+
+          <div style="max-height: 250px; overflow-y: auto; background: #070a12; border: 1px solid var(--border); border-radius: 8px; padding: 6px; font-family: monospace; font-size: 0.78rem;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                  <th style="padding: 6px;">Time</th>
+                  <th style="padding: 6px;">Direction</th>
+                  <th style="padding: 6px;">Method / API</th>
+                  <th style="padding: 6px;">Status</th>
+                  <th style="padding: 6px;">Latency</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody">
+                <tr><td colspan="5" style="text-align:center; padding: 14px; color: var(--text-muted);">Listening for API calls...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -647,9 +793,12 @@
         <div class="card-title" style="margin-bottom: 8px;">📱 Live Telegram Preview</div>
         <div class="telegram-mockup">
           <div class="tg-header">
-            <span id="previewHeaderDot">🔵</span> 
-            <span id="previewHeaderName">Avniffanbasebot</span> 
-            <span style="font-size:0.75rem; color:#8899a6; font-weight:normal;">bot</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="previewHeaderDot">🔵</span> 
+              <span id="previewHeaderName">Avniffanbasebot</span> 
+              <span style="font-size:0.75rem; color:#8899a6; font-weight:normal;">bot</span>
+            </div>
+            <span id="previewDropTag" style="font-size:0.75rem; color:var(--primary); font-weight:normal;"></span>
           </div>
           <div class="tg-body">
             <div class="tg-bubble">
@@ -661,7 +810,7 @@
                 <video id="b2_previewVideoPlayer" class="tg-video-preview" controls style="display:none;"></video>
                 <div id="b2_previewVideoPlaceholder" class="tg-video-placeholder">
                   <div style="font-size:2rem;">🎬</div>
-                  <div style="font-size:0.85rem; font-weight:600;" id="b2_previewVideoLabel">Video Message</div>
+                  <div style="font-size:0.85rem; font-weight:600;" id="b2_previewVideoLabel">Video Drop</div>
                 </div>
               </div>
 
@@ -683,18 +832,21 @@
     </div>
   </div>
 
-  <div id="toast" class="toast">✅ Configuration saved successfully!</div>
+  <div id="toast" class="toast">✅ Saved successfully!</div>
 
   <script>
     let currentConfig = {
       bot1: {},
       bot2: {
-        timer: { enabled: true, seconds: 60, preset: '1min' },
-        video: { buttons: [] },
+        bot_name: 'avnifanbbot',
+        deliveryMode: 'rotate',
+        messages: [],
         help: {}
       }
     };
     let activeTab = 'bot1';
+    let b2Filter = 'all';
+    let selectedB2MessageId = null;
 
     function switchTab(tab) {
       activeTab = tab;
@@ -706,15 +858,22 @@
       if (tab === 'bot1') {
         document.getElementById('previewHeaderName').textContent = document.getElementById('b1_botName').value || 'Avniffanbasebot';
         document.getElementById('previewHeaderDot').textContent = '🔵';
+        document.getElementById('previewDropTag').textContent = '';
         document.getElementById('b2_previewVideoContainer').style.display = 'none';
         document.getElementById('b2_previewTimerBanner').style.display = 'none';
         toggleB1Image();
         updateB1Preview();
       } else {
-        document.getElementById('previewHeaderName').textContent = document.getElementById('b2_botName').value || 'avnifanbbot';
+        document.getElementById('previewHeaderName').textContent = currentConfig.bot2?.bot_name || 'avnifanbbot';
         document.getElementById('previewHeaderDot').textContent = '🟣';
         document.getElementById('b1_previewImg').style.display = 'none';
         document.getElementById('b2_previewVideoContainer').style.display = 'block';
+        
+        // Select first active message for preview if none selected
+        if (!selectedB2MessageId && currentConfig.bot2?.messages?.length > 0) {
+          const first = currentConfig.bot2.messages.find(m => m.status === 'active') || currentConfig.bot2.messages[0];
+          selectedB2MessageId = first?.id;
+        }
         updateB2Preview();
       }
     }
@@ -750,28 +909,11 @@
         // 2. Bot 2 Config Population
         const b2 = currentConfig.bot2 || {};
         document.getElementById('b2_botName').value = b2.bot_name || 'avnifanbbot';
-        
-        const b2Timer = b2.timer || { enabled: true, seconds: 60, preset: '1min' };
-        document.getElementById('b2_timerEnabled').checked = b2Timer.enabled ?? true;
-        document.getElementById('b2_warningMsg').value = b2Timer.warningMessage || '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!';
-        
-        setB2Timer(b2Timer.seconds || 60, b2Timer.preset || '1min', false);
-
-        const b2Video = b2.video || {};
-        document.getElementById('b2_videoUrl').value = b2Video.videoUrl || '';
-        document.getElementById('b2_videoCaption').value = b2Video.message || '🎬 Hello {username}!\n\nHere is your requested video message.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}!';
-
-        if (b2Video.videoPath) {
-          const parts = b2Video.videoPath.split('/');
-          document.getElementById('b2_uploadedVideoName').textContent = parts[parts.length - 1];
-          document.getElementById('b2_videoFileChip').style.display = 'inline-block';
-          setB2VideoPreview(b2Video.videoPath);
-        }
-
-        document.getElementById('b2_helpMsg').value = b2.help?.message || '🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive the video message with auto-delete timer\n• /video - Fetch the video message\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}';
+        document.getElementById('b2_deliveryMode').value = b2.deliveryMode || 'rotate';
+        document.getElementById('b2_helpMsg').value = b2.help?.message || '🤖 *avnifanbbot Help & Information*\n\nAvailable commands:\n• /start - Receive video drop\n• /video - Get next video drop\n• /list - Browse active drops\n• /help - Bot information\n\n⏱ Default Timer: {timer_text}';
 
         renderB1Buttons();
-        renderB2Buttons();
+        renderB2Messages();
         switchTab('bot1');
       } catch (err) {
         console.error('Error loading config:', err);
@@ -877,121 +1019,338 @@
     }
 
     // ------------------------------------
-    // BOT 2 HANDLERS (TIMED VIDEO)
+    // BOT 2 MULTI-MESSAGES & ARCHIVE HANDLERS
     // ------------------------------------
-    let currentB2TimerPreset = '1min';
-    let currentB2TimerSeconds = 60;
-
-    function setB2Timer(seconds, preset, update = true) {
-      currentB2TimerSeconds = seconds;
-      currentB2TimerPreset = preset;
-
-      document.querySelectorAll('.timer-pill').forEach(el => el.classList.remove('selected'));
-      const pill = document.getElementById('pill_' + preset);
-      if (pill) pill.classList.add('selected');
-
-      document.getElementById('b2_customTimerRow').style.display = (preset === 'custom') ? 'block' : 'none';
-      if (preset === 'custom') {
-        document.getElementById('b2_customSeconds').value = seconds;
-      }
-
-      if (update) updateB2Preview();
+    function setB2Filter(filter) {
+      b2Filter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('fbtn_' + filter).classList.add('active');
+      renderB2Messages();
     }
 
-    function setB2TimerCustom() {
-      const val = parseInt(document.getElementById('b2_customSeconds').value, 10) || 90;
-      setB2Timer(val, 'custom');
-    }
-
-    function onCustomSecondsInput() {
-      const val = parseInt(document.getElementById('b2_customSeconds').value, 10) || 60;
-      currentB2TimerSeconds = val;
-      updateB2Preview();
-    }
-
-    function updateB2TimerSelection() {
+    function updateB2GlobalSettings() {
+      currentConfig.bot2.bot_name = document.getElementById('b2_botName').value;
+      currentConfig.bot2.deliveryMode = document.getElementById('b2_deliveryMode').value;
       updateB2Preview();
     }
 
     function formatTimerText(seconds) {
-      if (seconds >= 60) {
-        return Math.round(seconds / 60) + ' min';
-      }
+      if (seconds >= 60) return Math.round(seconds / 60) + ' min';
       return seconds + ' sec';
     }
 
-    function renderB2Buttons() {
-      const container = document.getElementById('b2_buttonsContainer');
+    function renderB2Messages() {
+      const container = document.getElementById('b2_messagesContainer');
       container.innerHTML = '';
-      const buttons = currentConfig.bot2?.video?.buttons || [];
 
-      buttons.forEach((btn, index) => {
-        const item = document.createElement('div');
-        item.className = 'button-item';
-        item.innerHTML = `
-          <input type="text" value="${btn.text || ''}" placeholder="Button Label" oninput="updateB2ButtonData(${index}, 'text', this.value)" />
-          <select disabled>
-            <option value="url" selected>🔗 URL Link</option>
-          </select>
-          <input type="text" value="${btn.url || ''}" placeholder="https://t.me/..." 
-            oninput="updateB2ButtonData(${index}, 'url', this.value)" />
-          <button class="btn btn-danger" onclick="removeB2Button(${index})">✕</button>
-        `;
-        container.appendChild(item);
+      const messages = currentConfig.bot2?.messages || [];
+      const totalCnt = messages.length;
+      const activeCnt = messages.filter(m => m.status === 'active').length;
+      const archivedCnt = messages.filter(m => m.status === 'archived').length;
+
+      document.getElementById('cnt_all').textContent = totalCnt;
+      document.getElementById('cnt_active').textContent = activeCnt;
+      document.getElementById('cnt_archived').textContent = archivedCnt;
+      document.getElementById('b2_tabCounter').textContent = `${activeCnt} Active Drops`;
+
+      const filtered = messages.filter(m => {
+        if (b2Filter === 'active') return m.status === 'active';
+        if (b2Filter === 'archived') return m.status === 'archived';
+        return true;
       });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 40px 20px; background: #0d1322; border-radius: 12px; border: 1px dashed var(--border);">
+            <div style="font-size:2.2rem; margin-bottom: 8px;">📭</div>
+            <div style="font-weight:600; color:var(--text); margin-bottom: 6px;">No messages found in this filter</div>
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 16px;">Click the button below to add your first message drop.</div>
+            <button class="btn btn-primary" onclick="addNewB2Message()">➕ Create Message Drop</button>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((msg, idx) => {
+        const isArchived = msg.status === 'archived';
+        const card = document.createElement('div');
+        card.className = `msg-card ${isArchived ? 'archived' : 'active-card'} ${selectedB2MessageId === msg.id ? 'selected-for-preview' : ''}`;
+        card.id = `msg_card_${msg.id}`;
+
+        const timerSec = msg.timer?.seconds || 60;
+        const timerText = formatTimerText(timerSec);
+        const hasVideo = (msg.videoPath && msg.videoPath !== '') || (msg.videoUrl && msg.videoUrl !== '');
+
+        card.innerHTML = `
+          <div class="msg-header" onclick="selectB2MessageForPreview('${msg.id}')">
+            <div class="msg-header-left">
+              <span class="badge-status ${isArchived ? 'badge-archived' : 'badge-active'}">
+                ${isArchived ? '📦 Archived' : '🟢 Active'}
+              </span>
+              <div>
+                <div class="msg-title-text">${msg.title || 'Untitled Drop'}</div>
+                <div style="display:flex; gap:6px; margin-top:3px; flex-wrap:wrap;">
+                  <span class="msg-meta-pill">${hasVideo ? '📹 Video Attached' : '📝 Text Only'}</span>
+                  <span class="msg-meta-pill">⏱️ ${timerText} timer</span>
+                  <span class="msg-meta-pill" style="cursor:pointer;" onclick="event.stopPropagation(); copyDeepLink('${msg.id}')" title="Copy direct link">🔗 Copy Link</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="msg-header-actions" onclick="event.stopPropagation();">
+              ${isArchived 
+                ? `<button class="btn btn-success" style="padding:5px 10px; font-size:0.8rem;" onclick="toggleArchiveStatus('${msg.id}', 'active')">🟢 Activate</button>`
+                : `<button class="btn btn-warning" style="padding:5px 10px; font-size:0.8rem;" onclick="toggleArchiveStatus('${msg.id}', 'archived')">📦 Archive</button>`
+              }
+              <button class="btn btn-secondary" style="padding:5px 10px; font-size:0.8rem;" onclick="toggleEditor('${msg.id}')">
+                ✏️ Edit
+              </button>
+              <button class="btn btn-secondary" style="padding:5px 10px; font-size:0.8rem;" onclick="duplicateMessage('${msg.id}')" title="Duplicate this drop">
+                📋
+              </button>
+              <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteMessage('${msg.id}')" title="Delete">
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <!-- Collapsible Editor for Message -->
+          <div class="msg-body-editor" id="editor_${msg.id}">
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+              <div>
+                <label>Drop Title / Identifier</label>
+                <input type="text" value="${msg.title || ''}" oninput="updateMsgField('${msg.id}', 'title', this.value)" />
+              </div>
+              <div>
+                <label>Status</label>
+                <select onchange="updateMsgField('${msg.id}', 'status', this.value); renderB2Messages();">
+                  <option value="active" ${msg.status === 'active' ? 'selected' : ''}>🟢 Active (Public)</option>
+                  <option value="archived" ${msg.status === 'archived' ? 'selected' : ''}>📦 Archived (Hidden)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Video File / URL -->
+            <label>Video File (Upload or external URL)</label>
+            <div class="upload-zone" onclick="triggerVideoUpload('${msg.id}')">
+              <input type="file" id="upload_input_${msg.id}" accept="video/*" style="display:none;" onchange="handleVideoUpload('${msg.id}', this)" />
+              <div class="upload-icon">🎥</div>
+              <div style="font-size:0.9rem; font-weight:600;">Click to upload video file (MP4, MOV, WebM)</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Max size: 100MB</div>
+            </div>
+            
+            ${msg.videoPath ? `
+              <div class="file-chip">
+                <span>📹 Uploaded: <b>${msg.videoPath.split('/').pop()}</b></span>
+                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeMsgVideo('${msg.id}')">Remove</button>
+              </div>
+            ` : ''}
+
+            <label>Or External Video URL / Telegram File ID</label>
+            <input type="text" value="${msg.videoUrl || ''}" placeholder="https://example.com/video.mp4 or BAACAgIAAxkBAA..." oninput="updateMsgField('${msg.id}', 'videoUrl', this.value)" />
+
+            <!-- Caption / Message -->
+            <label>Video Caption / Text</label>
+            <textarea rows="4" oninput="updateMsgField('${msg.id}', 'message', this.value)">${msg.message || ''}</textarea>
+            <div class="hint">Variables: <code>{username}</code>, <code>{bot_name}</code>, <code>{timer_text}</code></div>
+
+            <!-- Timer Settings for this Message -->
+            <label>Auto-Delete Timer Duration</label>
+            <div class="timer-pill-group">
+              <div class="timer-pill ${timerSec === 30 ? 'selected' : ''}" onclick="setMsgTimer('${msg.id}', 30, '30s')">⚡ 30s</div>
+              <div class="timer-pill ${timerSec === 60 ? 'selected' : ''}" onclick="setMsgTimer('${msg.id}', 60, '1min')">⏱️ 1 Min</div>
+              <div class="timer-pill ${timerSec === 120 ? 'selected' : ''}" onclick="setMsgTimer('${msg.id}', 120, '2min')">⏱️ 2 Min</div>
+              <div class="timer-pill ${timerSec === 300 ? 'selected' : ''}" onclick="setMsgTimer('${msg.id}', 300, '5min')">⏳ 5 Min</div>
+            </div>
+
+            <label>Self-Destruct Notice Warning Text</label>
+            <input type="text" value="${msg.timer?.warningMessage || '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!'}" oninput="updateMsgTimerWarning('${msg.id}', this.value)" />
+
+            <!-- Buttons below this video -->
+            <label style="margin-top:10px;">Interactive Buttons Below Drop</label>
+            <div id="btn_container_${msg.id}">
+              ${(msg.buttons || []).map((b, bIdx) => `
+                <div class="button-item">
+                  <input type="text" value="${b.text || ''}" placeholder="Button Label" oninput="updateMsgButton('${msg.id}', ${bIdx}, 'text', this.value)" />
+                  <select disabled><option value="url">🔗 URL Link</option></select>
+                  <input type="text" value="${b.url || ''}" placeholder="https://t.me/..." oninput="updateMsgButton('${msg.id}', ${bIdx}, 'url', this.value)" />
+                  <button class="btn btn-danger" onclick="removeMsgButton('${msg.id}', ${bIdx})">✕</button>
+                </div>
+              `).join('')}
+            </div>
+            <button class="btn btn-secondary" style="font-size:0.8rem; margin-top:5px;" onclick="addMsgButton('${msg.id}')">➕ Add Button</button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
       if (activeTab === 'bot2') updateB2Preview();
     }
 
-    function updateB2ButtonData(index, field, value) {
-      if (!currentConfig.bot2.video.buttons) currentConfig.bot2.video.buttons = [];
-      if (!currentConfig.bot2.video.buttons[index]) return;
-      currentConfig.bot2.video.buttons[index][field] = value;
-      renderB2Buttons();
-    }
-
-    function addB2Button() {
-      if (!currentConfig.bot2.video) currentConfig.bot2.video = { buttons: [] };
-      if (!currentConfig.bot2.video.buttons) currentConfig.bot2.video.buttons = [];
-      currentConfig.bot2.video.buttons.push({
-        id: 'b2_btn_' + Date.now(),
-        text: '📢 Channel Updates',
-        type: 'url',
-        url: 'https://t.me/'
-      });
-      renderB2Buttons();
-    }
-
-    function removeB2Button(index) {
-      currentConfig.bot2.video.buttons.splice(index, 1);
-      renderB2Buttons();
-    }
-
-    function setB2VideoPreview(videoPath) {
-      const player = document.getElementById('b2_previewVideoPlayer');
-      const placeholder = document.getElementById('b2_previewVideoPlaceholder');
-      if (videoPath) {
-        player.src = '/' + videoPath;
-        player.style.display = 'block';
-        placeholder.style.display = 'none';
-      } else {
-        player.style.display = 'none';
-        placeholder.style.display = 'flex';
+    function toggleEditor(id) {
+      const editor = document.getElementById(`editor_${id}`);
+      if (editor) {
+        editor.classList.toggle('open');
+        selectB2MessageForPreview(id);
       }
     }
 
-    function removeB2VideoFile() {
-      if (currentConfig.bot2.video) {
-        currentConfig.bot2.video.videoPath = '';
-      }
-      document.getElementById('b2_videoFileChip').style.display = 'none';
-      setB2VideoPreview('');
-      showToast('Video removed from configuration.');
+    function selectB2MessageForPreview(id) {
+      selectedB2MessageId = id;
+      document.querySelectorAll('.msg-card').forEach(c => c.classList.remove('selected-for-preview'));
+      const activeCard = document.getElementById(`msg_card_${id}`);
+      if (activeCard) activeCard.classList.add('selected-for-preview');
+      updateB2Preview();
     }
 
-    async function uploadB2Video() {
-      const fileInput = document.getElementById('b2_videoFileInput');
-      if (!fileInput.files || !fileInput.files[0]) return;
-      const file = fileInput.files[0];
+    function updateMsgField(id, field, value) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg) return;
+      msg[field] = value;
+      if (field === 'title') {
+        const titleEl = document.querySelector(`#msg_card_${id} .msg-title-text`);
+        if (titleEl) titleEl.textContent = value || 'Untitled Drop';
+      }
+      updateB2Preview();
+    }
+
+    function setMsgTimer(id, seconds, preset) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg) return;
+      if (!msg.timer) msg.timer = { enabled: true };
+      msg.timer.seconds = seconds;
+      msg.timer.preset = preset;
+      renderB2Messages();
+    }
+
+    function updateMsgTimerWarning(id, value) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg) return;
+      if (!msg.timer) msg.timer = { enabled: true, seconds: 60 };
+      msg.timer.warningMessage = value;
+      updateB2Preview();
+    }
+
+    function addMsgButton(id) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg) return;
+      if (!msg.buttons) msg.buttons = [];
+      msg.buttons.push({ id: 'btn_' + Date.now(), text: '📢 Channel Updates', type: 'url', url: 'https://t.me/' });
+      renderB2Messages();
+      toggleEditor(id);
+    }
+
+    function removeMsgButton(id, index) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg || !msg.buttons) return;
+      msg.buttons.splice(index, 1);
+      renderB2Messages();
+      toggleEditor(id);
+    }
+
+    function updateMsgButton(id, index, field, value) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg || !msg.buttons || !msg.buttons[index]) return;
+      msg.buttons[index][field] = value;
+      updateB2Preview();
+    }
+
+    async function toggleArchiveStatus(id, newStatus) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (!msg) return;
+      msg.status = newStatus;
+      renderB2Messages();
+
+      try {
+        await fetch('/api/bot2/toggle-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status: newStatus })
+        });
+        showToast(newStatus === 'active' ? '🟢 Message is now Active!' : '📦 Message has been Archived');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function addNewB2Message() {
+      const newId = 'msg_' + Date.now();
+      const count = (currentConfig.bot2.messages || []).length + 1;
+      const newMsg = {
+        id: newId,
+        title: `Drop #${count} - New Video Message`,
+        status: 'active',
+        videoPath: '',
+        videoUrl: '',
+        message: '🎬 Hello {username}!\n\nHere is your exclusive video drop.\n\n⚠️ This video message will self-destruct in {timer_text}!',
+        timer: {
+          enabled: true,
+          seconds: 60,
+          preset: '1min',
+          warningMessage: '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!'
+        },
+        buttons: [
+          { id: 'b_' + Date.now(), text: '📢 Alerts Channel', type: 'url', url: 'https://t.me/' }
+        ],
+        createdAt: new Date().toISOString()
+      };
+
+      if (!currentConfig.bot2.messages) currentConfig.bot2.messages = [];
+      currentConfig.bot2.messages.unshift(newMsg);
+      selectedB2MessageId = newId;
+      renderB2Messages();
+      toggleEditor(newId);
+      showToast('✨ New message drop added!');
+    }
+
+    async function duplicateMessage(id) {
+      try {
+        const res = await fetch('/api/bot2/duplicate-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (data.success && data.message) {
+          currentConfig.bot2.messages.unshift(data.message);
+          selectedB2MessageId = data.message.id;
+          renderB2Messages();
+          toggleEditor(data.message.id);
+          showToast('📋 Message duplicated successfully!');
+        }
+      } catch (err) {
+        alert('Failed to duplicate message');
+      }
+    }
+
+    async function deleteMessage(id) {
+      if (!confirm('Are you sure you want to permanently delete this message drop?')) return;
+      try {
+        await fetch('/api/bot2/delete-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        currentConfig.bot2.messages = currentConfig.bot2.messages.filter(m => m.id !== id);
+        if (selectedB2MessageId === id) {
+          selectedB2MessageId = currentConfig.bot2.messages[0]?.id || null;
+        }
+        renderB2Messages();
+        showToast('🗑️ Message deleted');
+      } catch (err) {
+        alert('Failed to delete message');
+      }
+    }
+
+    function triggerVideoUpload(id) {
+      const input = document.getElementById(`upload_input_${id}`);
+      if (input) input.click();
+    }
+
+    async function handleVideoUpload(id, input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
       const formData = new FormData();
       formData.append('video', file);
 
@@ -1001,65 +1360,108 @@
         const res = await fetch('/api/upload-video', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.path) {
-          if (!currentConfig.bot2.video) currentConfig.bot2.video = {};
-          currentConfig.bot2.video.videoPath = data.path;
-          document.getElementById('b2_uploadedVideoName').textContent = file.name;
-          document.getElementById('b2_videoFileChip').style.display = 'inline-block';
-          setB2VideoPreview(data.path);
-          showToast('✅ Video uploaded successfully!');
+          const msg = currentConfig.bot2.messages.find(m => m.id === id);
+          if (msg) {
+            msg.videoPath = data.path;
+            renderB2Messages();
+            toggleEditor(id);
+            showToast('✅ Video uploaded successfully!');
+          }
         }
       } catch (err) {
         alert('Failed to upload video');
       }
     }
 
+    function removeMsgVideo(id) {
+      const msg = currentConfig.bot2.messages.find(m => m.id === id);
+      if (msg) {
+        msg.videoPath = '';
+        renderB2Messages();
+        toggleEditor(id);
+      }
+    }
+
+    function copyDeepLink(id) {
+      const botName = currentConfig.bot2?.bot_name || 'avnifanbbot';
+      const link = `https://t.me/${botName}?start=${id}`;
+      navigator.clipboard.writeText(link).then(() => {
+        showToast('🔗 Direct link copied: ' + link);
+      });
+    }
+
     function updateB2Preview() {
       if (activeTab !== 'bot2') return;
-      const botName = document.getElementById('b2_botName').value || 'avnifanbbot';
+      const botName = currentConfig.bot2?.bot_name || 'avnifanbbot';
       document.getElementById('previewHeaderName').textContent = botName;
-      const timerEnabled = document.getElementById('b2_timerEnabled').checked;
-      const timerText = formatTimerText(currentB2TimerSeconds);
+
+      const messages = currentConfig.bot2?.messages || [];
+      const msg = messages.find(m => m.id === selectedB2MessageId) || messages[0];
+
+      if (!msg) {
+        document.getElementById('previewText').textContent = 'No active messages in library.';
+        document.getElementById('previewButtons').innerHTML = '';
+        document.getElementById('b2_previewTimerBanner').style.display = 'none';
+        document.getElementById('b2_previewVideoPlayer').style.display = 'none';
+        document.getElementById('b2_previewVideoPlaceholder').style.display = 'flex';
+        return;
+      }
+
+      document.getElementById('previewDropTag').textContent = msg.title ? `[ ${msg.title.slice(0, 18)} ]` : '';
+
+      const timerSec = msg.timer?.seconds || 60;
+      const timerText = formatTimerText(timerSec);
 
       // Timer Banner
       const timerBanner = document.getElementById('b2_previewTimerBanner');
-      if (timerEnabled) {
-        timerBanner.style.display = 'flex';
-        document.getElementById('b2_previewTimerText').textContent = `Auto-deletes in ${timerText}`;
-      } else {
-        timerBanner.style.display = 'none';
-      }
+      timerBanner.style.display = 'flex';
+      document.getElementById('b2_previewTimerText').textContent = `Auto-deletes in ${timerText}`;
 
-      // Video Source display
-      const videoUrl = document.getElementById('b2_videoUrl').value.trim();
-      if (!currentConfig.bot2?.video?.videoPath && videoUrl) {
-        document.getElementById('b2_previewVideoLabel').textContent = 'External Video: ' + videoUrl.slice(0, 25) + '...';
+      // Video Source
+      const player = document.getElementById('b2_previewVideoPlayer');
+      const placeholder = document.getElementById('b2_previewVideoPlaceholder');
+      if (msg.videoPath && msg.videoPath !== '') {
+        player.src = '/' + msg.videoPath;
+        player.style.display = 'block';
+        placeholder.style.display = 'none';
+      } else {
+        player.style.display = 'none';
+        placeholder.style.display = 'flex';
+        document.getElementById('b2_previewVideoLabel').textContent = msg.videoUrl ? 'External Video' : 'Video Drop';
       }
 
       // Caption
-      let text = document.getElementById('b2_videoCaption').value;
-      text = text
+      let text = (msg.message || '')
         .replace(/{username}/g, '@alex_telegram')
         .replace(/{bot_name}/g, botName)
         .replace(/{timer_text}/g, timerText)
         .replace(/{timer}/g, timerText);
 
-      const warning = document.getElementById('b2_warningMsg').value;
-      if (timerEnabled && warning && !text.includes(warning)) {
+      const warning = msg.timer?.warningMessage;
+      if (warning && !text.includes(warning)) {
         text += '\n\n' + warning.replace(/{timer_text}/g, timerText).replace(/{timer}/g, timerText);
       }
-
       document.getElementById('previewText').textContent = text;
 
       // Buttons
       const previewButtons = document.getElementById('previewButtons');
       previewButtons.innerHTML = '';
-      const buttons = currentConfig.bot2?.video?.buttons || [];
-      buttons.forEach(btn => {
+      (msg.buttons || []).forEach(btn => {
         const b = document.createElement('div');
         b.className = 'tg-btn-preview';
         b.textContent = btn.text || 'Button';
         previewButtons.appendChild(b);
       });
+
+      // Show extra "Next Video Drop" button preview if multiple active messages exist
+      const activeCount = messages.filter(m => m.status === 'active').length;
+      if (activeCount > 1) {
+        const nextB = document.createElement('div');
+        nextB.className = 'tg-btn-preview';
+        nextB.style.background = '#1e3a5f';
+        nextB.textContent = '▶️ Next Video Drop';
+        previewButtons.appendChild(nextB);
+      }
     }
 
     // ------------------------------------
@@ -1069,7 +1471,6 @@
       // 1. Pack Bot 1
       if (!currentConfig.bot1) currentConfig.bot1 = {};
       currentConfig.bot1.bot_name = document.getElementById('b1_botName').value;
-      
       if (!currentConfig.bot1.welcome) currentConfig.bot1.welcome = {};
       currentConfig.bot1.welcome.message = document.getElementById('b1_welcomeMsg').value;
       currentConfig.bot1.welcome.useImage = document.getElementById('b1_useImage').checked;
@@ -1093,20 +1494,8 @@
       // 2. Pack Bot 2
       if (!currentConfig.bot2) currentConfig.bot2 = {};
       currentConfig.bot2.bot_name = document.getElementById('b2_botName').value;
-      
-      currentConfig.bot2.timer = {
-        enabled: document.getElementById('b2_timerEnabled').checked,
-        seconds: currentB2TimerSeconds,
-        preset: currentB2TimerPreset,
-        warningMessage: document.getElementById('b2_warningMsg').value
-      };
-
-      if (!currentConfig.bot2.video) currentConfig.bot2.video = { buttons: [] };
-      currentConfig.bot2.video.videoUrl = document.getElementById('b2_videoUrl').value.trim();
-      currentConfig.bot2.video.message = document.getElementById('b2_videoCaption').value;
-
-      if (!currentConfig.bot2.help) currentConfig.bot2.help = {};
-      currentConfig.bot2.help.message = document.getElementById('b2_helpMsg').value;
+      currentConfig.bot2.deliveryMode = document.getElementById('b2_deliveryMode').value;
+      currentConfig.bot2.help = { message: document.getElementById('b2_helpMsg').value };
 
       // 3. Post to API
       try {
@@ -1116,7 +1505,7 @@
           body: JSON.stringify(currentConfig)
         });
         if (res.ok) {
-          showToast('✅ All Bot Configurations Saved Successfully!');
+          showToast('✅ All Configurations & Messages Saved!');
         } else {
           alert('Failed to save configuration.');
         }
@@ -1132,7 +1521,64 @@
       setTimeout(() => { toast.style.display = 'none'; }, 2800);
     }
 
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/api/logs');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Render Top Outbound
+        const outKeys = Object.keys(data.counts?.outbound || {});
+        if (outKeys.length > 0) {
+          document.getElementById('topOutboundCalls').innerHTML = outKeys
+            .map(k => `<div>• <b>${k}</b>: ${data.counts.outbound[k]} hits</div>`)
+            .join('');
+        }
+
+        // Render Top Inbound
+        const inKeys = Object.keys(data.counts?.inbound || {});
+        if (inKeys.length > 0) {
+          document.getElementById('topInboundCalls').innerHTML = inKeys
+            .map(k => `<div>• <b>${k}</b>: ${data.counts.inbound[k]} hits</div>`)
+            .join('');
+        }
+
+        // Render Table
+        const tbody = document.getElementById('logsTableBody');
+        if (data.recent && data.recent.length > 0) {
+          tbody.innerHTML = data.recent.map(item => {
+            const isOut = item.direction === 'outbound';
+            const isErr = item.status >= 400 || item.error;
+            const statusColor = item.status === 200 ? '#34d399' : '#f87171';
+            const dirBadge = isOut 
+              ? `<span style="color:#38bdf8; background:rgba(56,189,248,0.15); padding:2px 6px; border-radius:4px;">OUTBOUND</span>` 
+              : `<span style="color:#a78bfa; background:rgba(167,139,250,0.15); padding:2px 6px; border-radius:4px;">INBOUND</span>`;
+
+            const detail = isOut 
+              ? `[${item.bot}] ${item.method}` 
+              : `${item.method} ${item.path}`;
+
+            const errText = item.error ? `<div style="color:#f87171; font-size:0.7rem;">${item.error}</div>` : '';
+
+            return `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); ${isErr ? 'background:rgba(248,113,113,0.08);' : ''}">
+                <td style="padding: 6px; color: var(--text-muted);">${item.time}</td>
+                <td style="padding: 6px;">${dirBadge}</td>
+                <td style="padding: 6px; word-break: break-all;">${detail}${errText}</td>
+                <td style="padding: 6px; font-weight:bold; color: ${statusColor};">${item.status}</td>
+                <td style="padding: 6px; color: var(--text-muted);">${item.duration}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } catch (e) {
+        // quiet ignore on background poll
+      }
+    }
+
     loadConfig();
+    fetchLogs();
+    setInterval(fetchLogs, 3000);
   </script>
 </body>
 </html>
