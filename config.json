@@ -1,0 +1,48 @@
+{
+  "bot_name": "Avniffanbasebot",
+  "welcome": {
+    "useImage": true,
+    "imagePath": "assets/welcome.jpg",
+    "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n≼Terms & Policy≽",
+    "buttons": [
+      {
+        "id": "btn_1",
+        "text": "📢 Alerts Channel",
+        "type": "url",
+        "url": "https://t.me/"
+      },
+      {
+        "id": "btn_2",
+        "text": "🔒 Backup Channel",
+        "type": "url",
+        "url": "https://t.me/"
+      },
+      {
+        "id": "btn_3",
+        "text": "≼ Terms & Policy ≽",
+        "type": "terms",
+        "url": ""
+      }
+    ]
+  },
+  "free": {
+    "useImage": false,
+    "imagePath": "",
+    "message": "🎁 Welcome to Free Content!\n\nMake sure to stay joined in our channels for all upcoming fresh releases and updates.",
+    "buttons": [
+      {
+        "id": "btn_free_1",
+        "text": "🔥 Free Channel Link",
+        "type": "url",
+        "url": "https://t.me/"
+      }
+    ]
+  },
+  "help": {
+    "message": "🤖 *Bot Help & Support*\n\nAvailable commands:\n• /free - Access free content & community links\n• /help - View this help guide\n\nNeed support? Check the announcements in our alert channel."
+  },
+  "terms": {
+    "title": "Terms & Policy",
+    "content": "Welcome to our community.\n\n1. Community Guidelines:\nAll content shared is strictly for community members. Distribution, re-uploading, or piracy is strictly prohibited.\n\n2. Privacy:\nWe respect your privacy. No personal identifiable data beyond your basic Telegram interaction info is stored.\n\n3. Compliance:\nBy joining and accessing our channels, you confirm you meet the age and legal requirements of your local jurisdiction.\n\nFor queries or concerns, contact our bot administrator."
+  }
+}

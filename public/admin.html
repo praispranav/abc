@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telegram Bot Configuration Dashboard</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d30;
+      --card-hover: #1c2742;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --accent: #818cf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.15);
+      --danger: #f87171;
+      --success: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+    .wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .logo span {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: var(--success);
+      border-radius: 9999px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 25px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #38bdf8;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: #0d1322;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+    .hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: -12px;
+      margin-bottom: 14px;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #2563eb);
+      color: white;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: #334155;
+    }
+    .btn-danger {
+      background: rgba(248, 113, 113, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+    .btn-danger:hover {
+      background: rgba(248, 113, 113, 0.3);
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    /* Buttons List */
+    .button-item {
+      background: #0d1322;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (max-width: 600px) {
+      .button-item { grid-template-columns: 1fr; }
+    }
+    .button-item input, .button-item select {
+      margin-bottom: 0;
+    }
+    /* Telegram Live Preview */
+    .preview-pane {
+      position: sticky;
+      top: 20px;
+    }
+    .telegram-mockup {
+      background: #17212b;
+      border-radius: 20px;
+      border: 1px solid #242f3d;
+      padding: 18px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+    .tg-header {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #71bbf4;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tg-bubble {
+      background: #242f3d;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .tg-img-preview {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      background: #0e1621;
+    }
+    .tg-text {
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #ffffff;
+    }
+    .tg-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .tg-btn-preview {
+      background: #2b5278;
+      color: #ffffff;
+      padding: 9px 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      display: none;
+      animation: fadeIn 0.3s ease;
+      z-index: 999;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="logo">
+        🤖 <span>@avniffanbasebot Manager</span>
+      </div>
+      <div class="status-badge">
+        <span class="status-dot"></span> Bot Active
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left Config Form -->
+      <div>
+        <!-- Welcome Message Section -->
+        <div class="card">
+          <div class="card-title">👋 Welcome Message (Triggered on Join / Start)</div>
+          
+          <label>Bot Display Name</label>
+          <input type="text" id="botName" placeholder="Avniffanbasebot" oninput="updatePreview()" />
+
+          <label>Welcome Message Text</label>
+          <textarea id="welcomeMsg" rows="5" oninput="updatePreview()"></textarea>
+          <div class="hint">Available tags: <code>{username}</code>, <code>{bot_name}</code></div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="useImage" onchange="toggleImagePreview(); updatePreview();" />
+            <span>Attach Header Image to Welcome Message</span>
+          </label>
+
+          <div id="imageSettings">
+            <label>Image Source / Upload</label>
+            <input type="file" id="imageFileInput" accept="image/*" onchange="uploadImage()" />
+            <div class="hint">Upload a custom image or use the default welcome picture.</div>
+          </div>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="card">
+          <div class="card-title" style="justify-content: space-between;">
+            <span>🔘 Inline Buttons (Below Welcome Message)</span>
+            <button class="btn btn-secondary" onclick="addButton()">+ Add Button</button>
+          </div>
+          <div id="buttonsContainer"></div>
+          <div class="hint">Tip: Set type to "Terms & Policy Modal" so users can open the terms without leaving Telegram!</div>
+        </div>
+
+        <!-- Commands Section -->
+        <div class="card">
+          <div class="card-title">⚡ /free & /help Commands Configuration</div>
+          
+          <label>/free Command Message</label>
+          <textarea id="freeMsg" rows="3"></textarea>
+
+          <label>/free Button Label & Link</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="freeBtnText" placeholder="Button Text (e.g. Free Channel)" />
+            <input type="text" id="freeBtnUrl" placeholder="https://t.me/your_channel" />
+          </div>
+
+          <label style="margin-top: 15px;">/help Command Message</label>
+          <textarea id="helpMsg" rows="3"></textarea>
+        </div>
+
+        <!-- Terms and Policy Section -->
+        <div class="card">
+          <div class="card-title">📜 Terms & Policy Content</div>
+          
+          <label>Page Title</label>
+          <input type="text" id="termsTitle" />
+
+          <label>Terms & Conditions Body</label>
+          <textarea id="termsContent" rows="6"></textarea>
+          <div class="hint">This content will be shown when users click the "≼Terms & Policy≽" button. Also viewable at <a href="/terms" target="_blank" style="color: var(--primary);">/terms</a>.</div>
+        </div>
+
+        <div style="margin-bottom: 50px;">
+          <button class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="saveConfig()">
+            💾 Save All Configuration Changes
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Preview Pane -->
+      <div class="preview-pane">
+        <div class="card-title" style="margin-bottom: 8px;">📱 Live Telegram Preview</div>
+        <div class="telegram-mockup">
+          <div class="tg-header">
+            <span>🔵</span> Avniffanbasebot <span style="font-size:0.75rem; color:#8899a6; font-weight:normal;">bot</span>
+          </div>
+          <div class="tg-bubble">
+            <img id="previewImg" class="tg-img-preview" src="/assets/welcome.jpg" alt="Banner" />
+            <div id="previewText" class="tg-text"></div>
+          </div>
+          <div id="previewButtons" class="tg-buttons"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">✅ Configuration saved successfully!</div>
+
+  <script>
+    let currentConfig = {};
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        currentConfig = await res.json();
+        
+        document.getElementById('botName').value = currentConfig.bot_name || 'Avniffanbasebot';
+        document.getElementById('welcomeMsg').value = currentConfig.welcome?.message || '';
+        document.getElementById('useImage').checked = currentConfig.welcome?.useImage ?? true;
+        
+        document.getElementById('freeMsg').value = currentConfig.free?.message || '';
+        if (currentConfig.free?.buttons && currentConfig.free.buttons[0]) {
+          document.getElementById('freeBtnText').value = currentConfig.free.buttons[0].text || '';
+          document.getElementById('freeBtnUrl').value = currentConfig.free.buttons[0].url || '';
+        }
+
+        document.getElementById('helpMsg').value = currentConfig.help?.message || '';
+        document.getElementById('termsTitle').value = currentConfig.terms?.title || '';
+        document.getElementById('termsContent').value = currentConfig.terms?.content || '';
+
+        renderButtonsList();
+        toggleImagePreview();
+        updatePreview();
+      } catch (err) {
+        console.error('Error loading config:', err);
+      }
+    }
+
+    function toggleImagePreview() {
+      const show = document.getElementById('useImage').checked;
+      document.getElementById('previewImg').style.display = show ? 'block' : 'none';
+      document.getElementById('imageSettings').style.display = show ? 'block' : 'none';
+    }
+
+    function renderButtonsList() {
+      const container = document.getElementById('buttonsContainer');
+      container.innerHTML = '';
+      const buttons = currentConfig.welcome?.buttons || [];
+
+      buttons.forEach((btn, index) => {
+        const item = document.createElement('div');
+        item.className = 'button-item';
+        item.innerHTML = `
+          <input type="text" value="${btn.text}" placeholder="Button Label" oninput="updateButtonData(${index}, 'text', this.value)" />
+          <div style="display: flex; gap: 6px;">
+            <select onchange="updateButtonData(${index}, 'type', this.value)">
+              <option value="url" ${btn.type === 'url' ? 'selected' : ''}>🔗 Telegram / External URL</option>
+              <option value="terms" ${btn.type === 'terms' ? 'selected' : ''}>📜 Terms & Policy Modal</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap: 8px;">
+            <input type="text" value="${btn.url || ''}" placeholder="URL (e.g. https://t.me/...)" 
+              style="display: ${btn.type === 'terms' ? 'none' : 'block'}; min-width: 180px;"
+              oninput="updateButtonData(${index}, 'url', this.value)" />
+            <button class="btn btn-danger" onclick="removeButton(${index})">✕</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+      updatePreview();
+    }
+
+    function updateButtonData(index, field, value) {
+      if (!currentConfig.welcome.buttons[index]) return;
+      currentConfig.welcome.buttons[index][field] = value;
+      renderButtonsList();
+    }
+
+    function addButton() {
+      if (!currentConfig.welcome.buttons) currentConfig.welcome.buttons = [];
+      currentConfig.welcome.buttons.push({
+        id: 'btn_' + Date.now(),
+        text: 'New Channel Link',
+        type: 'url',
+        url: 'https://t.me/'
+      });
+      renderButtonsList();
+    }
+
+    function removeButton(index) {
+      currentConfig.welcome.buttons.splice(index, 1);
+      renderButtonsList();
+    }
+
+    function updatePreview() {
+      const botName = document.getElementById('botName').value;
+      let text = document.getElementById('welcomeMsg').value;
+      text = text.replace(/{username}/g, '@alex_telegram');
+      text = text.replace(/{bot_name}/g, botName);
+      document.getElementById('previewText').textContent = text;
+
+      // Render buttons preview
+      const previewButtons = document.getElementById('previewButtons');
+      previewButtons.innerHTML = '';
+      (currentConfig.welcome?.buttons || []).forEach(btn => {
+        const b = document.createElement('div');
+        b.className = 'tg-btn-preview';
+        b.textContent = btn.text || 'Button';
+        previewButtons.appendChild(b);
+      });
+    }
+
+    async function uploadImage() {
+      const fileInput = document.getElementById('imageFileInput');
+      if (!fileInput.files || !fileInput.files[0]) return;
+
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.path) {
+          currentConfig.welcome.imagePath = data.path;
+          document.getElementById('previewImg').src = '/' + data.path + '?t=' + Date.now();
+          showToast('Image uploaded successfully!');
+        }
+      } catch (err) {
+        alert('Failed to upload image');
+      }
+    }
+
+    async function saveConfig() {
+      currentConfig.bot_name = document.getElementById('botName').value;
+      currentConfig.welcome.message = document.getElementById('welcomeMsg').value;
+      currentConfig.welcome.useImage = document.getElementById('useImage').checked;
+
+      currentConfig.free.message = document.getElementById('freeMsg').value;
+      if (!currentConfig.free.buttons) currentConfig.free.buttons = [{}];
+      currentConfig.free.buttons[0] = {
+        text: document.getElementById('freeBtnText').value,
+        type: 'url',
+        url: document.getElementById('freeBtnUrl').value
+      };
+
+      currentConfig.help.message = document.getElementById('helpMsg').value;
+      currentConfig.terms.title = document.getElementById('termsTitle').value;
+      currentConfig.terms.content = document.getElementById('termsContent').value;
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentConfig)
+        });
+        if (res.ok) {
+          showToast('✅ Configuration saved successfully!');
+        } else {
+          alert('Failed to save config.');
+        }
+      } catch (err) {
+        alert('Error saving config.');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    loadConfig();
+  </script>
+</body>
+</html>
