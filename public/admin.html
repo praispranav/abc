@@ -12,11 +12,14 @@
       --primary: #38bdf8;
       --primary-hover: #0ea5e9;
       --accent: #818cf8;
+      --accent-hover: #6366f1;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --border: rgba(148, 163, 184, 0.15);
       --danger: #f87171;
+      --danger-hover: #ef4444;
       --success: #34d399;
+      --warning: #fbbf24;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -27,22 +30,24 @@
       padding: 30px 20px;
     }
     .wrapper {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
     }
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
-      padding-bottom: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
       border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 15px;
     }
     .logo {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       font-weight: 700;
     }
     .logo span {
@@ -50,12 +55,17 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+    .header-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 0.85rem;
-      padding: 6px 12px;
+      padding: 6px 14px;
       background: rgba(52, 211, 153, 0.1);
       border: 1px solid rgba(52, 211, 153, 0.3);
       color: var(--success);
@@ -66,14 +76,64 @@
       height: 8px;
       border-radius: 50%;
       background: var(--success);
-      box-shadow: 0 0 10px var(--success);
+      box-shadow: 0 0 8px var(--success);
     }
+
+    /* Tab Navigation */
+    .bot-tabs-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+      background: rgba(21, 29, 48, 0.6);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .tab-pill {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+    }
+    .tab-btn.active .tab-pill {
+      background: var(--primary);
+      color: #0b0f19;
+      font-weight: 700;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 400px;
       gap: 25px;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       .grid { grid-template-columns: 1fr; }
     }
     .card {
@@ -93,16 +153,22 @@
       gap: 8px;
       color: #38bdf8;
     }
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: -10px;
+      margin-bottom: 16px;
+    }
     label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-muted);
       margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    input[type="text"], textarea, select {
+    input[type="text"], input[type="number"], textarea, select {
       width: 100%;
       background: #0d1322;
       border: 1px solid var(--border);
@@ -114,19 +180,20 @@
       margin-bottom: 16px;
       transition: border-color 0.2s;
     }
-    input[type="text"]:focus, textarea:focus, select:focus {
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--primary);
     }
     textarea {
       resize: vertical;
-      min-height: 110px;
+      min-height: 100px;
     }
     .hint {
       font-size: 0.8rem;
       color: var(--text-muted);
       margin-top: -12px;
       margin-bottom: 14px;
+      line-height: 1.4;
     }
     .checkbox-row {
       display: flex;
@@ -149,87 +216,191 @@
       transition: all 0.2s;
     }
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #2563eb);
-      color: white;
+      background: var(--primary);
+      color: #0b0f19;
     }
     .btn-primary:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
+      background: var(--primary-hover);
     }
     .btn-secondary {
-      background: #1e293b;
+      background: #1c2742;
       color: var(--text);
       border: 1px solid var(--border);
     }
     .btn-secondary:hover {
-      background: #334155;
+      background: #253354;
     }
     .btn-danger {
       background: rgba(248, 113, 113, 0.15);
       color: var(--danger);
       border: 1px solid rgba(248, 113, 113, 0.3);
       padding: 6px 12px;
-      font-size: 0.8rem;
     }
     .btn-danger:hover {
-      background: rgba(248, 113, 113, 0.3);
+      background: var(--danger);
+      color: #fff;
     }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
+    .btn-save-sticky {
+      position: sticky;
+      bottom: 20px;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
-    /* Buttons List */
+
+    /* Buttons builder */
     .button-item {
-      background: #0d1322;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
       display: grid;
-      grid-template-columns: 1fr 1fr auto;
+      grid-template-columns: 1fr 1fr 1.5fr auto;
       gap: 10px;
+      background: #0d1322;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
       align-items: center;
     }
-    @media (max-width: 600px) {
+    @media (max-width: 650px) {
       .button-item { grid-template-columns: 1fr; }
     }
     .button-item input, .button-item select {
       margin-bottom: 0;
     }
-    /* Telegram Live Preview */
+
+    /* Timer Selector Pills */
+    .timer-pill-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .timer-pill {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px;
+      text-align: center;
+      background: #0d1322;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .timer-pill:hover {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+    .timer-pill.selected {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Video Upload Area */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      background: #0d1322;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.05);
+    }
+    .upload-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    /* Live Preview Mockup */
     .preview-pane {
       position: sticky;
       top: 20px;
     }
     .telegram-mockup {
       background: #17212b;
-      border-radius: 20px;
+      border-radius: 18px;
+      overflow: hidden;
       border: 1px solid #242f3d;
-      padding: 18px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
     }
     .tg-header {
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: #71bbf4;
-      margin-bottom: 10px;
+      background: #242f3d;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+    .tg-body {
+      padding: 16px;
+      background: #0e1621;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .tg-bubble {
-      background: #242f3d;
+      background: #182533;
       border-radius: 12px;
       overflow: hidden;
-      margin-bottom: 8px;
+      border: 1px solid #242f3d;
+      max-width: 100%;
     }
     .tg-img-preview {
       width: 100%;
-      height: 220px;
+      height: 180px;
       object-fit: cover;
       display: block;
-      background: #0e1621;
+      background: #0d1322;
+    }
+    .tg-video-preview {
+      width: 100%;
+      max-height: 220px;
+      background: #000;
+      display: block;
+    }
+    .tg-video-placeholder {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #1c2742, #0d1322);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+    .tg-timer-banner {
+      background: rgba(251, 191, 36, 0.15);
+      border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+      color: var(--warning);
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .tg-text {
       padding: 12px 14px;
@@ -237,44 +408,47 @@
       line-height: 1.45;
       white-space: pre-wrap;
       word-break: break-word;
-      color: #ffffff;
+      color: #e4ecf2;
     }
     .tg-buttons {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-top: 6px;
+      padding: 0 14px 14px;
     }
     .tg-btn-preview {
       background: #2b5278;
-      color: #ffffff;
+      color: #fff;
       padding: 9px 12px;
-      border-radius: 8px;
       text-align: center;
+      border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 500;
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
     }
-    /* Toast */
+
     .toast {
       position: fixed;
       bottom: 25px;
       right: 25px;
       background: #10b981;
-      color: white;
+      color: #fff;
       padding: 12px 20px;
       border-radius: 8px;
       font-weight: 600;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
       display: none;
-      animation: fadeIn 0.3s ease;
-      z-index: 999;
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .tab-section {
+      display: none;
+    }
+    .tab-section.active {
+      display: block;
     }
   </style>
 </head>
@@ -282,201 +456,398 @@
   <div class="wrapper">
     <header>
       <div class="logo">
-        🤖 <span>@avniffanbasebot Manager</span>
+        🤖 <span>Multi-Bot Configuration Hub</span>
       </div>
-      <div class="status-badge">
-        <span class="status-dot"></span> Bot Active
+      <div class="header-badges">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span>Bot 1: @Avniffanbasebot (Active)</span>
+        </div>
+        <div class="status-badge" style="background: rgba(129, 140, 248, 0.1); border-color: rgba(129, 140, 248, 0.3); color: var(--accent);">
+          <div class="status-dot" style="background: var(--accent); box-shadow: 0 0 8px var(--accent);"></div>
+          <span>Bot 2: @avnifanbbot (Active)</span>
+        </div>
       </div>
     </header>
 
+    <!-- Navigation Tabs between Bot 1 and Bot 2 -->
+    <div class="bot-tabs-bar">
+      <button class="tab-btn active" id="tabBtn1" onclick="switchTab('bot1')">
+        📢 Bot 1: @Avniffanbasebot <span class="tab-pill">Community & Welcome</span>
+      </button>
+      <button class="tab-btn" id="tabBtn2" onclick="switchTab('bot2')">
+        ⏱️ Bot 2: @avnifanbbot <span class="tab-pill">Timed Video (Auto-Delete)</span>
+      </button>
+    </div>
+
     <div class="grid">
-      <!-- Left Config Form -->
-      <div>
-        <!-- Welcome Message Section -->
-        <div class="card">
-          <div class="card-title">👋 Welcome Message (Triggered on Join / Start)</div>
-          
-          <label>Bot Display Name</label>
-          <input type="text" id="botName" placeholder="Avniffanbasebot" oninput="updatePreview()" />
+      <!-- Left Config Forms Area -->
+      <div class="config-area">
 
-          <label>Welcome Message Text</label>
-          <textarea id="welcomeMsg" rows="5" oninput="updatePreview()"></textarea>
-          <div class="hint">Available tags: <code>{username}</code>, <code>{bot_name}</code></div>
+        <!-- ============================================== -->
+        <!-- TAB 1: BOT 1 (@Avniffanbasebot)                -->
+        <!-- ============================================== -->
+        <div id="sectionBot1" class="tab-section active">
+          <div class="card">
+            <div class="card-title">⚙️ General Bot 1 Identity</div>
+            <label>Bot Display Name</label>
+            <input type="text" id="b1_botName" oninput="updateB1Preview()" />
+            <div class="hint">Will replace the {bot_name} placeholder in welcome messages.</div>
+          </div>
 
-          <label class="checkbox-row">
-            <input type="checkbox" id="useImage" onchange="toggleImagePreview(); updatePreview();" />
-            <span>Attach Header Image to Welcome Message</span>
-          </label>
+          <div class="card">
+            <div class="card-title">👋 Welcome Message & Banner</div>
+            
+            <div class="checkbox-row">
+              <input type="checkbox" id="b1_useImage" onchange="toggleB1Image()" />
+              <label for="b1_useImage" style="margin-bottom:0; cursor:pointer;">Show Banner Image on Welcome</label>
+            </div>
 
-          <div id="imageSettings">
-            <label>Image Source / Upload</label>
-            <input type="file" id="imageFileInput" accept="image/*" onchange="uploadImage()" />
-            <div class="hint">Upload a custom image or use the default welcome picture.</div>
+            <div id="b1_imageSettings">
+              <label>Upload Banner Image</label>
+              <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                <input type="file" id="b1_imageFileInput" accept="image/*" style="display:none;" onchange="uploadB1Image()" />
+                <button class="btn btn-secondary" onclick="document.getElementById('b1_imageFileInput').click()">📁 Choose Image File</button>
+                <span id="b1_imageFileName" style="font-size: 0.85rem; color: var(--text-muted); align-self: center;">welcome.jpg</span>
+              </div>
+            </div>
+
+            <label>Welcome Message Caption</label>
+            <textarea id="b1_welcomeMsg" rows="5" oninput="updateB1Preview()"></textarea>
+            <div class="hint">Supported variables: <code>{username}</code>, <code>{bot_name}</code></div>
+
+            <label style="margin-top: 15px;">Interactive Buttons</label>
+            <div id="b1_buttonsContainer"></div>
+            <button class="btn btn-secondary" style="font-size: 0.85rem; margin-top: 5px;" onclick="addB1Button()">
+              ➕ Add Button
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🎁 /free Command Settings</div>
+            <label>Message Content</label>
+            <textarea id="b1_freeMsg" rows="3"></textarea>
+
+            <label>Channel Button Text</label>
+            <input type="text" id="b1_freeBtnText" />
+
+            <label>Channel Button URL</label>
+            <input type="text" id="b1_freeBtnUrl" />
+          </div>
+
+          <div class="card">
+            <div class="card-title">ℹ️ /help Command Settings</div>
+            <label>Help & Information Message</label>
+            <textarea id="b1_helpMsg" rows="4"></textarea>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📜 Terms & Policy Modal</div>
+            <label>Popup Title</label>
+            <input type="text" id="b1_termsTitle" />
+
+            <label>Terms & Conditions Body</label>
+            <textarea id="b1_termsContent" rows="6"></textarea>
+            <div class="hint">Also viewable directly at <a href="/terms" target="_blank" style="color: var(--primary);">/terms</a>.</div>
           </div>
         </div>
 
-        <!-- Buttons Section -->
-        <div class="card">
-          <div class="card-title" style="justify-content: space-between;">
-            <span>🔘 Inline Buttons (Below Welcome Message)</span>
-            <button class="btn btn-secondary" onclick="addButton()">+ Add Button</button>
-          </div>
-          <div id="buttonsContainer"></div>
-          <div class="hint">Tip: Set type to "Terms & Policy Modal" so users can open the terms without leaving Telegram!</div>
-        </div>
-
-        <!-- Commands Section -->
-        <div class="card">
-          <div class="card-title">⚡ /free & /help Commands Configuration</div>
-          
-          <label>/free Command Message</label>
-          <textarea id="freeMsg" rows="3"></textarea>
-
-          <label>/free Button Label & Link</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" id="freeBtnText" placeholder="Button Text (e.g. Free Channel)" />
-            <input type="text" id="freeBtnUrl" placeholder="https://t.me/your_channel" />
+        <!-- ============================================== -->
+        <!-- TAB 2: BOT 2 (@avnifanbbot - TIMED VIDEO)      -->
+        <!-- ============================================== -->
+        <div id="sectionBot2" class="tab-section">
+          <div class="card">
+            <div class="card-title">⚙️ Bot 2 Identity & Information</div>
+            <label>Bot Display Name / Tag</label>
+            <input type="text" id="b2_botName" oninput="updateB2Preview()" />
+            <div class="hint">Official Telegram Link: <a href="https://t.me/avnifanbbot" target="_blank" style="color:var(--primary);">t.me/avnifanbbot</a></div>
           </div>
 
-          <label style="margin-top: 15px;">/help Command Message</label>
-          <textarea id="helpMsg" rows="3"></textarea>
+          <div class="card">
+            <div class="card-title">⏱️ Auto-Delete Timer Settings</div>
+            <div class="card-subtitle">Default timer to automatically delete the video and message from the user's chat.</div>
+
+            <div class="checkbox-row">
+              <input type="checkbox" id="b2_timerEnabled" checked onchange="updateB2TimerSelection()" />
+              <label for="b2_timerEnabled" style="margin-bottom:0; cursor:pointer;">Enable Automatic Message Deletion</label>
+            </div>
+
+            <label>Quick Preset Duration</label>
+            <div class="timer-pill-group">
+              <div class="timer-pill" id="pill_30s" onclick="setB2Timer(30, '30s')">⚡ 30s</div>
+              <div class="timer-pill selected" id="pill_1min" onclick="setB2Timer(60, '1min')">⏱️ 1 Min</div>
+              <div class="timer-pill" id="pill_2min" onclick="setB2Timer(120, '2min')">⏱️ 2 Min</div>
+              <div class="timer-pill" id="pill_5min" onclick="setB2Timer(300, '5min')">⏳ 5 Min</div>
+              <div class="timer-pill" id="pill_custom" onclick="setB2TimerCustom()">✏️ Custom</div>
+            </div>
+
+            <div id="b2_customTimerRow" style="display:none; margin-bottom: 16px;">
+              <label>Custom Duration (Seconds)</label>
+              <input type="number" id="b2_customSeconds" min="5" max="86400" placeholder="e.g. 90" oninput="onCustomSecondsInput()" />
+            </div>
+
+            <label>Countdown / Warning Message Attached to Video</label>
+            <input type="text" id="b2_warningMsg" oninput="updateB2Preview()" />
+            <div class="hint">Variables: <code>{timer_text}</code> (e.g. "1 min" or "2 min")</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🎬 Video & Caption Configuration</div>
+            <div class="card-subtitle">Configure the video file or link delivered to users with the self-destruct timer.</div>
+
+            <label>Upload Video File (MP4, MOV, WebM - Max 100MB)</label>
+            <div class="upload-zone" onclick="document.getElementById('b2_videoFileInput').click()">
+              <input type="file" id="b2_videoFileInput" accept="video/mp4,video/quicktime,video/webm,video/*" style="display:none;" onchange="uploadB2Video()" />
+              <div class="upload-icon">🎥</div>
+              <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Click to select or upload video file</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Supports standard video formats up to 100MB</div>
+            </div>
+            <div id="b2_videoFileChip" style="display:none;">
+              <span class="file-chip">
+                <span>📹 Uploaded: <b id="b2_uploadedVideoName">video.mp4</b></span>
+                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 0.75rem;" onclick="removeB2VideoFile()">Remove</button>
+              </span>
+            </div>
+
+            <label>Or External Video URL / Telegram File ID (Optional Alternative)</label>
+            <input type="text" id="b2_videoUrl" placeholder="https://example.com/video.mp4 or BAACAgIAAxkBAA..." oninput="updateB2Preview()" />
+            <div class="hint">If you prefer using an external HTTPS direct video URL or Telegram <code>file_id</code> instead of uploading.</div>
+
+            <label>Video Message / Caption</label>
+            <textarea id="b2_videoCaption" rows="5" oninput="updateB2Preview()"></textarea>
+            <div class="hint">Variables: <code>{username}</code>, <code>{bot_name}</code>, <code>{timer_text}</code></div>
+
+            <label style="margin-top: 15px;">Interactive Buttons Below Video</label>
+            <div id="b2_buttonsContainer"></div>
+            <button class="btn btn-secondary" style="font-size: 0.85rem; margin-top: 5px;" onclick="addB2Button()">
+              ➕ Add Button
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">ℹ️ Bot 2 /help Command Information</div>
+            <div class="card-subtitle">Information shown when users send /help to @avnifanbbot.</div>
+            <label>Help Message Body</label>
+            <textarea id="b2_helpMsg" rows="6"></textarea>
+            <div class="hint">Supports Markdown and <code>{timer_text}</code></div>
+          </div>
         </div>
 
-        <!-- Terms and Policy Section -->
-        <div class="card">
-          <div class="card-title">📜 Terms & Policy Content</div>
-          
-          <label>Page Title</label>
-          <input type="text" id="termsTitle" />
-
-          <label>Terms & Conditions Body</label>
-          <textarea id="termsContent" rows="6"></textarea>
-          <div class="hint">This content will be shown when users click the "≼Terms & Policy≽" button. Also viewable at <a href="/terms" target="_blank" style="color: var(--primary);">/terms</a>.</div>
-        </div>
-
-        <div style="margin-bottom: 50px;">
-          <button class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="saveConfig()">
+        <!-- Sticky Save Button -->
+        <div class="btn-save-sticky">
+          <button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.05rem;" onclick="saveConfig()">
             💾 Save All Configuration Changes
           </button>
         </div>
+
       </div>
 
-      <!-- Right Preview Pane -->
+      <!-- Right Telegram Preview Pane -->
       <div class="preview-pane">
         <div class="card-title" style="margin-bottom: 8px;">📱 Live Telegram Preview</div>
         <div class="telegram-mockup">
           <div class="tg-header">
-            <span>🔵</span> Avniffanbasebot <span style="font-size:0.75rem; color:#8899a6; font-weight:normal;">bot</span>
+            <span id="previewHeaderDot">🔵</span> 
+            <span id="previewHeaderName">Avniffanbasebot</span> 
+            <span style="font-size:0.75rem; color:#8899a6; font-weight:normal;">bot</span>
           </div>
-          <div class="tg-bubble">
-            <img id="previewImg" class="tg-img-preview" src="/assets/welcome.jpg" alt="Banner" />
-            <div id="previewText" class="tg-text"></div>
+          <div class="tg-body">
+            <div class="tg-bubble">
+              <!-- Bot 1 Image Preview -->
+              <img id="b1_previewImg" class="tg-img-preview" src="/assets/welcome.jpg" alt="Banner" style="display:none;" />
+              
+              <!-- Bot 2 Video Preview -->
+              <div id="b2_previewVideoContainer" style="display:none;">
+                <video id="b2_previewVideoPlayer" class="tg-video-preview" controls style="display:none;"></video>
+                <div id="b2_previewVideoPlaceholder" class="tg-video-placeholder">
+                  <div style="font-size:2rem;">🎬</div>
+                  <div style="font-size:0.85rem; font-weight:600;" id="b2_previewVideoLabel">Video Message</div>
+                </div>
+              </div>
+
+              <!-- Bot 2 Timer Pill Banner -->
+              <div id="b2_previewTimerBanner" class="tg-timer-banner" style="display:none;">
+                <span>⏳</span> <span id="b2_previewTimerText">Auto-deletes in 1 min</span>
+              </div>
+
+              <!-- Message Caption Text -->
+              <div id="previewText" class="tg-text"></div>
+            </div>
+
+            <!-- Inline Buttons -->
+            <div id="previewButtons" class="tg-buttons"></div>
           </div>
-          <div id="previewButtons" class="tg-buttons"></div>
         </div>
       </div>
+
     </div>
   </div>
 
   <div id="toast" class="toast">✅ Configuration saved successfully!</div>
 
   <script>
-    let currentConfig = {};
+    let currentConfig = {
+      bot1: {},
+      bot2: {
+        timer: { enabled: true, seconds: 60, preset: '1min' },
+        video: { buttons: [] },
+        help: {}
+      }
+    };
+    let activeTab = 'bot1';
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.getElementById('tabBtn1').classList.toggle('active', tab === 'bot1');
+      document.getElementById('tabBtn2').classList.toggle('active', tab === 'bot2');
+      document.getElementById('sectionBot1').classList.toggle('active', tab === 'bot1');
+      document.getElementById('sectionBot2').classList.toggle('active', tab === 'bot2');
+
+      if (tab === 'bot1') {
+        document.getElementById('previewHeaderName').textContent = document.getElementById('b1_botName').value || 'Avniffanbasebot';
+        document.getElementById('previewHeaderDot').textContent = '🔵';
+        document.getElementById('b2_previewVideoContainer').style.display = 'none';
+        document.getElementById('b2_previewTimerBanner').style.display = 'none';
+        toggleB1Image();
+        updateB1Preview();
+      } else {
+        document.getElementById('previewHeaderName').textContent = document.getElementById('b2_botName').value || 'avnifanbbot';
+        document.getElementById('previewHeaderDot').textContent = '🟣';
+        document.getElementById('b1_previewImg').style.display = 'none';
+        document.getElementById('b2_previewVideoContainer').style.display = 'block';
+        updateB2Preview();
+      }
+    }
 
     async function loadConfig() {
       try {
         const res = await fetch('/api/config');
         currentConfig = await res.json();
+
+        // 1. Bot 1 Config Population
+        const b1 = currentConfig.bot1 || {};
+        document.getElementById('b1_botName').value = b1.bot_name || currentConfig.bot_name || 'Avniffanbasebot';
+        document.getElementById('b1_welcomeMsg').value = b1.welcome?.message || currentConfig.welcome?.message || '';
+        document.getElementById('b1_useImage').checked = b1.welcome?.useImage ?? currentConfig.welcome?.useImage ?? true;
         
-        document.getElementById('botName').value = currentConfig.bot_name || 'Avniffanbasebot';
-        document.getElementById('welcomeMsg').value = currentConfig.welcome?.message || '';
-        document.getElementById('useImage').checked = currentConfig.welcome?.useImage ?? true;
-        
-        document.getElementById('freeMsg').value = currentConfig.free?.message || '';
-        if (currentConfig.free?.buttons && currentConfig.free.buttons[0]) {
-          document.getElementById('freeBtnText').value = currentConfig.free.buttons[0].text || '';
-          document.getElementById('freeBtnUrl').value = currentConfig.free.buttons[0].url || '';
+        if (b1.welcome?.imagePath) {
+          const parts = b1.welcome.imagePath.split('/');
+          document.getElementById('b1_imageFileName').textContent = parts[parts.length - 1];
+          document.getElementById('b1_previewImg').src = '/' + b1.welcome.imagePath + '?t=' + Date.now();
         }
 
-        document.getElementById('helpMsg').value = currentConfig.help?.message || '';
-        document.getElementById('termsTitle').value = currentConfig.terms?.title || '';
-        document.getElementById('termsContent').value = currentConfig.terms?.content || '';
+        document.getElementById('b1_freeMsg').value = b1.free?.message || currentConfig.free?.message || '';
+        const b1FreeBtn = b1.free?.buttons?.[0] || currentConfig.free?.buttons?.[0];
+        if (b1FreeBtn) {
+          document.getElementById('b1_freeBtnText').value = b1FreeBtn.text || '';
+          document.getElementById('b1_freeBtnUrl').value = b1FreeBtn.url || '';
+        }
 
-        renderButtonsList();
-        toggleImagePreview();
-        updatePreview();
+        document.getElementById('b1_helpMsg').value = b1.help?.message || currentConfig.help?.message || '';
+        document.getElementById('b1_termsTitle').value = b1.terms?.title || currentConfig.terms?.title || '';
+        document.getElementById('b1_termsContent').value = b1.terms?.content || currentConfig.terms?.content || '';
+
+        // 2. Bot 2 Config Population
+        const b2 = currentConfig.bot2 || {};
+        document.getElementById('b2_botName').value = b2.bot_name || 'avnifanbbot';
+        
+        const b2Timer = b2.timer || { enabled: true, seconds: 60, preset: '1min' };
+        document.getElementById('b2_timerEnabled').checked = b2Timer.enabled ?? true;
+        document.getElementById('b2_warningMsg').value = b2Timer.warningMessage || '⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!';
+        
+        setB2Timer(b2Timer.seconds || 60, b2Timer.preset || '1min', false);
+
+        const b2Video = b2.video || {};
+        document.getElementById('b2_videoUrl').value = b2Video.videoUrl || '';
+        document.getElementById('b2_videoCaption').value = b2Video.message || '🎬 Hello {username}!\n\nHere is your requested video message.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}!';
+
+        if (b2Video.videoPath) {
+          const parts = b2Video.videoPath.split('/');
+          document.getElementById('b2_uploadedVideoName').textContent = parts[parts.length - 1];
+          document.getElementById('b2_videoFileChip').style.display = 'inline-block';
+          setB2VideoPreview(b2Video.videoPath);
+        }
+
+        document.getElementById('b2_helpMsg').value = b2.help?.message || '🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive the video message with auto-delete timer\n• /video - Fetch the video message\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}';
+
+        renderB1Buttons();
+        renderB2Buttons();
+        switchTab('bot1');
       } catch (err) {
         console.error('Error loading config:', err);
       }
     }
 
-    function toggleImagePreview() {
-      const show = document.getElementById('useImage').checked;
-      document.getElementById('previewImg').style.display = show ? 'block' : 'none';
-      document.getElementById('imageSettings').style.display = show ? 'block' : 'none';
+    // ------------------------------------
+    // BOT 1 HANDLERS
+    // ------------------------------------
+    function toggleB1Image() {
+      if (activeTab !== 'bot1') return;
+      const show = document.getElementById('b1_useImage').checked;
+      document.getElementById('b1_previewImg').style.display = show ? 'block' : 'none';
+      document.getElementById('b1_imageSettings').style.display = show ? 'block' : 'none';
     }
 
-    function renderButtonsList() {
-      const container = document.getElementById('buttonsContainer');
+    function renderB1Buttons() {
+      const container = document.getElementById('b1_buttonsContainer');
       container.innerHTML = '';
-      const buttons = currentConfig.welcome?.buttons || [];
+      const buttons = currentConfig.bot1?.welcome?.buttons || currentConfig.welcome?.buttons || [];
 
       buttons.forEach((btn, index) => {
         const item = document.createElement('div');
         item.className = 'button-item';
         item.innerHTML = `
-          <input type="text" value="${btn.text}" placeholder="Button Label" oninput="updateButtonData(${index}, 'text', this.value)" />
-          <div style="display: flex; gap: 6px;">
-            <select onchange="updateButtonData(${index}, 'type', this.value)">
-              <option value="url" ${btn.type === 'url' ? 'selected' : ''}>🔗 Telegram / External URL</option>
-              <option value="terms" ${btn.type === 'terms' ? 'selected' : ''}>📜 Terms & Policy Modal</option>
-            </select>
-          </div>
-          <div style="display:flex; align-items:center; gap: 8px;">
-            <input type="text" value="${btn.url || ''}" placeholder="URL (e.g. https://t.me/...)" 
-              style="display: ${btn.type === 'terms' ? 'none' : 'block'}; min-width: 180px;"
-              oninput="updateButtonData(${index}, 'url', this.value)" />
-            <button class="btn btn-danger" onclick="removeButton(${index})">✕</button>
-          </div>
+          <input type="text" value="${btn.text || ''}" placeholder="Button Label" oninput="updateB1ButtonData(${index}, 'text', this.value)" />
+          <select onchange="updateB1ButtonData(${index}, 'type', this.value)">
+            <option value="url" ${btn.type === 'url' ? 'selected' : ''}>🔗 URL Link</option>
+            <option value="terms" ${btn.type === 'terms' ? 'selected' : ''}>📜 Terms Modal</option>
+          </select>
+          <input type="text" value="${btn.url || ''}" placeholder="https://t.me/..." 
+            style="display: ${btn.type === 'terms' ? 'none' : 'block'};"
+            oninput="updateB1ButtonData(${index}, 'url', this.value)" />
+          <button class="btn btn-danger" onclick="removeB1Button(${index})">✕</button>
         `;
         container.appendChild(item);
       });
-      updatePreview();
+      if (activeTab === 'bot1') updateB1Preview();
     }
 
-    function updateButtonData(index, field, value) {
-      if (!currentConfig.welcome.buttons[index]) return;
-      currentConfig.welcome.buttons[index][field] = value;
-      renderButtonsList();
+    function updateB1ButtonData(index, field, value) {
+      if (!currentConfig.bot1.welcome.buttons) currentConfig.bot1.welcome.buttons = [];
+      if (!currentConfig.bot1.welcome.buttons[index]) return;
+      currentConfig.bot1.welcome.buttons[index][field] = value;
+      renderB1Buttons();
     }
 
-    function addButton() {
-      if (!currentConfig.welcome.buttons) currentConfig.welcome.buttons = [];
-      currentConfig.welcome.buttons.push({
+    function addB1Button() {
+      if (!currentConfig.bot1.welcome) currentConfig.bot1.welcome = { buttons: [] };
+      if (!currentConfig.bot1.welcome.buttons) currentConfig.bot1.welcome.buttons = [];
+      currentConfig.bot1.welcome.buttons.push({
         id: 'btn_' + Date.now(),
-        text: 'New Channel Link',
+        text: '📢 Channel Link',
         type: 'url',
         url: 'https://t.me/'
       });
-      renderButtonsList();
+      renderB1Buttons();
     }
 
-    function removeButton(index) {
-      currentConfig.welcome.buttons.splice(index, 1);
-      renderButtonsList();
+    function removeB1Button(index) {
+      currentConfig.bot1.welcome.buttons.splice(index, 1);
+      renderB1Buttons();
     }
 
-    function updatePreview() {
-      const botName = document.getElementById('botName').value;
-      let text = document.getElementById('welcomeMsg').value;
-      text = text.replace(/{username}/g, '@alex_telegram');
-      text = text.replace(/{bot_name}/g, botName);
+    function updateB1Preview() {
+      if (activeTab !== 'bot1') return;
+      const botName = document.getElementById('b1_botName').value || 'Avniffanbasebot';
+      document.getElementById('previewHeaderName').textContent = botName;
+      let text = document.getElementById('b1_welcomeMsg').value;
+      text = text.replace(/{username}/g, '@alex_telegram').replace(/{bot_name}/g, botName);
       document.getElementById('previewText').textContent = text;
 
-      // Render buttons preview
       const previewButtons = document.getElementById('previewButtons');
       previewButtons.innerHTML = '';
-      (currentConfig.welcome?.buttons || []).forEach(btn => {
+      const buttons = currentConfig.bot1?.welcome?.buttons || [];
+      buttons.forEach(btn => {
         const b = document.createElement('div');
         b.className = 'tg-btn-preview';
         b.textContent = btn.text || 'Button';
@@ -484,22 +855,20 @@
       });
     }
 
-    async function uploadImage() {
-      const fileInput = document.getElementById('imageFileInput');
+    async function uploadB1Image() {
+      const fileInput = document.getElementById('b1_imageFileInput');
       if (!fileInput.files || !fileInput.files[0]) return;
-
       const formData = new FormData();
       formData.append('image', fileInput.files[0]);
 
       try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.path) {
-          currentConfig.welcome.imagePath = data.path;
-          document.getElementById('previewImg').src = '/' + data.path + '?t=' + Date.now();
+          if (!currentConfig.bot1.welcome) currentConfig.bot1.welcome = {};
+          currentConfig.bot1.welcome.imagePath = data.path;
+          document.getElementById('b1_imageFileName').textContent = fileInput.files[0].name;
+          document.getElementById('b1_previewImg').src = '/' + data.path + '?t=' + Date.now();
           showToast('Image uploaded successfully!');
         }
       } catch (err) {
@@ -507,23 +876,239 @@
       }
     }
 
-    async function saveConfig() {
-      currentConfig.bot_name = document.getElementById('botName').value;
-      currentConfig.welcome.message = document.getElementById('welcomeMsg').value;
-      currentConfig.welcome.useImage = document.getElementById('useImage').checked;
+    // ------------------------------------
+    // BOT 2 HANDLERS (TIMED VIDEO)
+    // ------------------------------------
+    let currentB2TimerPreset = '1min';
+    let currentB2TimerSeconds = 60;
 
-      currentConfig.free.message = document.getElementById('freeMsg').value;
-      if (!currentConfig.free.buttons) currentConfig.free.buttons = [{}];
-      currentConfig.free.buttons[0] = {
-        text: document.getElementById('freeBtnText').value,
+    function setB2Timer(seconds, preset, update = true) {
+      currentB2TimerSeconds = seconds;
+      currentB2TimerPreset = preset;
+
+      document.querySelectorAll('.timer-pill').forEach(el => el.classList.remove('selected'));
+      const pill = document.getElementById('pill_' + preset);
+      if (pill) pill.classList.add('selected');
+
+      document.getElementById('b2_customTimerRow').style.display = (preset === 'custom') ? 'block' : 'none';
+      if (preset === 'custom') {
+        document.getElementById('b2_customSeconds').value = seconds;
+      }
+
+      if (update) updateB2Preview();
+    }
+
+    function setB2TimerCustom() {
+      const val = parseInt(document.getElementById('b2_customSeconds').value, 10) || 90;
+      setB2Timer(val, 'custom');
+    }
+
+    function onCustomSecondsInput() {
+      const val = parseInt(document.getElementById('b2_customSeconds').value, 10) || 60;
+      currentB2TimerSeconds = val;
+      updateB2Preview();
+    }
+
+    function updateB2TimerSelection() {
+      updateB2Preview();
+    }
+
+    function formatTimerText(seconds) {
+      if (seconds >= 60) {
+        return Math.round(seconds / 60) + ' min';
+      }
+      return seconds + ' sec';
+    }
+
+    function renderB2Buttons() {
+      const container = document.getElementById('b2_buttonsContainer');
+      container.innerHTML = '';
+      const buttons = currentConfig.bot2?.video?.buttons || [];
+
+      buttons.forEach((btn, index) => {
+        const item = document.createElement('div');
+        item.className = 'button-item';
+        item.innerHTML = `
+          <input type="text" value="${btn.text || ''}" placeholder="Button Label" oninput="updateB2ButtonData(${index}, 'text', this.value)" />
+          <select disabled>
+            <option value="url" selected>🔗 URL Link</option>
+          </select>
+          <input type="text" value="${btn.url || ''}" placeholder="https://t.me/..." 
+            oninput="updateB2ButtonData(${index}, 'url', this.value)" />
+          <button class="btn btn-danger" onclick="removeB2Button(${index})">✕</button>
+        `;
+        container.appendChild(item);
+      });
+      if (activeTab === 'bot2') updateB2Preview();
+    }
+
+    function updateB2ButtonData(index, field, value) {
+      if (!currentConfig.bot2.video.buttons) currentConfig.bot2.video.buttons = [];
+      if (!currentConfig.bot2.video.buttons[index]) return;
+      currentConfig.bot2.video.buttons[index][field] = value;
+      renderB2Buttons();
+    }
+
+    function addB2Button() {
+      if (!currentConfig.bot2.video) currentConfig.bot2.video = { buttons: [] };
+      if (!currentConfig.bot2.video.buttons) currentConfig.bot2.video.buttons = [];
+      currentConfig.bot2.video.buttons.push({
+        id: 'b2_btn_' + Date.now(),
+        text: '📢 Channel Updates',
         type: 'url',
-        url: document.getElementById('freeBtnUrl').value
+        url: 'https://t.me/'
+      });
+      renderB2Buttons();
+    }
+
+    function removeB2Button(index) {
+      currentConfig.bot2.video.buttons.splice(index, 1);
+      renderB2Buttons();
+    }
+
+    function setB2VideoPreview(videoPath) {
+      const player = document.getElementById('b2_previewVideoPlayer');
+      const placeholder = document.getElementById('b2_previewVideoPlaceholder');
+      if (videoPath) {
+        player.src = '/' + videoPath;
+        player.style.display = 'block';
+        placeholder.style.display = 'none';
+      } else {
+        player.style.display = 'none';
+        placeholder.style.display = 'flex';
+      }
+    }
+
+    function removeB2VideoFile() {
+      if (currentConfig.bot2.video) {
+        currentConfig.bot2.video.videoPath = '';
+      }
+      document.getElementById('b2_videoFileChip').style.display = 'none';
+      setB2VideoPreview('');
+      showToast('Video removed from configuration.');
+    }
+
+    async function uploadB2Video() {
+      const fileInput = document.getElementById('b2_videoFileInput');
+      if (!fileInput.files || !fileInput.files[0]) return;
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('video', file);
+
+      showToast('Uploading video... please wait');
+
+      try {
+        const res = await fetch('/api/upload-video', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.path) {
+          if (!currentConfig.bot2.video) currentConfig.bot2.video = {};
+          currentConfig.bot2.video.videoPath = data.path;
+          document.getElementById('b2_uploadedVideoName').textContent = file.name;
+          document.getElementById('b2_videoFileChip').style.display = 'inline-block';
+          setB2VideoPreview(data.path);
+          showToast('✅ Video uploaded successfully!');
+        }
+      } catch (err) {
+        alert('Failed to upload video');
+      }
+    }
+
+    function updateB2Preview() {
+      if (activeTab !== 'bot2') return;
+      const botName = document.getElementById('b2_botName').value || 'avnifanbbot';
+      document.getElementById('previewHeaderName').textContent = botName;
+      const timerEnabled = document.getElementById('b2_timerEnabled').checked;
+      const timerText = formatTimerText(currentB2TimerSeconds);
+
+      // Timer Banner
+      const timerBanner = document.getElementById('b2_previewTimerBanner');
+      if (timerEnabled) {
+        timerBanner.style.display = 'flex';
+        document.getElementById('b2_previewTimerText').textContent = `Auto-deletes in ${timerText}`;
+      } else {
+        timerBanner.style.display = 'none';
+      }
+
+      // Video Source display
+      const videoUrl = document.getElementById('b2_videoUrl').value.trim();
+      if (!currentConfig.bot2?.video?.videoPath && videoUrl) {
+        document.getElementById('b2_previewVideoLabel').textContent = 'External Video: ' + videoUrl.slice(0, 25) + '...';
+      }
+
+      // Caption
+      let text = document.getElementById('b2_videoCaption').value;
+      text = text
+        .replace(/{username}/g, '@alex_telegram')
+        .replace(/{bot_name}/g, botName)
+        .replace(/{timer_text}/g, timerText)
+        .replace(/{timer}/g, timerText);
+
+      const warning = document.getElementById('b2_warningMsg').value;
+      if (timerEnabled && warning && !text.includes(warning)) {
+        text += '\n\n' + warning.replace(/{timer_text}/g, timerText).replace(/{timer}/g, timerText);
+      }
+
+      document.getElementById('previewText').textContent = text;
+
+      // Buttons
+      const previewButtons = document.getElementById('previewButtons');
+      previewButtons.innerHTML = '';
+      const buttons = currentConfig.bot2?.video?.buttons || [];
+      buttons.forEach(btn => {
+        const b = document.createElement('div');
+        b.className = 'tg-btn-preview';
+        b.textContent = btn.text || 'Button';
+        previewButtons.appendChild(b);
+      });
+    }
+
+    // ------------------------------------
+    // SAVE ALL CONFIGURATION
+    // ------------------------------------
+    async function saveConfig() {
+      // 1. Pack Bot 1
+      if (!currentConfig.bot1) currentConfig.bot1 = {};
+      currentConfig.bot1.bot_name = document.getElementById('b1_botName').value;
+      
+      if (!currentConfig.bot1.welcome) currentConfig.bot1.welcome = {};
+      currentConfig.bot1.welcome.message = document.getElementById('b1_welcomeMsg').value;
+      currentConfig.bot1.welcome.useImage = document.getElementById('b1_useImage').checked;
+
+      if (!currentConfig.bot1.free) currentConfig.bot1.free = { buttons: [{}] };
+      currentConfig.bot1.free.message = document.getElementById('b1_freeMsg').value;
+      currentConfig.bot1.free.buttons[0] = {
+        id: 'btn_free_1',
+        text: document.getElementById('b1_freeBtnText').value,
+        type: 'url',
+        url: document.getElementById('b1_freeBtnUrl').value
       };
 
-      currentConfig.help.message = document.getElementById('helpMsg').value;
-      currentConfig.terms.title = document.getElementById('termsTitle').value;
-      currentConfig.terms.content = document.getElementById('termsContent').value;
+      if (!currentConfig.bot1.help) currentConfig.bot1.help = {};
+      currentConfig.bot1.help.message = document.getElementById('b1_helpMsg').value;
 
+      if (!currentConfig.bot1.terms) currentConfig.bot1.terms = {};
+      currentConfig.bot1.terms.title = document.getElementById('b1_termsTitle').value;
+      currentConfig.bot1.terms.content = document.getElementById('b1_termsContent').value;
+
+      // 2. Pack Bot 2
+      if (!currentConfig.bot2) currentConfig.bot2 = {};
+      currentConfig.bot2.bot_name = document.getElementById('b2_botName').value;
+      
+      currentConfig.bot2.timer = {
+        enabled: document.getElementById('b2_timerEnabled').checked,
+        seconds: currentB2TimerSeconds,
+        preset: currentB2TimerPreset,
+        warningMessage: document.getElementById('b2_warningMsg').value
+      };
+
+      if (!currentConfig.bot2.video) currentConfig.bot2.video = { buttons: [] };
+      currentConfig.bot2.video.videoUrl = document.getElementById('b2_videoUrl').value.trim();
+      currentConfig.bot2.video.message = document.getElementById('b2_videoCaption').value;
+
+      if (!currentConfig.bot2.help) currentConfig.bot2.help = {};
+      currentConfig.bot2.help.message = document.getElementById('b2_helpMsg').value;
+
+      // 3. Post to API
       try {
         const res = await fetch('/api/config', {
           method: 'POST',
@@ -531,12 +1116,12 @@
           body: JSON.stringify(currentConfig)
         });
         if (res.ok) {
-          showToast('✅ Configuration saved successfully!');
+          showToast('✅ All Bot Configurations Saved Successfully!');
         } else {
-          alert('Failed to save config.');
+          alert('Failed to save configuration.');
         }
       } catch (err) {
-        alert('Error saving config.');
+        alert('Error saving configuration: ' + err.message);
       }
     }
 
@@ -544,7 +1129,7 @@
       const toast = document.getElementById('toast');
       toast.textContent = msg;
       toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      setTimeout(() => { toast.style.display = 'none'; }, 2800);
     }
 
     loadConfig();
