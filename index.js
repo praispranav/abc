@@ -25,7 +25,9 @@ import {
   formatRemainingTime,
   planUnlocksBot4,
   getFinalBotConfig,
-  escapeHtml
+  escapeHtml,
+  handlePlansCommand,
+  handleResendVipLink
 } from './subscriptions.js';
 import { adminAuth, warnIfUnprotected } from './auth.js';
 import crypto from 'crypto';
@@ -1429,20 +1431,63 @@ function formatBot1Message(template, ctx) {
 
 // Welcome Message: Terms & Policy is ALWAYS intact at the end of the message
 
+// Utility to shuffle an array (Fisher-Yates) for randomized drops delivery
+function shuffleArray(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 // Native Telegram Sticky Reply Keyboard (Pinned at the bottom of the user's screen)
-function buildStickyReplyKeyboard() {
-  const config = getConfig();
-  const bottomButtons = config.bot1?.welcome?.bottomButtons || [
+function buildStickyReplyKeyboard(userId = null, config = getConfig()) {
+  const rawButtons = config.bot1?.welcome?.bottomButtons || [
     { text: "✨ Today's Content", type: 'today', fullWidth: true },
-    { text: 'Button 1', type: 'list', listId: 'list_btn1', fullWidth: false },
+    { text: 'Most Viewed', type: 'list', listId: 'list_btn1', fullWidth: false },
     { text: 'Button 2', type: 'list', listId: 'list_btn2', fullWidth: false },
     { text: 'Button 3', type: 'list', listId: 'list_btn3', fullWidth: false }
   ];
 
+  // Exclude buttons explicitly hidden or disabled by admin
+  const bottomButtons = rawButtons.filter((btn) => btn.hidden !== true && btn.enabled !== false);
+
+  let displayButtons = bottomButtons;
+
+  if (userId) {
+    const vip = checkUserVipSubscription(userId, 'any');
+    const activePasses = vip.activePasses || (vip.active ? [vip] : []);
+    const isAllAccess = vip.isAllAccess || activePasses.some((p) => p.linkedContent === 'all' || p.planId === 'plan_1m');
+    const activeKeys = new Set(activePasses.flatMap((p) => [p.linkedContent, p.planId, p.contentTitle]));
+
+    if (vip.active && !isAllAccess) {
+      // User has specific active passes:
+      // Show buttons that match active subscription or are free!
+      displayButtons = bottomButtons.filter((btn) => {
+        if (!btn.accessType || btn.accessType === 'free') return true;
+        // Check if button's plan or content is active
+        if (btn.planId && activeKeys.has(btn.planId)) return true;
+        if (btn.category && activeKeys.has(btn.category)) return true;
+        if (btn.linkedContent && activeKeys.has(btn.linkedContent)) return true;
+        if (btn.contentType && activeKeys.has(btn.contentType)) return true;
+        if (btn.type === 'today' && (activeKeys.has('today') || activeKeys.has('plan_6h'))) return true;
+        if (btn.listId && activeKeys.has(btn.listId)) return true;
+        if (btn.id && activeKeys.has(btn.id)) return true;
+        return false;
+      });
+
+      if (displayButtons.length === 0) {
+        displayButtons = bottomButtons;
+      }
+    }
+  }
+
   const rows = [];
   let currentRow = [];
 
-  for (const btn of bottomButtons) {
+  for (const btn of displayButtons) {
     const text = (btn.text || '').trim();
     if (!text) continue;
 
@@ -1454,7 +1499,7 @@ function buildStickyReplyKeyboard() {
       rows.push([text]);
     } else {
       currentRow.push(text);
-      if (currentRow.length >= 3) {
+      if (currentRow.length >= 2) {
         rows.push(currentRow);
         currentRow = [];
       }
@@ -1467,7 +1512,7 @@ function buildStickyReplyKeyboard() {
 
   if (rows.length === 0) {
     rows.push(["✨ Today's Content"]);
-    rows.push(['Button 1', 'Button 2', 'Button 3']);
+    rows.push(['Most Viewed', 'Button 2', 'Button 3']);
   }
 
   // Telegram persistent reply keyboard: is_persistent = true keeps it stuck to the bottom!
@@ -1478,10 +1523,11 @@ async function sendBot1Welcome(ctx) {
   try {
     const config = getConfig();
     const welcome = config.bot1?.welcome || {};
+    const userId = ctx.from?.id ? String(ctx.from.id) : null;
 
     if (welcome.enabled === false) {
       try {
-        const stickyKb = buildStickyReplyKeyboard();
+        const stickyKb = buildStickyReplyKeyboard(userId, config);
         await ctx.reply('👇 Tap a button below for instant content drops:', stickyKb);
       } catch (_) {}
       return;
@@ -1522,9 +1568,9 @@ async function sendBot1Welcome(ctx) {
       extra: keyboard ? keyboard : {}
     });
 
-    // Always dock the sticky bottom reply keyboard permanently
+    // Always dock the sticky bottom reply keyboard permanently customized to user's subscription
     try {
-      const stickyKb = buildStickyReplyKeyboard();
+      const stickyKb = buildStickyReplyKeyboard(userId, config);
       await ctx.reply('👇 Tap a button below for instant content drops:', stickyKb);
     } catch (_) {}
 
@@ -1673,7 +1719,7 @@ async function executeMessageList(ctx, listId, botKey = 'bot1') {
   );
   const accessType = matchingBtn?.accessType || 'free';
   const userId = ctx.from?.id ? String(ctx.from.id) : null;
-  const contentType = matchingBtn?.contentType || matchingBtn?.id || listId;
+  const contentType = matchingBtn?.planId || matchingBtn?.category || matchingBtn?.contentType || matchingBtn?.id || listId;
   const accessCheck = checkUserVipSubscription(userId, contentType);
 
   // 1. COMPLETELY LOCKED MODE: non-subscribed users get ONLY the paywall message upfront (0 drops)
@@ -1710,18 +1756,22 @@ async function executeMessageList(ctx, listId, botKey = 'bot1') {
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
   const botName = config[botKey]?.bot_name || 'Bot';
 
+  // Randomize content delivery so drops are not sent in predictable serial order
+  const shouldRandomize = list.randomize !== false;
+  const deliveryMessages = shouldRandomize ? shuffleArray(activeMessages) : activeMessages;
+
   if (deliveryMode === 'all_in_one') {
-    for (const msg of activeMessages) {
+    for (const msg of deliveryMessages) {
       await sendSingleListPreview(ctx, msg, list, username, botName, false);
     }
   } else {
     const userId = ctx.from?.id || 'default';
     const cursorKey = `${userId}_${list.id}`;
     const lastCursor = listUserCursors.get(cursorKey) ?? -1;
-    const nextCursor = (lastCursor + 1) % activeMessages.length;
+    const nextCursor = (lastCursor + 1) % deliveryMessages.length;
     listUserCursors.set(cursorKey, nextCursor);
-    const chosen = activeMessages[nextCursor];
-    const showNextBtn = activeMessages.length > 1;
+    const chosen = deliveryMessages[nextCursor];
+    const showNextBtn = deliveryMessages.length > 1;
     await sendSingleListPreview(ctx, chosen, list, username, botName, showNextBtn);
   }
 
@@ -2090,19 +2140,23 @@ async function executeTodayCommand(ctx, botKey = 'bot1') {
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
   const botName = config[botKey]?.bot_name || 'Bot';
 
+  // Randomize content delivery so drops are not sent in predictable serial order
+  const shouldRandomize = todayConfig.randomize !== false;
+  const deliveryMessages = shouldRandomize ? shuffleArray(activeMessages) : activeMessages;
+
   if (deliveryMode === 'all_in_one') {
     // Mode 1: Send all active messages in one go, each with its unique View Content button
-    for (const msg of activeMessages) {
+    for (const msg of deliveryMessages) {
       await sendSingleTodayPreview(ctx, msg, username, botName, false);
     }
   } else {
     // Mode 2: Sequential (send one by one, cycles on "Next Today's Drop")
     const userId = ctx.from?.id || 'default';
     const lastCursor = todayUserCursors.get(userId) ?? -1;
-    const nextCursor = (lastCursor + 1) % activeMessages.length;
+    const nextCursor = (lastCursor + 1) % deliveryMessages.length;
     todayUserCursors.set(userId, nextCursor);
-    const chosen = activeMessages[nextCursor];
-    const showNextBtn = activeMessages.length > 1;
+    const chosen = deliveryMessages[nextCursor];
+    const showNextBtn = deliveryMessages.length > 1;
     await sendSingleTodayPreview(ctx, chosen, username, botName, showNextBtn);
   }
 
@@ -3124,50 +3178,7 @@ bot2.on('text', async (ctx) => {
 // 5. BOT 3: @avnifanbasepaybot (Payment Confirmation & VIP Checkout Bot)
 // ----------------------------------------------------
 bot3.start(async (ctx) => {
-  const payload = (ctx.startPayload || '').trim();
-
-  // If payload points directly to a plan (e.g. /start plan_6h, /start plan_1w, /start plan_1m):
-  if (payload.startsWith('plan_')) {
-    return await sendPlanQrAndInstructions(ctx, payload, getConfig, formatTelegramHtml);
-  }
-
-  // Otherwise, display the welcome & plan selection menu
-  const config = getConfig();
-  const subCfg = config.subscriptions || {};
-  const fb = getFinalBotConfig(config);
-  const finalBotHandle = fb.username ? (fb.username.startsWith('@') ? fb.username : `@${fb.username}`) : 'our exclusive VIP Bot';
-  const plans = subCfg.plans || [];
-  const curr = subCfg.currency || '₹';
-  const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
-
-  let text = `💳 *Welcome to Avni FanBase Payment Gateway, ${username}!* 👑\n\n`;
-  text += `Upgrade to our **VIP Pass** to get unlimited drops, zero daily limits, and access to our exclusive **Premium Bot (${finalBotHandle})**.\n\n`;
-  text += `💎 *Available VIP Subscription Plans:*\n\n`;
-
-  plans.forEach((p, idx) => {
-    const dur = formatDurationLabel(p.durationHours);
-    const badge = p.badge ? ` [${p.badge}]` : '';
-    text += `*${idx + 1}. ${p.name}*${badge}\n`;
-    text += `• Price: *${curr}${p.price}*\n`;
-    text += `• Duration: *${dur}*\n`;
-    if (p.description) text += `• ${p.description}\n`;
-    text += `\n`;
-  });
-
-  text += `👇 Tap a plan below to view your instant UPI QR code & pay:`;
-
-  const buttons = plans.map((p) => {
-    const dur = formatDurationLabel(p.durationHours);
-    return [Markup.button.callback(`${p.name} — ${curr}${p.price} (${dur})`, `buy_plan_${p.id}`)];
-  });
-  buttons.push([Markup.button.callback('🔍 Check My Subscription Status', 'check_my_plan')]);
-
-  const keyboard = Markup.inlineKeyboard(buttons);
-  try {
-    await ctx.reply(formatTelegramHtml(text), { parse_mode: 'HTML', ...keyboard });
-  } catch (_) {
-    await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
-  }
+  return await handlePlansCommand(ctx, getConfig, formatTelegramHtml);
 });
 
 bot3.command('help', async (ctx) => {
@@ -3205,7 +3216,8 @@ bot3.on('text', async (ctx) => {
 
   const handled = await handlePaymentTextSubmission(ctx, getConfig, formatTelegramHtml);
   if (!handled) {
-    const isUtr = /^\d{10,14}$/.test(text.replace(/\s+/g, ''));
+    const clean = text.replace(/[\s-]/g, '');
+    const isUtr = /^\d{10,14}$/.test(clean) || (/^[A-Z0-9]{8,24}$/i.test(clean) && clean.replace(/\D/g, '').length >= 3);
     if (isUtr) {
       const config = getConfig();
       const plans = config.subscriptions?.plans || [];
@@ -3228,59 +3240,87 @@ bot3.on('text', async (ctx) => {
 // BOT 4: @avnifanbaseprembot (PREMIUM VIP BOT) ENGINE
 // ====================================================
 
-function buildBot4StickyKeyboard(config = getConfig()) {
-  const bottomButtons = config.bot4?.welcome?.bottomButtons || [
-    { text: '🔥 Premium Drops', type: 'drops', fullWidth: true },
-    { text: '⭐ Saved Contents', type: 'saved', fullWidth: false },
-    { text: '💎 My Subscription', type: 'myplan', fullWidth: false },
-    { text: '👑 Renew / Extend Pass', type: 'renew', fullWidth: false },
-    { text: '❓ Support & Help', type: 'help', fullWidth: false }
-  ];
+// Bot 4 User Active Categories & Page Cursors
+const bot4UserActiveCategories = new Map(); // userId -> category string (e.g. 'today', 'bbtn_1', 'all')
+const bot4UserPageCursors = new Map(); // `${userId}_${category}` -> number
+const bot4UserShuffledPool = new Map(); // `${userId}_${category}` -> Array of randomized drops
 
+// Filter drops accessible to the user based on their active subscription passes
+function getUserAccessibleDrops(userId, filterCategory = null) {
+  const vip = checkUserVipSubscription(userId, 'any');
+  if (!vip.active && (!vip.activePasses || vip.activePasses.length === 0)) {
+    return [];
+  }
+  const cfg = getConfig();
+  const allMessages = (cfg.bot4?.messages || []).filter((m) => m.status !== 'inactive');
+  const activePasses = vip.activePasses || [vip];
+  const isAllAccess = vip.isAllAccess || activePasses.some((p) => p.linkedContent === 'all' || p.planId === 'plan_1m');
+  const activeContentKeys = new Set(activePasses.map((p) => p.linkedContent));
+
+  return allMessages.filter((msg) => {
+    const msgCat = msg.linkedContent || msg.category || 'all';
+
+    // If explicit filter is requested:
+    if (filterCategory && filterCategory !== 'all') {
+      if (msgCat !== filterCategory) return false;
+    }
+
+    // All-access pass unlocks everything
+    if (isAllAccess) return true;
+
+    // Check if user has active pass for this category
+    if (activeContentKeys.has(msgCat)) return true;
+    if (msgCat === 'today' && (activeContentKeys.has('today') || activeContentKeys.has('plan_6h'))) return true;
+    if (msgCat === 'bbtn_1' && (activeContentKeys.has('bbtn_1') || activeContentKeys.has('plan_1w'))) return true;
+
+    // Unassigned drops
+    if (!msg.linkedContent && !msg.category) return true;
+
+    return false;
+  });
+}
+
+// Dynamically build Bot 4 sticky bottom keyboard showing ONLY plan buttons and Next of [Plan]
+function buildBot4StickyKeyboard(config = getConfig(), userId = null) {
   const rows = [];
-  let currentRow = [];
 
-  for (const btn of bottomButtons) {
-    const text = (btn.text || '').trim();
-    if (!text) continue;
+  if (userId) {
+    const vip = checkUserVipSubscription(userId, 'any');
+    const activePasses = vip.activePasses || (vip.active ? [vip] : []);
+    const isAllAccess = vip.isAllAccess || activePasses.some((p) => p.linkedContent === 'all' || p.planId === 'plan_1m');
 
-    if (btn.fullWidth) {
-      if (currentRow.length > 0) {
-        rows.push(currentRow);
-        currentRow = [];
-      }
-      rows.push([text]);
-    } else {
-      currentRow.push(text);
-      if (currentRow.length >= 2) {
-        rows.push(currentRow);
-        currentRow = [];
-      }
+    if (isAllAccess) {
+      rows.push(["✨ Today's Content Drops", "➡️ Next of Today's Content"]);
+      rows.push(["🌟 Most Viewed Vault Drops", "➡️ Next of Most Viewed Vault"]);
+      rows.push(["🔥 All VIP Drops", "➡️ Next All Drops"]);
+    } else if (activePasses.length > 0) {
+      activePasses.forEach((p) => {
+        const title = p.contentTitle || (p.linkedContent === 'today' ? "Today's Content" : (p.linkedContent === 'bbtn_1' ? "Most Viewed Vault" : p.planName));
+        rows.push([`🎬 ${title} Drops`, `➡️ Next of ${title}`]);
+      });
     }
   }
 
-  if (currentRow.length > 0) {
-    rows.push(currentRow);
-  }
-
+  // Fallback if no user or no active passes
   if (rows.length === 0) {
-    rows.push(['🔥 Premium Drops']);
-    rows.push(['⭐ Saved Contents', '💎 My Subscription']);
-    rows.push(['👑 Renew / Extend Pass', '❓ Support & Help']);
+    rows.push(["🔥 Premium Drops", "➡️ Next Drops"]);
   }
 
   return Markup.keyboard(rows).resize().persistent();
 }
 
-// Check if user has active VIP access for Bot 4 (All-Access or Bot 4 specific pass)
+// Check if user has active VIP access for Bot 4 (any active VIP subscription pass)
 function isBot4Subscriber(ctx) {
   const userId = ctx.from?.id ? String(ctx.from.id) : null;
-  const allAccessCheck = checkUserVipSubscription(userId, 'all');
-  if (allAccessCheck.active) return allAccessCheck;
-  const b4Check = checkUserVipSubscription(userId, 'b4_drops');
-  if (b4Check.active) return b4Check;
-  const customCheck = checkUserVipSubscription(userId, 'b4_bbtn_drops');
-  if (customCheck.active) return customCheck;
+  const vip = checkUserVipSubscription(userId, 'any');
+  if (vip.active) return vip;
+  if (vip.activePasses && vip.activePasses.length > 0) {
+    return {
+      active: true,
+      ...vip.activePasses[0],
+      activePasses: vip.activePasses
+    };
+  }
   return { active: false };
 }
 
@@ -3345,7 +3385,8 @@ async function sendBot4Welcome(ctx) {
   ]);
 
   const inlineKeyboard = Markup.inlineKeyboard(inlineRows);
-  const bottomKeyboard = buildBot4StickyKeyboard(config);
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const bottomKeyboard = buildBot4StickyKeyboard(config, userId);
 
   if (welcome.useImage && welcome.imagePath && fs.existsSync(welcome.imagePath)) {
     try {
@@ -3368,35 +3409,70 @@ async function sendBot4Welcome(ctx) {
   }
 }
 
-// Batch drop deliverer with configurable limit (safe for 10,000+ messages library)
-async function sendBot4DropsBatch(ctx, page = 0) {
+// Batch drop deliverer with category-based filtering and pagination
+async function sendBot4DropsBatch(ctx, page = 0, categoryFilter = null) {
   const vip = isBot4Subscriber(ctx);
   if (!vip.active) return await sendBot4GatedMessage(ctx);
 
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
   const cfg = getConfig();
   const b4Cfg = cfg.bot4 || {};
-  const allMessages = b4Cfg.messages || [];
-  const activeMessages = allMessages.filter((m) => m.status !== 'inactive');
 
-  if (activeMessages.length === 0) {
-    return await ctx.reply('📭 No premium drops available right now. Please check back later!');
+  // Resolve active category
+  let cat = categoryFilter;
+  if (!cat && userId && bot4UserActiveCategories.has(userId)) {
+    cat = bot4UserActiveCategories.get(userId);
+  }
+  if (!cat) cat = 'all';
+  if (userId) bot4UserActiveCategories.set(userId, cat);
+
+  const accessibleDrops = getUserAccessibleDrops(userId, cat === 'all' ? null : cat);
+
+  if (accessibleDrops.length === 0) {
+    const catLabel = cat === 'today' ? "✨ Today's Content" : (cat === 'bbtn_1' ? "🌟 Most Viewed Vault" : "VIP Vault");
+    const noAccessText = `🔒 *No Drops Available for ${catLabel}*\n\nYou do not have an active subscription pass unlocking this collection.\n\n👇 Tap below to upgrade or renew your pass in @avnifanbasepaybot:`;
+    const renewKeyboard = Markup.inlineKeyboard([
+      [Markup.button.url('👑 Browse Plans in @avnifanbasepaybot', 'https://t.me/avnifanbasepaybot?start=plans')]
+    ]);
+    return await ctx.reply(formatTelegramHtml(noAccessText), { parse_mode: 'HTML', ...renewKeyboard });
   }
 
-  const limit = Math.max(1, Number(b4Cfg.dropBatchLimit) || 5);
-  const totalPages = Math.ceil(activeMessages.length / limit);
-  const currentPage = Math.max(0, Math.min(Number(page) || 0, totalPages - 1));
+  const poolKey = `${userId}_${cat}`;
+  const shouldRandomize = b4Cfg.randomize !== false; // Default true: drops are delivered in randomized order, not serial!
+  const requestedPage = Number(page) || 0;
+
+  let pool = bot4UserShuffledPool.get(poolKey);
+  if (!pool || pool.length !== accessibleDrops.length || requestedPage === 0) {
+    pool = shouldRandomize ? shuffleArray(accessibleDrops) : [...accessibleDrops];
+    if (userId) bot4UserShuffledPool.set(poolKey, pool);
+  }
+
+  const limit = Math.max(1, Number(b4Cfg.dropBatchLimit) || 10);
+  const totalPages = Math.ceil(pool.length / limit);
+  const currentPage = Math.max(0, Math.min(requestedPage, totalPages - 1));
   const startIdx = currentPage * limit;
-  const currentBatch = activeMessages.slice(startIdx, startIdx + limit);
-  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const currentBatch = pool.slice(startIdx, startIdx + limit);
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'VIP Member');
 
-  await ctx.reply(`🔥 *Exclusive VIP Vault* (Showing ${startIdx + 1}–${startIdx + currentBatch.length} of ${activeMessages.length} drops):`, { parse_mode: 'Markdown' });
+  if (userId) {
+    bot4UserPageCursors.set(`${userId}_${cat}`, currentPage);
+    bot4UserPageCursors.set(userId, currentPage);
+  }
 
-  for (const msg of currentBatch) {
+  const catHeader = cat === 'today' ? "✨ Today's Content Vault" : (cat === 'bbtn_1' ? "🌟 Most Viewed Vault" : "🔥 Exclusive VIP Vault");
+  const mixNote = shouldRandomize ? 'Randomized Mix • ' : '';
+  await ctx.reply(`${catHeader} (${mixNote}${startIdx + 1}–${startIdx + currentBatch.length} of ${pool.length} drops):`, {
+    parse_mode: 'Markdown',
+    ...buildBot4StickyKeyboard(cfg, userId)
+  });
+
+  for (let i = 0; i < currentBatch.length; i++) {
+    const msg = currentBatch[i];
+    const isLastInBatch = (i === currentBatch.length - 1);
     const preview = msg.preview || {};
-    const timerConfig = preview.timer || { enabled: false, seconds: 60 };
-    const isTemporary = preview.type === 'temporary' || timerConfig.enabled;
-    const timerSeconds = Number(timerConfig.seconds) || 60;
+    const timerConfig = preview.timer || { enabled: false, seconds: 120 };
+    const isTemporary = timerConfig.enabled === true || (timerConfig.enabled !== false && preview.type === 'temporary');
+    const timerSeconds = isTemporary ? (Number(timerConfig.seconds) || 120) : 0;
 
     let content = (preview.message || `💎 *${msg.title}*\n\nTap below to unlock full exclusive content!`)
       .replace(/{username}/g, username)
@@ -3404,25 +3480,57 @@ async function sendBot4DropsBatch(ctx, page = 0) {
 
     if (isTemporary && timerSeconds > 0) {
       const durText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
-      content += `\n\n⏱️ *Auto-Destruct Notice:* This preview vanishes in ${durText}!`;
+      if (timerConfig.warningMessage) {
+        content += `\n\n${timerConfig.warningMessage.replace(/{timer_text}/g, durText).replace(/{timer}/g, durText)}`;
+      } else {
+        content += `\n\n⏱️ *Auto-Destruct Notice:* This preview vanishes in ${durText}!`;
+      }
     }
 
     const isSaved = isUserContentSaved(userId, msg.id);
     const viewButtonText = msg.viewButtonText || '👁️ View Premium Content';
     const saveButtonText = isSaved ? '✅ Saved' : '⭐ Save Content';
 
-    const buttons = [
-      [Markup.button.callback(viewButtonText, `b4_rev_${msg.id}`)],
-      [Markup.button.callback(saveButtonText, `b4_save_${msg.id}`)]
-    ];
+    const buttons = [];
+    if (msg.viewRedirectUrl) {
+      let u = msg.viewRedirectUrl.trim();
+      if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
+      buttons.push([Markup.button.url(viewButtonText, u)]);
+    } else {
+      buttons.push([Markup.button.callback(viewButtonText, `b4_rev_${msg.id}`)]);
+    }
+    buttons.push([Markup.button.callback(saveButtonText, `b4_save_${msg.id}`)]);
 
     if (Array.isArray(preview.buttons)) {
       preview.buttons.forEach((b) => {
         if (!b.text) return;
         let u = (b.url || '').trim();
-        if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
-        buttons.push([Markup.button.url(b.text, u)]);
+        if (u) {
+          if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
+          buttons.push([Markup.button.url(b.text, u)]);
+        }
       });
+    }
+
+    if (Array.isArray(msg.buttons)) {
+      msg.buttons.forEach((b) => {
+        if (!b.text) return;
+        let u = (b.url || '').trim();
+        if (u) {
+          if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
+          buttons.push([Markup.button.url(b.text, u)]);
+        }
+      });
+    }
+
+    // On the last message of this batch (e.g. 10th message), attach the "Load More / Next 10 Drops" button!
+    if (isLastInBatch) {
+      const nextTarget = (currentPage + 1) % totalPages;
+      const nextRemaining = pool.length - (startIdx + currentBatch.length);
+      const nextLabel = nextRemaining > 0 
+        ? `➡️ Next 10 Drops (${nextRemaining} left) /next` 
+        : `🔁 Load Fresh Random Batch /next`;
+      buttons.push([Markup.button.callback(nextLabel, `b4_page_${nextTarget}`)]);
     }
 
     const inlineKeyboard = Markup.inlineKeyboard(buttons);
@@ -3441,22 +3549,6 @@ async function sendBot4DropsBatch(ctx, page = 0) {
         try { await ctx.telegram.deleteMessage(sent.chat.id, sent.message_id); } catch (_) {}
       }, timerSeconds * 1000);
     }
-  }
-
-  // Navigation pagination keyboard
-  const navRow = [];
-  if (currentPage > 0) {
-    navRow.push(Markup.button.callback('⬅️ Previous', `b4_page_${currentPage - 1}`));
-  }
-  if (currentPage < totalPages - 1) {
-    navRow.push(Markup.button.callback(`Next Page ➡️ (${activeMessages.length - (startIdx + currentBatch.length)} left)`, `b4_page_${currentPage + 1}`));
-  }
-
-  if (navRow.length > 0) {
-    await ctx.reply(`📑 *Page ${currentPage + 1} of ${totalPages}*`, {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([navRow])
-    });
   }
 }
 
@@ -3478,8 +3570,8 @@ async function sendBot4DropContent(ctx, dropId) {
 
   const revealed = drop.revealedContent || {};
   const timerConfig = revealed.timer || { enabled: false, seconds: 60 };
-  const isTemporary = revealed.type === 'temporary' || timerConfig.enabled;
-  const timerSeconds = Number(timerConfig.seconds) || 60;
+  const isTemporary = timerConfig.enabled === true || (timerConfig.enabled !== false && revealed.type === 'temporary');
+  const timerSeconds = isTemporary ? (Number(timerConfig.seconds) || 60) : 0;
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'VIP Member');
 
   let content = (revealed.message || `🎬 *${drop.title}*\n\nHere is your full unlocked exclusive content, {username}!`)
@@ -3488,7 +3580,11 @@ async function sendBot4DropContent(ctx, dropId) {
 
   if (isTemporary && timerSeconds > 0) {
     const durText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
-    content += `\n\n⏱️ *Auto-Destruct Notice:* This message will automatically self-destruct in ${durText}!`;
+    if (timerConfig.warningMessage) {
+      content += `\n\n${timerConfig.warningMessage.replace(/{timer_text}/g, durText).replace(/{timer}/g, durText)}`;
+    } else {
+      content += `\n\n⏱️ *Auto-Destruct Notice:* This message will automatically self-destruct in ${durText}!`;
+    }
   }
 
   const userId = ctx.from?.id ? String(ctx.from.id) : null;
@@ -3501,8 +3597,21 @@ async function sendBot4DropContent(ctx, dropId) {
     revealed.buttons.forEach((b) => {
       if (!b.text) return;
       let u = (b.url || '').trim();
-      if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
-      buttons.push([Markup.button.url(b.text, u)]);
+      if (u) {
+        if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
+        buttons.push([Markup.button.url(b.text, u)]);
+      }
+    });
+  }
+
+  if (Array.isArray(drop.revealedButtons)) {
+    drop.revealedButtons.forEach((b) => {
+      if (!b.text) return;
+      let u = (b.url || '').trim();
+      if (u) {
+        if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
+        buttons.push([Markup.button.url(b.text, u)]);
+      }
     });
   }
 
@@ -3731,11 +3840,64 @@ function startExpiryReminderScheduler() {
   }, 30 * 1000); // Check every 30 seconds
 }
 
+async function handleBot4NextOrShow(ctx) {
+  const vip = isBot4Subscriber(ctx);
+  if (!vip.active) return await sendBot4GatedMessage(ctx);
+
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const cat = (userId && bot4UserActiveCategories.get(userId)) || 'all';
+  const accessibleDrops = getUserAccessibleDrops(userId, cat === 'all' ? null : cat);
+
+  if (accessibleDrops.length === 0) {
+    return await ctx.reply('📭 No drops found in your collection.');
+  }
+
+  const cfg = getConfig();
+  const limit = Math.max(1, Number(cfg.bot4?.dropBatchLimit) || 10);
+  const totalPages = Math.ceil(accessibleDrops.length / limit);
+  const currentCursor = (userId && bot4UserPageCursors.get(`${userId}_${cat}`)) || 0;
+
+  let nextCursor = currentCursor + 1;
+  if (nextCursor >= totalPages) {
+    nextCursor = 0; // Wrap back to page 0
+  }
+  if (userId) {
+    bot4UserPageCursors.set(`${userId}_${cat}`, nextCursor);
+    bot4UserPageCursors.set(userId, nextCursor);
+  }
+
+  await sendBot4DropsBatch(ctx, nextCursor, cat);
+}
+
 // Bot 4 Commands & Actions
 bot4.start(async (ctx) => {
   const vip = isBot4Subscriber(ctx);
   if (!vip.active) return await sendBot4GatedMessage(ctx);
-  return await sendBot4Welcome(ctx);
+
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  // Default to user's first active collection: today, bbtn_1, or all
+  let defaultCat = 'all';
+  if (vip.activePasses && vip.activePasses.length > 0) {
+    defaultCat = vip.isAllAccess ? 'all' : (vip.activePasses[0].linkedContent || 'all');
+  }
+  if (userId) {
+    bot4UserActiveCategories.set(userId, defaultCat);
+    bot4UserPageCursors.set(userId, 0);
+    bot4UserPageCursors.set(`${userId}_${defaultCat}`, 0);
+  }
+
+  // 1. VIP welcome greeting with dynamic collection bottom keyboard
+  await sendBot4Welcome(ctx);
+  // 2. Deliver the first 10 drops directly right here
+  return await sendBot4DropsBatch(ctx, 0, defaultCat);
+});
+
+bot4.command('next', handleBot4NextOrShow);
+bot4.command('show', handleBot4NextOrShow);
+bot4.command('more', handleBot4NextOrShow);
+bot4.action('b4_next_page', async (ctx) => {
+  try { await ctx.answerCbQuery('Loading next drops...'); } catch (_) {}
+  await handleBot4NextOrShow(ctx);
 });
 
 bot4.command('drops', async (ctx) => {
@@ -3812,7 +3974,8 @@ bot4.action('b4_show_saved', async (ctx) => {
 bot4.on('photo', async (ctx) => {
   const handled = await handlePaymentPhotoSubmission(ctx, getConfig, formatTelegramHtml);
   if (handled) return;
-  await ctx.reply('📸 Photo received. Use the buttons below to navigate:', buildBot4StickyKeyboard());
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  await ctx.reply('📸 Photo received. Use the buttons below to navigate:', buildBot4StickyKeyboard(getConfig(), userId));
 });
 
 // Text & Bottom Button Router on Bot 4
@@ -3822,11 +3985,77 @@ bot4.on('text', async (ctx) => {
 
   const text = (ctx.message.text || '').trim();
   const lower = text.toLowerCase();
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
 
   if (text === '/start' || text.startsWith('/start ')) {
     const vip = isBot4Subscriber(ctx);
     if (!vip.active) return await sendBot4GatedMessage(ctx);
-    return await sendBot4Welcome(ctx);
+    let defaultCat = 'all';
+    if (vip.activePasses && vip.activePasses.length > 0) {
+      defaultCat = vip.isAllAccess ? 'all' : (vip.activePasses[0].linkedContent || 'all');
+    }
+    if (userId) {
+      bot4UserActiveCategories.set(userId, defaultCat);
+      bot4UserPageCursors.set(userId, 0);
+      bot4UserPageCursors.set(`${userId}_${defaultCat}`, 0);
+    }
+    await sendBot4Welcome(ctx);
+    return await sendBot4DropsBatch(ctx, 0, defaultCat);
+  }
+
+  // Handle taps on "Next of <Plan>" from bottom keyboard
+  if (lower.startsWith('➡️ next of') || lower.includes('next of today') || lower.includes('next of most viewed') || lower.includes('next of vault') || lower.includes('next all drops') || lower === '➡️ next drops') {
+    if (lower.includes('today')) {
+      if (userId) bot4UserActiveCategories.set(userId, 'today');
+      return await handleBot4NextOrShow(ctx);
+    }
+    if (lower.includes('most viewed') || lower.includes('vault')) {
+      if (userId) bot4UserActiveCategories.set(userId, 'bbtn_1');
+      return await handleBot4NextOrShow(ctx);
+    }
+    if (lower.includes('all')) {
+      if (userId) bot4UserActiveCategories.set(userId, 'all');
+      return await handleBot4NextOrShow(ctx);
+    }
+    return await handleBot4NextOrShow(ctx);
+  }
+
+  // Active Collection Switchers from Bottom Keyboard
+  if (lower.includes("today's content") || (lower.includes("today") && lower.includes("drop"))) {
+    if (userId) {
+      bot4UserActiveCategories.set(userId, 'today');
+      bot4UserPageCursors.set(`${userId}_today`, 0);
+    }
+    return await sendBot4DropsBatch(ctx, 0, 'today');
+  }
+  if (lower.includes("most viewed") || (lower.includes("vault") && lower.includes("drop"))) {
+    if (userId) {
+      bot4UserActiveCategories.set(userId, 'bbtn_1');
+      bot4UserPageCursors.set(`${userId}_bbtn_1`, 0);
+    }
+    return await sendBot4DropsBatch(ctx, 0, 'bbtn_1');
+  }
+  if (lower.includes("all unlocked") || lower.includes("all vip") || lower.includes("all drop")) {
+    if (userId) {
+      bot4UserActiveCategories.set(userId, 'all');
+      bot4UserPageCursors.set(`${userId}_all`, 0);
+    }
+    return await sendBot4DropsBatch(ctx, 0, 'all');
+  }
+
+  // Handle /next and /show
+  if (
+    lower === '/next' ||
+    lower === '/show' ||
+    lower.includes('/next') ||
+    lower.includes('/show') ||
+    lower === 'next' ||
+    lower === 'show' ||
+    lower.includes('next drop') ||
+    lower.includes('show content') ||
+    lower.includes('more drop')
+  ) {
+    return await handleBot4NextOrShow(ctx);
   }
 
   // Check Sticky Bottom Buttons
@@ -3835,6 +4064,9 @@ bot4.on('text', async (ctx) => {
   const matchedBtn = bottomButtons.find((b) => b.text && b.text.trim().toLowerCase() === lower);
 
   if (matchedBtn) {
+    if (matchedBtn.type === 'next' || matchedBtn.type === 'show' || lower.includes('next') || lower.includes('show')) {
+      return await handleBot4NextOrShow(ctx);
+    }
     if (matchedBtn.type === 'drops' || lower.includes('drop')) {
       return await sendBot4DropsBatch(ctx, 0);
     }
@@ -3879,7 +4111,7 @@ bot4.on('text', async (ctx) => {
   if (!vip.active) {
     return await sendBot4GatedMessage(ctx);
   } else {
-    await ctx.reply(`👋 Hello VIP Member! Use the menu below to browse drops and saved bookmarks:`, buildBot4StickyKeyboard());
+    await ctx.reply(`👋 Hello VIP Member! Use the menu below to browse drops and saved bookmarks:`, buildBot4StickyKeyboard(getConfig(), userId));
   }
 });
 
@@ -3916,13 +4148,14 @@ async function connectBot(botInstance, name, commands, statusKey, secretPath) {
       console.log(`✅ [${name}] Webhook already set to ${targetWebhook}. Skipping API call.`);
     }
 
-    if (!setupError && !cfg._commandsSet[statusKey] && commands && commands.length > 0) {
+    const commandsHash = JSON.stringify(commands || []);
+    if (!setupError && cfg._commandsSet[statusKey] !== commandsHash && commands && commands.length > 0) {
       try {
         await callTelegramOnce(`${name} setMyCommands`, () =>
           botInstance.telegram.setMyCommands(commands)
         );
         console.log(`✅ [${name}] Registered commands: ${commands.map((c) => `/${c.command}`).join(', ')}`);
-        cfg._commandsSet[statusKey] = true;
+        cfg._commandsSet[statusKey] = commandsHash;
         saveConfig(cfg);
       } catch (cmdErr) {
         setupError = cmdErr.message;
@@ -4068,11 +4301,13 @@ async function initBots() {
       bot4,
       'Bot 4: avnifanbaseprembot',
       [
-        { command: 'start', description: 'VIP Premium Welcome & Portal' },
-        { command: 'drops', description: 'Browse Exclusive VIP Drops' },
-        { command: 'saved', description: 'View Your Saved Content' },
+        { command: 'next', description: 'Load Next 10 Drops' },
+        { command: 'renew', description: 'Renew or Extend Pass' },
         { command: 'myplan', description: 'Check VIP Subscription Status' },
-        { command: 'renew', description: 'Renew or Extend VIP Pass' },
+        { command: 'saved', description: 'View Your Saved Content' },
+        { command: 'show', description: 'Show / Load Unlocked Content' },
+        { command: 'drops', description: 'Browse Unlocked VIP Drops' },
+        { command: 'start', description: 'VIP Premium Welcome & Portal' },
         { command: 'help', description: 'VIP Support & Help' },
       ],
       'bot4',

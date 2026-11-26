@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1920">
+<script src="vendor/gsap.min.js"></script>
+<style>
+/*FONTS*/
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0b1020}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden;color:#fff;font-family:"Promo Sans",sans-serif;font-weight:500;
+  background:radial-gradient(circle at 20% 10%,#24306b 0,transparent 55%),radial-gradient(circle at 90% 80%,#123f4a 0,transparent 50%),#0b1020}
+/* Text stays inside x 192-888, y 288-1248: clear of the Instagram Reels and YouTube Shorts buttons. */
+.brandbar{position:absolute;top:294px;left:192px;right:192px;text-align:center;font-size:30px;font-weight:800;letter-spacing:6px;color:#8ee6c9}
+.scene{position:absolute;inset:0}
+.title{position:absolute;top:344px;left:192px;right:192px;text-align:center;font-size:58px;line-height:1.32;font-weight:800}
+.title span{display:block}
+.caption{position:absolute;left:192px;right:192px;top:1160px;text-align:center;font-size:36px;line-height:1.45}
+.caption span{display:inline-block;padding:10px 24px;border-radius:22px;background:#05070f}
+.stack,.center,.phone,.channels,.wires,.hub{position:absolute;left:192px;right:192px}
+.stack,.center{top:540px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.notif{align-self:stretch;background:#1b2242;border:2px solid #333d6b;border-radius:28px;padding:18px 30px;font-size:34px}
+.notif small{display:block;margin-top:4px;font-size:28px;color:#aab3d6}
+.stamp{margin-top:8px;padding:8px 34px;border:6px solid #ff7a7a;border-radius:24px;color:#ff9a9a;font-size:42px;font-weight:800}
+.orb{width:300px;height:300px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:132px;font-weight:800;color:#06231a;
+  background:#8ee6c9;box-shadow:0 0 100px #3fd3a577;margin-bottom:24px}
+.pill{padding:14px 32px;border-radius:60px;background:#1b2242;font-size:34px}
+.pill.big{background:#8ee6c9;color:#06231a;font-size:40px;font-weight:800}
+.phone{top:446px;height:690px;padding:20px;border-radius:44px;background:#121830;border:3px solid #333d6b;display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:580px;padding:11px 22px;border-radius:26px;font-size:30px;line-height:1.5}
+.bubble.them{align-self:flex-start;background:#2a3257;border-bottom-left-radius:8px}
+.bubble.us{align-self:flex-end;background:#8ee6c9;color:#06231a;border-bottom-right-radius:8px}
+.bubble u{display:block;font-weight:800}
+.card{align-self:flex-end;display:flex;align-items:center;gap:20px;padding:12px 24px 12px 12px;border-radius:24px;background:#fff;color:#111633}
+.card b{display:block;font-size:30px;font-weight:800}
+.card em{display:block;font-style:normal;font-size:34px;color:#0a7a58;font-weight:800}
+.thumb{width:88px;height:88px;border-radius:18px;background:#ffe7c7;display:flex;align-items:center;justify-content:center;font-size:50px}
+.channels{top:546px;display:flex;gap:18px}
+.channel{flex:1;height:240px;border-radius:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  text-align:center;font-size:28px;line-height:1.3;font-weight:800}
+.channel i,.contact i{font-style:normal}
+.channel i{font-size:64px}
+.channel.wa{background:#136c47}.channel.ig{background:#9b2f6e}.channel.tg{background:#1a6a9e}
+.wires{top:786px;height:110px;display:flex;justify-content:space-around}
+.wire{width:10px;height:110px;background:#8ee6c9;border-radius:5px;transform-origin:top}
+.hub{top:896px;padding:30px 20px;border-radius:40px;background:#8ee6c9;color:#06231a;text-align:center}
+.hub b{display:block;font-size:60px;font-weight:800}
+.hub span{display:block;margin-top:10px;font-size:30px}
+#support .center{top:448px;gap:16px}
+.brand{font-size:68px;font-weight:800;text-align:center;line-height:1.25}
+.contact{align-self:stretch;display:flex;gap:24px;align-items:center;padding:14px 30px;border-radius:26px;background:#1b2242;font-size:34px}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+<div id="brandbar" class="clip brandbar" data-start="0" data-duration="__TOTAL__" data-track-index="3">__BRAND__</div>
+<!--SCENES-->
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+/*ANIMS*/
+window.__timelines = window.__timelines || {};
+window.__timelines["main"] = tl;
+tl.seek(0);
+</script>
+</body>
+</html>

@@ -1503,14 +1503,14 @@
             <!-- Inline Button Text -->
             <div style="margin-bottom:12px;">
               <label>Delivery Inline Button Label</label>
-              <input type="text" id="b3_finalBotBtnText" value="👑 Access VIP Bot 4 (@avnifanbaseprembot)" placeholder="e.g. 👑 Access VIP Bot 4 (@avnifanbaseprembot)" oninput="updateFinalBotField('buttonText', this.value); updateB3Preview();" />
+              <input type="text" id="b3_finalBotBtnText" value="👑 Access VIP Premium Subscription" placeholder="e.g. 👑 Access VIP Premium Subscription" oninput="updateFinalBotField('buttonText', this.value); updateB3Preview();" />
               <div class="hint">Text shown on the primary Telegram button sent to the user upon approval and in /myplan status.</div>
             </div>
 
             <!-- Approval Message Body with Toolbar -->
             <div style="margin-bottom:14px;">
               <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                <label style="margin-bottom:0;">Payment Approved & Bot Delivery Message (Advanced Formatter)</label>
+                <label style="margin-bottom:0;">Payment Approved & Delivery Message (Advanced Formatter)</label>
                 <span style="font-size:0.7rem; color:#fbbf24;">Shortcuts: Ctrl+B, Ctrl+I, Ctrl+U, Ctrl+K</span>
               </div>
               <div id="toolbar_b3_finalBotMessage"></div>
@@ -1524,18 +1524,18 @@
             <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:8px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <label style="margin-bottom:0; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px;">
-                  <input type="checkbox" id="b3_finalBotShareBot1" onchange="updateFinalBotField('shareBot1', this.checked); updateB3Preview();" checked />
-                  Also include Bot 1 link button (🎬 Open Bot 1)
+                  <input type="checkbox" id="b3_finalBotShareBot1" onchange="updateFinalBotField('shareBot1', this.checked); updateB3Preview();" />
+                  Also include Bot 1 link button (Disabled by default)
                 </label>
-                <span style="font-size:0.75rem; color:var(--text-muted);">Lets users easily jump back to Bot 1 drops</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Disabled by default to keep confirmation clean</span>
               </div>
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <div>
-                  <label style="font-size:0.8rem;">Bot 1 Button Label</label>
-                  <input type="text" id="b3_finalBot1BtnText" value="🎬 Open Bot 1 (@avniffanbasebot)" oninput="updateFinalBotField('bot1ButtonText', this.value)" style="margin-bottom:0;" />
+                  <label style="font-size:0.8rem;">Secondary Button Label</label>
+                  <input type="text" id="b3_finalBot1BtnText" value="🎬 Open VIP Portal" oninput="updateFinalBotField('bot1ButtonText', this.value)" style="margin-bottom:0;" />
                 </div>
                 <div>
-                  <label style="font-size:0.8rem;">Bot 1 URL</label>
+                  <label style="font-size:0.8rem;">Secondary Button URL</label>
                   <input type="text" id="b3_finalBot1Url" value="https://t.me/avniffanbasebot" oninput="updateFinalBotField('bot1Url', this.value)" style="margin-bottom:0;" />
                 </div>
               </div>
@@ -1563,6 +1563,70 @@
               <button type="button" class="btn btn-secondary" style="font-size:0.82rem; padding:6px 12px; border-color:rgba(245,158,11,0.5); color:#fbbf24;" onclick="switchTab('bot3');">
                 ⚙️ Configure Final Bot in Payment Bot Tab ↗
               </button>
+            </div>
+          </div>
+
+          <!-- ⏱️ SUBSCRIPTION & PAYMENT AUTO-DESTRUCT TIMERS -->
+          <div class="card" style="--card-accent: 239, 68, 68; border-color: rgba(239, 68, 68, 0.4); margin-bottom: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+              <div class="card-title" style="margin-bottom:0; color:#f87171;">⏱️ Payment & Subscription Auto-Destruct Timers (Self-Destruct Engine)</div>
+              <span class="badge" style="background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4);">Auto-Deletes Sensitive Messages</span>
+            </div>
+            <div class="card-subtitle">
+              Configure how quickly payment QR codes, plans menus, and final VIP approval confirmations automatically delete themselves from user Telegram chats (default: 10 minutes = 600s).
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; margin-top:12px;">
+              <!-- 1. Payment QR Code Timer -->
+              <div style="padding:12px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(239,68,68,0.25);">
+                <div style="font-weight:700; color:#fca5a5; font-size:0.85rem; margin-bottom:6px;">🖼️ 1. Payment QR Code Auto-Delete</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Deletes the generated UPI QR code photo and checkout instructions.</div>
+                <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('qr', 120)">2m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('qr', 300)">5m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('qr', 600)">10m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('qr', 900)">15m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('qr', 0)">Off</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="number" id="sub_qrTimerSeconds" value="600" min="0" max="86400" style="margin-bottom:0; font-size:0.85rem;" oninput="updateSubConfigField('qrAutoDeleteSeconds', Number(this.value))" />
+                  <span style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap;">Secs (0 = Off)</span>
+                </div>
+              </div>
+
+              <!-- 2. Plans Menu (/plans) Timer -->
+              <div style="padding:12px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(239,68,68,0.25);">
+                <div style="font-weight:700; color:#fca5a5; font-size:0.85rem; margin-bottom:6px;">📋 2. Plans Menu (/plans) Auto-Delete</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Deletes the subscription plans list and pricing browser.</div>
+                <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('plans', 120)">2m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('plans', 300)">5m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('plans', 600)">10m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('plans', 900)">15m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('plans', 0)">Off</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="number" id="sub_plansTimerSeconds" value="600" min="0" max="86400" style="margin-bottom:0; font-size:0.85rem;" oninput="updateSubConfigField('plansAutoDeleteSeconds', Number(this.value))" />
+                  <span style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap;">Secs (0 = Off)</span>
+                </div>
+              </div>
+
+              <!-- 3. Approval Confirmation Timer -->
+              <div style="padding:12px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(239,68,68,0.25);">
+                <div style="font-weight:700; color:#fca5a5; font-size:0.85rem; margin-bottom:6px;">🎉 3. VIP Approval Confirmation Auto-Delete</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Deletes the payment approved & delivery button confirmation message.</div>
+                <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('approval', 120)">2m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('approval', 300)">5m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('approval', 600)">10m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('approval', 900)">15m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="setSubTimerPreset('approval', 0)">Off</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="number" id="sub_approvalTimerSeconds" value="600" min="0" max="86400" style="margin-bottom:0; font-size:0.85rem;" oninput="updateSubConfigField('approvalAutoDeleteSeconds', Number(this.value))" />
+                  <span style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap;">Secs (0 = Off)</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1929,10 +1993,51 @@
             <div class="card" style="--card-accent: 245, 158, 11;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
                 <div>
-                  <div class="card-title" style="margin-bottom:0; color:#fbbf24;">🎬 Exclusive VIP Drops & Message Vault</div>
-                  <div class="card-subtitle">Manage drops in Bot 4. Add video/photo media, preview text, revealed content, and auto-destruct timers.</div>
+                  <div class="card-title" style="margin-bottom:0; color:#fbbf24;">🎬 Exclusive VIP Drops & Message Vault (<span id="b4_dropsCountBadge">0</span>)</div>
+                  <div class="card-subtitle">Manage drops in Bot 4. Fully configure message self-destruct timers (presets & custom seconds), custom category-dependent inline buttons, media, and preview/revealed content.</div>
                 </div>
-                <button type="button" class="btn btn-secondary" style="padding:6px 14px; font-size:0.85rem;" onclick="addB4DropMessage()">➕ Add New Premium Drop</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button type="button" class="btn btn-secondary" style="padding:6px 14px; font-size:0.85rem;" onclick="addB4DropMessage()">➕ Add New Premium Drop</button>
+                </div>
+              </div>
+
+              <!-- Category Filter Bar & Quick Stats -->
+              <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; padding:10px 14px; background:rgba(0,0,0,0.25); border-radius:10px; border:1px solid var(--border);">
+                <span style="font-size:0.82rem; font-weight:700; color:var(--text-muted); margin-right:4px;">Filter by Category:</span>
+                <button type="button" class="filter-btn active" id="b4_catbtn_all" onclick="setB4DropCategoryFilter('all')">🌐 All Drops (<span id="b4_filterCount_all">0</span>)</button>
+                <button type="button" class="filter-btn" id="b4_catbtn_today" onclick="setB4DropCategoryFilter('today')">⚡ Today's Content (<span id="b4_filterCount_today">0</span>)</button>
+                <button type="button" class="filter-btn" id="b4_catbtn_bbtn1" onclick="setB4DropCategoryFilter('bbtn_1')">🌟 Most Viewed Vault (<span id="b4_filterCount_bbtn1">0</span>)</button>
+                <button type="button" class="filter-btn" id="b4_catbtn_planall" onclick="setB4DropCategoryFilter('plan_1m')">👑 1 Month All-Access (<span id="b4_filterCount_allm">0</span>)</button>
+
+                <div style="margin-left:auto; display:flex; gap:6px;">
+                  <button type="button" class="btn btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="bulkToggleCurrentCategoryStatus(false)" title="Hide or Deactivate all drops in this filter">🕶️ Hide All In View</button>
+                  <button type="button" class="btn btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="bulkToggleCurrentCategoryStatus(true)" title="Show or Activate all drops in this filter">🟢 Show All In View</button>
+                </div>
+              </div>
+
+              <!-- Search Bar & Fast Bulk Timer Bar -->
+              <div style="display:grid; grid-template-columns: 1.5fr 2fr; gap:12px; margin-top:12px; align-items:center;">
+                <div>
+                  <input type="text" id="b4_dropsSearchInput" placeholder="🔍 Search drops by title or ID..." oninput="setB4DropsSearch(this.value)" style="margin-bottom:0; font-size:0.85rem;" />
+                </div>
+                <!-- Bulk Timer Fast Tool -->
+                <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:8px;">
+                  <span style="font-size:0.78rem; font-weight:700; color:#fbbf24; white-space:nowrap;">⚡ Bulk Expiry Timer:</span>
+                  <select id="b4_bulkTimerSelect" style="margin-bottom:0; font-size:0.78rem; padding:4px 8px;">
+                    <option value="60">1 Min (60s)</option>
+                    <option value="120" selected>2 Mins (120s)</option>
+                    <option value="300">5 Mins (300s)</option>
+                    <option value="600">10 Mins (600s)</option>
+                    <option value="0">Permanent (No Expire)</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary" style="padding:4px 10px; font-size:0.78rem; white-space:nowrap;" onclick="applyBulkTimerToCurrentView()">Apply to Filtered</button>
+                </div>
+              </div>
+
+              <!-- Pagination Header -->
+              <div id="b4_paginationBar" style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding:6px 10px; background:rgba(255,255,255,0.03); border-radius:8px; font-size:0.8rem; color:var(--text-muted);">
+                <div id="b4_paginationInfo">Showing drops 1-10</div>
+                <div id="b4_paginationControls" style="display:flex; gap:6px; align-items:center;"></div>
               </div>
 
               <div id="b4_dropsListContainer" style="display:flex; flex-direction:column; gap:16px; margin-top:14px;"></div>
@@ -3217,6 +3322,8 @@
       }
 
       const allLists = getAvailableDropLists();
+      const plans = currentConfig.subscriptions?.plans || [];
+      const curr = currentConfig.subscriptions?.currency || '₹';
 
       if (currentConfig.bot1.welcome.bottomButtons.length === 0) {
         container.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:12px; background:var(--surface); border-radius:8px; border:1px dashed var(--border);">No bottom buttons configured. Click <b>"➕ Add Bottom Button"</b> to create one!</div>';
@@ -3227,7 +3334,7 @@
         const item = document.createElement('div');
         item.className = 'button-item';
         item.style.display = 'grid';
-        item.style.gridTemplateColumns = '2fr 1fr 1.2fr 2fr 1.3fr auto';
+        item.style.gridTemplateColumns = '1.8fr 1fr 1fr 1.6fr 1.4fr 1.5fr auto';
         item.style.gap = '10px';
         item.style.marginBottom = '10px';
         item.style.background = 'var(--surface)';
@@ -3246,9 +3353,14 @@
           return `<option value="${l.id}" ${isSel ? 'selected' : ''}>📂 ${escapeHtml(l.title)}</option>`;
         }).join('');
 
+        const planOptionsHtml = plans.map(p => {
+          const isSel = (btn.planId === p.id) || (btn.contentType === p.linkedContent) || (btn.type === 'today' && p.linkedContent === 'today' && !btn.planId);
+          return `<option value="${p.id}" ${isSel ? 'selected' : ''}>💎 ${escapeHtml(p.name)} (${curr}${p.price})</option>`;
+        }).join('');
+
         item.innerHTML = `
           <div>
-            <label style="font-size:0.75rem; margin-bottom:4px;">Button Label (On Keyboard)</label>
+            <label style="font-size:0.75rem; margin-bottom:4px;">Button Label</label>
             <input type="text" value="${escapeHtml(btn.text || '')}" placeholder="Button Label" oninput="updateB1BottomButtonData(${index}, 'text', this.value)" style="margin-bottom:0;" />
           </div>
           <div>
@@ -3261,7 +3373,7 @@
           <div>
             <label style="font-size:0.75rem; margin-bottom:4px;">Action Type</label>
             <select onchange="onB1BottomButtonTypeChange(${index}, this.value)" style="margin-bottom:0;">
-              <option value="list" ${isList ? 'selected' : ''}>🎬 Send Content Drops</option>
+              <option value="list" ${isList ? 'selected' : ''}>🎬 Send Drops</option>
               <option value="url" ${isUrl ? 'selected' : ''}>🔗 External URL</option>
               <option value="terms" ${isTerms ? 'selected' : ''}>📜 Terms & Policy</option>
             </select>
@@ -3278,14 +3390,24 @@
             <div style="display: ${isTerms ? 'block' : 'none'}; font-size:0.8rem; color:#38bdf8; padding:8px 0;">Sends Terms & Policy message</div>
           </div>
           <div>
-            <label style="font-size:0.75rem; margin-bottom:4px;">Access / Paywall Mode</label>
+            <label style="font-size:0.75rem; margin-bottom:4px;">Access / Paywall</label>
             <select onchange="updateB1BottomButtonData(${index}, 'accessType', this.value)" style="margin-bottom:0; font-size:0.78rem; ${btn.accessType === 'locked' || btn.accessType === 'paid' ? 'border-color:#ef4444; color:#f87171; font-weight:600;' : btn.accessType === 'drops_then_paywall' || btn.accessType === 'teaser' ? 'border-color:#f59e0b; color:#fbbf24; font-weight:600;' : ''}">
               <option value="free" ${!btn.accessType || btn.accessType === 'free' ? 'selected' : ''}>🔓 Free for Everyone</option>
-              <option value="drops_then_paywall" ${btn.accessType === 'drops_then_paywall' || btn.accessType === 'teaser' ? 'selected' : ''}>🎬 Drops First, then VIP Paywall at End</option>
-              <option value="locked" ${btn.accessType === 'locked' || btn.accessType === 'paid' ? 'selected' : ''}>🔒 Completely Locked (Paywall Only)</option>
+              <option value="drops_then_paywall" ${btn.accessType === 'drops_then_paywall' || btn.accessType === 'teaser' ? 'selected' : ''}>🎬 Drops First, then VIP Paywall</option>
+              <option value="locked" ${btn.accessType === 'locked' || btn.accessType === 'paid' ? 'selected' : ''}>🔒 Completely Locked</option>
             </select>
           </div>
-          <div style="padding-top:16px;">
+          <div>
+            <label style="font-size:0.75rem; margin-bottom:4px;" title="2 buttons can share the same plan!">Linked VIP Plan 💡</label>
+            <select onchange="updateB1BottomButtonData(${index}, 'planId', this.value)" style="margin-bottom:0; font-size:0.78rem; border-color:#818cf8; color:#c7d2fe;">
+              <option value="" ${!btn.planId ? 'selected' : ''}>🔓 Any Active / Free</option>
+              ${planOptionsHtml}
+            </select>
+          </div>
+          <div style="padding-top:16px; display:flex; gap:6px;">
+            <button type="button" class="btn ${btn.hidden ? 'btn-danger' : 'btn-secondary'}" style="padding: 7px 10px; font-size:0.75rem;" onclick="toggleB1BottomButtonVisibility(${index})" title="Toggle Visibility on Bot 1">
+              ${btn.hidden ? '🕶️ Hidden' : '🟢 Visible'}
+            </button>
             <button type="button" class="btn btn-danger" style="padding: 7px 12px;" onclick="removeB1BottomButton(${index})" title="Delete Button">✕</button>
           </div>
         `;
@@ -3294,6 +3416,15 @@
 
       renderSimulatorStickyKeyboard();
       if (activeTab === 'bot1') updateB1Preview();
+    }
+
+    function toggleB1BottomButtonVisibility(index) {
+      const btn = currentConfig.bot1?.welcome?.bottomButtons?.[index];
+      if (btn) {
+        btn.hidden = !btn.hidden;
+        renderB1BottomButtons();
+        showToast(btn.hidden ? `🕶️ Button "${btn.text}" is now hidden from Bot 1` : `🟢 Button "${btn.text}" is now visible on Bot 1`);
+      }
     }
 
     function onB1BottomButtonTypeChange(index, newType) {
@@ -4594,6 +4725,80 @@
       }
     }
 
+    let b4CurrentCategoryFilter = 'all';
+    let b4CurrentSearchQuery = '';
+    let b4CurrentPage = 0;
+    const b4PageSize = 10;
+
+    function setB4DropCategoryFilter(cat) {
+      b4CurrentCategoryFilter = cat;
+      b4CurrentPage = 0;
+      document.querySelectorAll('#subtabPane_b4_drops .filter-btn').forEach(b => b.classList.remove('active'));
+      const activeId = cat === 'all' ? 'b4_catbtn_all' : (cat === 'today' ? 'b4_catbtn_today' : (cat === 'bbtn_1' ? 'b4_catbtn_bbtn1' : 'b4_catbtn_planall'));
+      document.getElementById(activeId)?.classList.add('active');
+      renderB4Drops();
+    }
+
+    function setB4DropsSearch(q) {
+      b4CurrentSearchQuery = (q || '').trim().toLowerCase();
+      b4CurrentPage = 0;
+      renderB4Drops();
+    }
+
+    function setB4DropPage(p) {
+      b4CurrentPage = Math.max(0, p);
+      renderB4Drops();
+    }
+
+    function applyBulkTimerToCurrentView() {
+      const select = document.getElementById('b4_bulkTimerSelect');
+      if (!select) return;
+      const secs = Number(select.value);
+      const isEnabled = secs > 0;
+      const preset = secs === 60 ? '1min' : (secs === 120 ? '2min' : (secs === 300 ? '5min' : (secs === 600 ? '10min' : 'custom')));
+
+      const list = currentConfig.bot4?.messages || [];
+      let count = 0;
+      list.forEach(drop => {
+        const matchesCategory = (b4CurrentCategoryFilter === 'all') || 
+          (drop.linkedContent === b4CurrentCategoryFilter || drop.category === b4CurrentCategoryFilter || drop.planId === b4CurrentCategoryFilter);
+        if (!matchesCategory) return;
+
+        if (!drop.preview) drop.preview = {};
+        if (!drop.preview.timer) drop.preview.timer = {};
+        drop.preview.timer.enabled = isEnabled;
+        drop.preview.timer.seconds = secs;
+        drop.preview.timer.preset = preset;
+        drop.preview.type = isEnabled ? 'temporary' : 'permanent';
+
+        if (!drop.revealedContent) drop.revealedContent = {};
+        if (!drop.revealedContent.timer) drop.revealedContent.timer = {};
+        drop.revealedContent.timer.enabled = isEnabled;
+        drop.revealedContent.timer.seconds = secs;
+        drop.revealedContent.timer.preset = preset;
+        drop.revealedContent.type = isEnabled ? 'temporary' : 'permanent';
+
+        count++;
+      });
+
+      renderB4Drops();
+      showToast(`⚡ Updated expiry timers for ${count} drops in this view!`);
+    }
+
+    function bulkToggleCurrentCategoryStatus(active) {
+      const list = currentConfig.bot4?.messages || [];
+      let count = 0;
+      list.forEach(drop => {
+        const matchesCategory = (b4CurrentCategoryFilter === 'all') || 
+          (drop.linkedContent === b4CurrentCategoryFilter || drop.category === b4CurrentCategoryFilter || drop.planId === b4CurrentCategoryFilter);
+        if (!matchesCategory) return;
+        drop.status = active ? 'active' : 'inactive';
+        count++;
+      });
+      renderB4Drops();
+      showToast(active ? `🟢 Activated ${count} drops in this view` : `🕶️ Hidden/Deactivated ${count} drops in this view`);
+    }
+
     function renderB4Drops() {
       const container = document.getElementById('b4_dropsListContainer');
       const badge = document.getElementById('b4_dropsCountBadge');
@@ -4608,23 +4813,170 @@
       const list = currentConfig.bot4.messages;
       if (badge) badge.textContent = list.length;
 
+      // Update Category Badges & Counters
+      const countAll = list.length;
+      const countToday = list.filter(d => d.linkedContent === 'today' || d.category === 'today' || d.planId === 'plan_6h').length;
+      const countBbtn1 = list.filter(d => d.linkedContent === 'bbtn_1' || d.category === 'bbtn_1' || d.planId === 'plan_1w').length;
+      const countAllM = list.filter(d => d.linkedContent === 'all' || d.category === 'all' || d.planId === 'plan_1m').length;
+
+      if (document.getElementById('b4_filterCount_all')) document.getElementById('b4_filterCount_all').textContent = countAll;
+      if (document.getElementById('b4_filterCount_today')) document.getElementById('b4_filterCount_today').textContent = countToday;
+      if (document.getElementById('b4_filterCount_bbtn1')) document.getElementById('b4_filterCount_bbtn1').textContent = countBbtn1;
+      if (document.getElementById('b4_filterCount_allm')) document.getElementById('b4_filterCount_allm').textContent = countAllM;
+
       if (list.length === 0) {
         container.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted); background:rgba(0,0,0,0.2); border-radius:10px;">📭 No drops in Bot 4 library yet. Click "+ Add New Premium Drop" to create your first release.</div>';
         return;
       }
 
-      list.forEach((drop, idx) => {
+      // Filter by category and search
+      const filtered = list.filter(drop => {
+        if (b4CurrentCategoryFilter !== 'all') {
+          const matchCat = (drop.linkedContent === b4CurrentCategoryFilter) || 
+                           (drop.category === b4CurrentCategoryFilter) || 
+                           (drop.planId === b4CurrentCategoryFilter);
+          if (!matchCat) return false;
+        }
+        if (b4CurrentSearchQuery) {
+          const title = (drop.title || '').toLowerCase();
+          const id = (drop.id || '').toLowerCase();
+          if (!title.includes(b4CurrentSearchQuery) && !id.includes(b4CurrentSearchQuery)) return false;
+        }
+        return true;
+      });
+
+      const totalFiltered = filtered.length;
+      const totalPages = Math.ceil(totalFiltered / b4PageSize) || 1;
+      if (b4CurrentPage >= totalPages) b4CurrentPage = totalPages - 1;
+      const startIdx = b4CurrentPage * b4PageSize;
+      const paginatedDrops = filtered.slice(startIdx, startIdx + b4PageSize);
+
+      // Render Pagination Controls
+      const pInfo = document.getElementById('b4_paginationInfo');
+      const pControls = document.getElementById('b4_paginationControls');
+      if (pInfo) {
+        pInfo.textContent = totalFiltered > 0 
+          ? `Showing ${startIdx + 1}–${Math.min(startIdx + b4PageSize, totalFiltered)} of ${totalFiltered} drops`
+          : 'No drops match your filter';
+      }
+      if (pControls) {
+        pControls.innerHTML = '';
+        if (totalPages > 1) {
+          const prevBtn = document.createElement('button');
+          prevBtn.type = 'button';
+          prevBtn.className = 'btn btn-secondary';
+          prevBtn.style.padding = '3px 8px';
+          prevBtn.style.fontSize = '0.75rem';
+          prevBtn.disabled = b4CurrentPage === 0;
+          prevBtn.textContent = '◀ Prev';
+          prevBtn.onclick = () => setB4DropPage(b4CurrentPage - 1);
+          pControls.appendChild(prevBtn);
+
+          for (let p = 0; p < totalPages; p++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.type = 'button';
+            pageBtn.className = `btn ${p === b4CurrentPage ? 'btn-primary' : 'btn-secondary'}`;
+            pageBtn.style.padding = '3px 8px';
+            pageBtn.style.fontSize = '0.75rem';
+            pageBtn.textContent = String(p + 1);
+            pageBtn.onclick = () => setB4DropPage(p);
+            pControls.appendChild(pageBtn);
+          }
+
+          const nextBtn = document.createElement('button');
+          nextBtn.type = 'button';
+          nextBtn.className = 'btn btn-secondary';
+          nextBtn.style.padding = '3px 8px';
+          nextBtn.style.fontSize = '0.75rem';
+          nextBtn.disabled = b4CurrentPage >= totalPages - 1;
+          nextBtn.textContent = 'Next ▶';
+          nextBtn.onclick = () => setB4DropPage(b4CurrentPage + 1);
+          pControls.appendChild(nextBtn);
+        }
+      }
+
+      if (paginatedDrops.length === 0) {
+        container.innerHTML = `<div style="padding:24px; text-align:center; color:var(--text-muted); background:rgba(0,0,0,0.2); border-radius:10px;">🔍 No drops matched "${escapeHtml(b4CurrentSearchQuery || b4CurrentCategoryFilter)}". Try changing category filter or search query.</div>`;
+        return;
+      }
+
+      const plans = currentConfig.subscriptions?.plans || [];
+
+      paginatedDrops.forEach((drop) => {
+        const actualIdx = list.indexOf(drop);
         const preview = drop.preview || {};
         const revealed = drop.revealedContent || {};
         const isActive = drop.status !== 'inactive';
 
+        // Preview timer
+        const prevTimer = preview.timer || { enabled: preview.type === 'temporary', seconds: 120, warningMessage: '⚠️ This exclusive preview self-destructs in {timer_text}!' };
+        const isPrevTimerOn = prevTimer.enabled !== false && (prevTimer.enabled === true || preview.type === 'temporary');
+        const prevSecs = Number(prevTimer.seconds) || 120;
+
+        // Revealed timer
+        const revTimer = revealed.timer || { enabled: revealed.type === 'temporary', seconds: 120, warningMessage: '⏳ Unlocked VIP drop self-destructs in {timer_text}!' };
+        const isRevTimerOn = revTimer.enabled !== false && (revTimer.enabled === true || revealed.type === 'temporary');
+        const revSecs = Number(revTimer.seconds) || 120;
+
+        const b4PlanOptions = plans.map(p => {
+          const isSel = (drop.planId === p.id) || (drop.linkedContent === p.linkedContent);
+          return `<option value="${p.id}" ${isSel ? 'selected' : ''}>💎 ${escapeHtml(p.name)} (${p.contentTitle || p.linkedContent})</option>`;
+        }).join('');
+
+        // Category-smart suggestions
+        const cat = drop.category || drop.linkedContent || 'all';
+        let customBtnSuggestionsHtml = '';
+        if (cat === 'today') {
+          customBtnSuggestionsHtml = `
+            <span style="font-size:0.7rem; color:var(--text-muted);">Quick Add for Today:</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '📺 Stream Online', 'https://t.me/')">+ 📺 Stream</button>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '📥 Fast Download', 'https://t.me/')">+ 📥 Download</button>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '⚡ Mirror Link', 'https://t.me/')">+ ⚡ Mirror</button>
+          `;
+        } else if (cat === 'bbtn_1') {
+          customBtnSuggestionsHtml = `
+            <span style="font-size:0.7rem; color:var(--text-muted);">Quick Add for Most Viewed:</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '🔥 Full Vault', 'https://t.me/')">+ 🔥 Full Vault</button>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '🌟 1080p Mirror', 'https://t.me/')">+ 🌟 Mirror</button>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '📥 VIP Pack', 'https://t.me/')">+ 📥 VIP Pack</button>
+          `;
+        } else {
+          customBtnSuggestionsHtml = `
+            <span style="font-size:0.7rem; color:var(--text-muted);">Quick Add for VIP:</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '👑 All Episodes', 'https://t.me/')">+ 👑 All Episodes</button>
+            <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem;" onclick="addB4DropButton('${drop.id}', 'preview', '💬 VIP Community', 'https://t.me/')">+ 💬 VIP Chat</button>
+          `;
+        }
+
+        // Render preview custom buttons list
+        const prevButtons = Array.isArray(preview.buttons) ? preview.buttons : [];
+        const prevButtonsHtml = prevButtons.map((b, bIdx) => `
+          <div style="display:grid; grid-template-columns: 1fr 1.5fr auto; gap:6px; align-items:center; margin-top:4px; padding:4px 6px; background:rgba(0,0,0,0.3); border-radius:6px;">
+            <input type="text" value="${escapeHtml(b.text || '')}" placeholder="Button Label" style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropButton('${drop.id}', 'preview', ${bIdx}, 'text', this.value)" />
+            <input type="text" value="${escapeHtml(b.url || '')}" placeholder="https://..." style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropButton('${drop.id}', 'preview', ${bIdx}, 'url', this.value)" />
+            <button type="button" class="btn btn-danger" style="padding:2px 6px; font-size:0.72rem;" onclick="removeB4DropButton('${drop.id}', 'preview', ${bIdx})">✕</button>
+          </div>
+        `).join('');
+
+        // Render revealed custom buttons list
+        const revButtons = Array.isArray(revealed.buttons) ? revealed.buttons : [];
+        const revButtonsHtml = revButtons.map((b, bIdx) => `
+          <div style="display:grid; grid-template-columns: 1fr 1.5fr auto; gap:6px; align-items:center; margin-top:4px; padding:4px 6px; background:rgba(0,0,0,0.3); border-radius:6px;">
+            <input type="text" value="${escapeHtml(b.text || '')}" placeholder="Button Label" style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropButton('${drop.id}', 'revealedContent', ${bIdx}, 'text', this.value)" />
+            <input type="text" value="${escapeHtml(b.url || '')}" placeholder="https://..." style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropButton('${drop.id}', 'revealedContent', ${bIdx}, 'url', this.value)" />
+            <button type="button" class="btn btn-danger" style="padding:2px 6px; font-size:0.72rem;" onclick="removeB4DropButton('${drop.id}', 'revealedContent', ${bIdx})">✕</button>
+          </div>
+        `).join('');
+
         const card = document.createElement('div');
         card.style.cssText = 'padding:16px; background:rgba(0,0,0,0.35); border-radius:12px; border:1px solid ' + (isActive ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.1)') + ';';
         card.innerHTML = `
+          <!-- Drop Card Top Navigation -->
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:1.1rem; font-weight:700; color:#fbbf24;">#${idx + 1}</span>
-              <input type="text" value="${drop.title || ''}" placeholder="Drop Title" style="font-weight:700; max-width:320px;" oninput="updateB4DropField('${drop.id}', 'title', this.value)" />
+              <span style="font-size:1.15rem; font-weight:800; color:#fbbf24;">#${actualIdx + 1}</span>
+              <input type="text" value="${escapeHtml(drop.title || '')}" placeholder="Drop Title" style="font-weight:700; max-width:380px; margin-bottom:0;" oninput="updateB4DropField('${drop.id}', 'title', this.value)" />
+              <span class="badge" style="background:rgba(99,102,241,0.2); color:#818cf8; font-size:0.72rem;">${escapeHtml(drop.contentTitle || drop.category || 'VIP')}</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
               <button type="button" class="btn ${isActive ? 'btn-secondary' : 'btn-danger'}" style="padding:4px 10px; font-size:0.78rem;" onclick="toggleB4DropStatus('${drop.id}')">
@@ -4635,32 +4987,45 @@
             </div>
           </div>
 
-          <!-- View Button Text & Bookmark Indicator -->
-          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px; margin-bottom:12px;">
+          <!-- Plan / Category Selection Row -->
+          <div style="display:grid; grid-template-columns: 1.2fr 1.5fr 1fr; gap:12px; margin-bottom:14px; align-items:center;">
             <div>
               <label style="font-size:0.78rem; margin-bottom:2px;">Unlock / View Button Label</label>
-              <input type="text" value="${drop.viewButtonText || '👁️ View Premium Content'}" oninput="updateB4DropField('${drop.id}', 'viewButtonText', this.value)" />
+              <input type="text" value="${escapeHtml(drop.viewButtonText || '👁️ View Premium Content')}" oninput="updateB4DropField('${drop.id}', 'viewButtonText', this.value)" style="margin-bottom:0;" />
             </div>
             <div>
-              <label style="font-size:0.78rem; margin-bottom:2px;">Auto-Included Button</label>
-              <div style="padding:8px 12px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:8px; font-size:0.8rem; color:#38bdf8; font-weight:600;">
-                ⭐ Save Content (Auto-Bookmarks)
+              <label style="font-size:0.78rem; margin-bottom:2px;">Linked Plan (Category Access)</label>
+              <select onchange="updateB4DropPlan('${drop.id}', this.value)" style="font-size:0.8rem; margin-bottom:0; border-color:#818cf8; color:#c7d2fe;">
+                <option value="all" ${drop.linkedContent === 'all' || !drop.linkedContent ? 'selected' : ''}>🌐 All VIP Members (Full Access)</option>
+                ${b4PlanOptions}
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.78rem; margin-bottom:2px;">Built-in Bookmark Action</label>
+              <div style="padding:7px 10px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:6px; font-size:0.78rem; color:#38bdf8; font-weight:600;">
+                ⭐ Save Content (Auto-Included)
               </div>
             </div>
           </div>
 
           <!-- Preview & Revealed Dual Columns -->
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
-            <!-- Column 1: Preview -->
-            <div style="padding:12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
-              <div style="font-weight:700; color:#38bdf8; font-size:0.85rem; margin-bottom:8px;">👁️ 1. Initial Preview Section</div>
-              <label style="font-size:0.75rem;">Preview Message Caption</label>
+
+            <!-- ================= COLUMN 1: PREVIEW ================= -->
+            <div style="padding:12px; background:rgba(0,0,0,0.25); border-radius:10px; border:1px solid rgba(56,189,248,0.25);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:700; color:#38bdf8; font-size:0.85rem;">👁️ 1. Initial Preview Section</span>
+                <span class="badge" style="background:rgba(56,189,248,0.15); color:#38bdf8; font-size:0.7rem;">Seen Before Unlock</span>
+              </div>
+
+              <label style="font-size:0.75rem;">Preview Caption</label>
               ${buildRichToolbarHtml('ta_b4_prev_' + drop.id, ['{username}', '{bot_name}'])}
               <textarea id="ta_b4_prev_${drop.id}" class="with-rich-toolbar" rows="3" oninput="updateB4DropNested('${drop.id}', 'preview', 'message', this.value)">${escapeHtml(preview.message || '')}</textarea>
+
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px;">
                 <div>
                   <label style="font-size:0.72rem;">Media Type</label>
-                  <select onchange="updateB4DropNested('${drop.id}', 'preview', 'mediaType', this.value)">
+                  <select onchange="updateB4DropNested('${drop.id}', 'preview', 'mediaType', this.value)" style="margin-bottom:0; font-size:0.75rem;">
                     <option value="none" ${preview.mediaType === 'none' ? 'selected' : ''}>No Media</option>
                     <option value="photo" ${preview.mediaType === 'photo' ? 'selected' : ''}>Photo Banner</option>
                     <option value="video" ${preview.mediaType === 'video' ? 'selected' : ''}>Video</option>
@@ -4668,22 +5033,70 @@
                 </div>
                 <div>
                   <label style="font-size:0.72rem;">Upload File</label>
-                  <input type="file" onchange="uploadB4DropMedia(this, '${drop.id}', 'preview')" style="font-size:0.75rem;" />
-                  <span style="font-size:0.7rem; color:var(--text-muted);">${preview.mediaPath ? preview.mediaPath.split('/').pop() : 'No file'}</span>
+                  <input type="file" onchange="uploadB4DropMedia(this, '${drop.id}', 'preview')" style="font-size:0.75rem; margin-bottom:0;" />
+                  <span style="font-size:0.68rem; color:var(--text-muted);">${preview.mediaPath ? preview.mediaPath.split('/').pop() : 'No file'}</span>
                 </div>
               </div>
+
+              <!-- ⏱️ PREVIEW EXPIRY TIMER CONTROLS -->
+              <div style="margin-top:12px; padding:10px; background:rgba(0,0,0,0.35); border-radius:8px; border:1px solid ${isPrevTimerOn ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.08)'};">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <label style="margin-bottom:0; cursor:pointer; font-size:0.78rem; font-weight:700; color:#fbbf24; display:flex; align-items:center; gap:6px;">
+                    <input type="checkbox" ${isPrevTimerOn ? 'checked' : ''} onchange="toggleB4DropTimer('${drop.id}', 'preview', this.checked)" />
+                    ⏱️ Preview Auto-Destruct Timer
+                  </label>
+                  <span style="font-size:0.72rem; color:${isPrevTimerOn ? '#34d399' : 'var(--text-muted)'}; font-weight:600;">
+                    ${isPrevTimerOn ? `Destructs in ${prevSecs >= 60 ? Math.round(prevSecs/60) + 'm' : prevSecs + 's'}` : 'Permanent (No Timer)'}
+                  </span>
+                </div>
+
+                <!-- Presets -->
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; align-items:center;">
+                  <span style="font-size:0.7rem; color:var(--text-muted); margin-right:2px;">Presets:</span>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${prevSecs === 30 && isPrevTimerOn ? 'background:#f59e0b; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'preview', 30, '30s')">30s</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${prevSecs === 60 && isPrevTimerOn ? 'background:#f59e0b; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'preview', 60, '1min')">1m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${prevSecs === 120 && isPrevTimerOn ? 'background:#f59e0b; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'preview', 120, '2min')">2m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${prevSecs === 300 && isPrevTimerOn ? 'background:#f59e0b; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'preview', 300, '5min')">5m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${prevSecs === 600 && isPrevTimerOn ? 'background:#f59e0b; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'preview', 600, '10min')">10m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${!isPrevTimerOn ? 'background:#ef4444; color:#fff;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'preview', 0, 'off')">Off</button>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 80px 1fr; gap:6px; align-items:center;">
+                  <input type="number" value="${prevSecs}" min="0" max="86400" placeholder="Secs" style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropTimerSeconds('${drop.id}', 'preview', this.value)" />
+                  <input type="text" value="${escapeHtml(prevTimer.warningMessage || '⚠️ This exclusive preview self-destructs in {timer_text}!')}" placeholder="Destruct warning template ({timer_text})" style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropTimerWarning('${drop.id}', 'preview', this.value)" />
+                </div>
+              </div>
+
+              <!-- 🔘 CUSTOM PREVIEW BUTTONS -->
+              <div style="margin-top:12px; padding:10px; background:rgba(0,0,0,0.35); border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-size:0.78rem; font-weight:700; color:#38bdf8;">🔘 Custom Inline Buttons (Preview)</span>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.72rem;" onclick="addB4DropButton('${drop.id}', 'preview', '📺 Stream Online', 'https://t.me/')">➕ Add Button</button>
+                </div>
+                <!-- Category Suggestions -->
+                <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-bottom:6px;">
+                  ${customBtnSuggestionsHtml}
+                </div>
+                <div id="prevBtnsList_${drop.id}">${prevButtonsHtml}</div>
+              </div>
+
             </div>
 
-            <!-- Column 2: Revealed Content -->
-            <div style="padding:12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
-              <div style="font-weight:700; color:#34d399; font-size:0.85rem; margin-bottom:8px;">🎬 2. Unlocked Content Section</div>
-              <label style="font-size:0.75rem;">Unlocked Message Caption</label>
+            <!-- ================= COLUMN 2: REVEALED CONTENT ================= -->
+            <div style="padding:12px; background:rgba(0,0,0,0.25); border-radius:10px; border:1px solid rgba(52,211,153,0.25);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:700; color:#34d399; font-size:0.85rem;">🎬 2. Unlocked Content Section</span>
+                <span class="badge" style="background:rgba(52,211,153,0.15); color:#34d399; font-size:0.7rem;">Delivered Upon Unlock</span>
+              </div>
+
+              <label style="font-size:0.75rem;">Unlocked Caption</label>
               ${buildRichToolbarHtml('ta_b4_rev_' + drop.id, ['{username}', '{bot_name}'])}
               <textarea id="ta_b4_rev_${drop.id}" class="with-rich-toolbar" rows="3" oninput="updateB4DropNested('${drop.id}', 'revealedContent', 'message', this.value)">${escapeHtml(revealed.message || '')}</textarea>
+
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px;">
                 <div>
                   <label style="font-size:0.72rem;">Media Type</label>
-                  <select onchange="updateB4DropNested('${drop.id}', 'revealedContent', 'mediaType', this.value)">
+                  <select onchange="updateB4DropNested('${drop.id}', 'revealedContent', 'mediaType', this.value)" style="margin-bottom:0; font-size:0.75rem;">
                     <option value="none" ${revealed.mediaType === 'none' ? 'selected' : ''}>No Media</option>
                     <option value="photo" ${revealed.mediaType === 'photo' ? 'selected' : ''}>Photo Banner</option>
                     <option value="video" ${revealed.mediaType === 'video' ? 'selected' : ''}>Video</option>
@@ -4691,17 +5104,61 @@
                 </div>
                 <div>
                   <label style="font-size:0.72rem;">Upload File</label>
-                  <input type="file" onchange="uploadB4DropMedia(this, '${drop.id}', 'revealedContent')" style="font-size:0.75rem;" />
-                  <span style="font-size:0.7rem; color:var(--text-muted);">${revealed.mediaPath ? revealed.mediaPath.split('/').pop() : 'No file'}</span>
+                  <input type="file" onchange="uploadB4DropMedia(this, '${drop.id}', 'revealedContent')" style="font-size:0.75rem; margin-bottom:0;" />
+                  <span style="font-size:0.68rem; color:var(--text-muted);">${revealed.mediaPath ? revealed.mediaPath.split('/').pop() : 'No file'}</span>
                 </div>
               </div>
+
+              <!-- ⏱️ REVEALED CONTENT EXPIRY TIMER CONTROLS -->
+              <div style="margin-top:12px; padding:10px; background:rgba(0,0,0,0.35); border-radius:8px; border:1px solid ${isRevTimerOn ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.08)'};">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <label style="margin-bottom:0; cursor:pointer; font-size:0.78rem; font-weight:700; color:#34d399; display:flex; align-items:center; gap:6px;">
+                    <input type="checkbox" ${isRevTimerOn ? 'checked' : ''} onchange="toggleB4DropTimer('${drop.id}', 'revealedContent', this.checked)" />
+                    ⏱️ Content Auto-Destruct Timer
+                  </label>
+                  <span style="font-size:0.72rem; color:${isRevTimerOn ? '#34d399' : 'var(--text-muted)'}; font-weight:600;">
+                    ${isRevTimerOn ? `Destructs in ${revSecs >= 60 ? Math.round(revSecs/60) + 'm' : revSecs + 's'}` : 'Permanent (No Timer)'}
+                  </span>
+                </div>
+
+                <!-- Presets -->
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; align-items:center;">
+                  <span style="font-size:0.7rem; color:var(--text-muted); margin-right:2px;">Presets:</span>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${revSecs === 30 && isRevTimerOn ? 'background:#10b981; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'revealedContent', 30, '30s')">30s</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${revSecs === 60 && isRevTimerOn ? 'background:#10b981; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'revealedContent', 60, '1min')">1m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${revSecs === 120 && isRevTimerOn ? 'background:#10b981; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'revealedContent', 120, '2min')">2m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${revSecs === 300 && isRevTimerOn ? 'background:#10b981; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'revealedContent', 300, '5min')">5m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${revSecs === 600 && isRevTimerOn ? 'background:#10b981; color:#000;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'revealedContent', 600, '10min')">10m</button>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 6px; font-size:0.7rem; ${!isRevTimerOn ? 'background:#ef4444; color:#fff;' : ''}" onclick="setB4DropTimerPreset('${drop.id}', 'revealedContent', 0, 'off')">Off</button>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 80px 1fr; gap:6px; align-items:center;">
+                  <input type="number" value="${revSecs}" min="0" max="86400" placeholder="Secs" style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropTimerSeconds('${drop.id}', 'revealedContent', this.value)" />
+                  <input type="text" value="${escapeHtml(revTimer.warningMessage || '⏳ Unlocked VIP drop self-destructs in {timer_text}!')}" placeholder="Destruct warning template ({timer_text})" style="font-size:0.75rem; margin-bottom:0;" oninput="updateB4DropTimerWarning('${drop.id}', 'revealedContent', this.value)" />
+                </div>
+              </div>
+
+              <!-- 🔘 CUSTOM REVEALED BUTTONS -->
+              <div style="margin-top:12px; padding:10px; background:rgba(0,0,0,0.35); border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-size:0.78rem; font-weight:700; color:#34d399;">🔘 Custom Inline Buttons (Unlocked Content)</span>
+                  <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.72rem;" onclick="addB4DropButton('${drop.id}', 'revealedContent', '📥 Full HD Download', 'https://t.me/')">➕ Add Button</button>
+                </div>
+                <!-- Category Suggestions -->
+                <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-bottom:6px;">
+                  ${customBtnSuggestionsHtml}
+                </div>
+                <div id="revBtnsList_${drop.id}">${revButtonsHtml}</div>
+              </div>
+
             </div>
+
           </div>
         `;
         container.appendChild(card);
       });
 
-      list.forEach(drop => {
+      paginatedDrops.forEach(drop => {
         const prevEl = document.getElementById('ta_b4_prev_' + drop.id);
         if (prevEl) attachEditorShortcuts(prevEl);
         const revEl = document.getElementById('ta_b4_rev_' + drop.id);
@@ -4709,6 +5166,78 @@
       });
 
       updateB4Preview();
+    }
+
+    function toggleB4DropTimer(dropId, section, enabled) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop) return;
+      if (!drop[section]) drop[section] = {};
+      if (!drop[section].timer) drop[section].timer = {};
+      drop[section].timer.enabled = enabled;
+      drop[section].type = enabled ? 'temporary' : 'permanent';
+      if (enabled && (!drop[section].timer.seconds || drop[section].timer.seconds <= 0)) {
+        drop[section].timer.seconds = 120;
+      }
+      renderB4Drops();
+    }
+
+    function setB4DropTimerPreset(dropId, section, seconds, preset) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop) return;
+      if (!drop[section]) drop[section] = {};
+      if (!drop[section].timer) drop[section].timer = {};
+      drop[section].timer.seconds = Number(seconds) || 0;
+      drop[section].timer.preset = preset;
+      drop[section].timer.enabled = (seconds > 0);
+      drop[section].type = (seconds > 0) ? 'temporary' : 'permanent';
+      renderB4Drops();
+    }
+
+    function updateB4DropTimerSeconds(dropId, section, seconds) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop) return;
+      if (!drop[section]) drop[section] = {};
+      if (!drop[section].timer) drop[section].timer = {};
+      const s = Math.max(0, Number(seconds) || 0);
+      drop[section].timer.seconds = s;
+      drop[section].timer.enabled = (s > 0);
+      drop[section].type = (s > 0) ? 'temporary' : 'permanent';
+      updateB4Preview();
+    }
+
+    function updateB4DropTimerWarning(dropId, section, msg) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop) return;
+      if (!drop[section]) drop[section] = {};
+      if (!drop[section].timer) drop[section].timer = {};
+      drop[section].timer.warningMessage = msg;
+      updateB4Preview();
+    }
+
+    function addB4DropButton(dropId, section, defaultText, defaultUrl) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop) return;
+      if (!drop[section]) drop[section] = {};
+      if (!Array.isArray(drop[section].buttons)) drop[section].buttons = [];
+      drop[section].buttons.push({
+        text: defaultText || '📺 Stream Online',
+        url: defaultUrl || 'https://t.me/'
+      });
+      renderB4Drops();
+    }
+
+    function updateB4DropButton(dropId, section, btnIdx, field, val) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop || !drop[section]?.buttons?.[btnIdx]) return;
+      drop[section].buttons[btnIdx][field] = val;
+      updateB4Preview();
+    }
+
+    function removeB4DropButton(dropId, section, btnIdx) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === dropId);
+      if (!drop || !drop[section]?.buttons) return;
+      drop[section].buttons.splice(btnIdx, 1);
+      renderB4Drops();
     }
 
     function addB4DropMessage() {
@@ -4767,6 +5296,23 @@
         currentConfig.bot4.messages = currentConfig.bot4.messages.filter(m => m.id !== id);
         renderB4Drops();
       }
+    }
+
+    function updateB4DropPlan(id, planId) {
+      const drop = currentConfig.bot4?.messages?.find(m => m.id === id);
+      if (!drop) return;
+      drop.planId = planId;
+      if (planId === 'all') {
+        drop.linkedContent = 'all';
+        drop.category = 'all';
+        drop.contentTitle = 'All VIP Members';
+      } else {
+        const plan = (currentConfig.subscriptions?.plans || []).find(p => p.id === planId);
+        drop.linkedContent = plan?.linkedContent || planId;
+        drop.category = plan?.linkedContent || planId;
+        drop.contentTitle = plan?.contentTitle || plan?.name;
+      }
+      renderB4Drops();
     }
 
     function updateB4DropField(id, field, val) {
@@ -5092,16 +5638,16 @@
           currentConfig.bot3.help = { message: val('b3_helpMsg') };
         }
 
-        // Pack Final Bot configuration (Bot 4 Premium Bot delivery)
+        // Pack Final Bot configuration (Premium VIP delivery)
         if (document.getElementById('b3_finalBotUsername')) {
           const finalBotData = {
             enabled: checked('b3_finalBotEnabled', true),
             username: val('b3_finalBotUsername', 'avnifanbaseprembot').replace(/^@/, ''),
             url: val('b3_finalBotUrl', 'https://t.me/avnifanbaseprembot?start=vip'),
-            buttonText: val('b3_finalBotBtnText', '👑 Access VIP Bot 4 (@avnifanbaseprembot)'),
+            buttonText: val('b3_finalBotBtnText', '👑 Access VIP Premium Subscription'),
             message: val('b3_finalBotMessage', ''),
-            shareBot1: checked('b3_finalBotShareBot1', true),
-            bot1ButtonText: val('b3_finalBot1BtnText', '🎬 Open Bot 1 (@avniffanbasebot)'),
+            shareBot1: checked('b3_finalBotShareBot1', false),
+            bot1ButtonText: val('b3_finalBot1BtnText', '🎬 Open VIP Portal'),
             bot1Url: val('b3_finalBot1Url', 'https://t.me/avniffanbasebot')
           };
           if (!currentConfig.subscriptions) currentConfig.subscriptions = {};
@@ -5121,6 +5667,9 @@
           currentConfig.subscriptions.adminChatId = val('sub_adminChatId', currentConfig.subscriptions?.adminChatId || '');
           currentConfig.subscriptions.autoApprove = checked('sub_autoApprove', false);
           currentConfig.subscriptions.instructions = val('sub_instructions', '');
+          currentConfig.subscriptions.qrAutoDeleteSeconds = numVal('sub_qrTimerSeconds', 600);
+          currentConfig.subscriptions.plansAutoDeleteSeconds = numVal('sub_plansTimerSeconds', 600);
+          currentConfig.subscriptions.approvalAutoDeleteSeconds = numVal('sub_approvalTimerSeconds', 600);
         }
 
         // 5. Pack Bot 4 (Premium Bot)
@@ -5489,6 +6038,16 @@
       document.getElementById('sub_autoApprove').checked = !!s.autoApprove;
       document.getElementById('sub_instructions').value = s.instructions || '';
 
+      if (document.getElementById('sub_qrTimerSeconds')) {
+        document.getElementById('sub_qrTimerSeconds').value = s.qrAutoDeleteSeconds !== undefined ? s.qrAutoDeleteSeconds : 600;
+      }
+      if (document.getElementById('sub_plansTimerSeconds')) {
+        document.getElementById('sub_plansTimerSeconds').value = s.plansAutoDeleteSeconds !== undefined ? s.plansAutoDeleteSeconds : 600;
+      }
+      if (document.getElementById('sub_approvalTimerSeconds')) {
+        document.getElementById('sub_approvalTimerSeconds').value = s.approvalAutoDeleteSeconds !== undefined ? s.approvalAutoDeleteSeconds : 600;
+      }
+
       if (document.getElementById('toolbar_sub_instructions')) {
         document.getElementById('toolbar_sub_instructions').innerHTML = buildRichToolbarHtml('sub_instructions');
         attachEditorShortcuts(document.getElementById('sub_instructions'));
@@ -5499,10 +6058,10 @@
       if (document.getElementById('b3_finalBotEnabled')) document.getElementById('b3_finalBotEnabled').checked = fb.enabled !== false;
       if (document.getElementById('b3_finalBotUsername')) document.getElementById('b3_finalBotUsername').value = fb.username || 'avnifanbaseprembot';
       if (document.getElementById('b3_finalBotUrl')) document.getElementById('b3_finalBotUrl').value = fb.url || 'https://t.me/avnifanbaseprembot?start=vip';
-      if (document.getElementById('b3_finalBotBtnText')) document.getElementById('b3_finalBotBtnText').value = fb.buttonText || '👑 Access VIP Bot 4 (@avnifanbaseprembot)';
-      if (document.getElementById('b3_finalBotMessage')) document.getElementById('b3_finalBotMessage').value = fb.message || '🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to launch your exclusive VIP Premium Bot:';
-      if (document.getElementById('b3_finalBotShareBot1')) document.getElementById('b3_finalBotShareBot1').checked = fb.shareBot1 !== false;
-      if (document.getElementById('b3_finalBot1BtnText')) document.getElementById('b3_finalBot1BtnText').value = fb.bot1ButtonText || '🎬 Open Bot 1 (@avniffanbasebot)';
+      if (document.getElementById('b3_finalBotBtnText')) document.getElementById('b3_finalBotBtnText').value = fb.buttonText || '👑 Access VIP Premium Subscription';
+      if (document.getElementById('b3_finalBotMessage')) document.getElementById('b3_finalBotMessage').value = fb.message || '🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to access your VIP Premium Subscription:\n\n⏱️ <i>This confirmation message will automatically self-destruct in 2 minutes.</i>';
+      if (document.getElementById('b3_finalBotShareBot1')) document.getElementById('b3_finalBotShareBot1').checked = fb.shareBot1 === true;
+      if (document.getElementById('b3_finalBot1BtnText')) document.getElementById('b3_finalBot1BtnText').value = fb.bot1ButtonText || '🎬 Open VIP Portal';
       if (document.getElementById('b3_finalBot1Url')) document.getElementById('b3_finalBot1Url').value = fb.bot1Url || 'https://t.me/avniffanbasebot';
 
       if (document.getElementById('toolbar_b3_finalBotMessage')) {
@@ -5522,6 +6081,20 @@
       if (wrap) wrap.style.display = mode === 'custom_image' ? 'block' : 'none';
       if (currentConfig.subscriptions) currentConfig.subscriptions.qrMode = mode;
       updateSubscriptionPreview();
+    }
+
+    function setSubTimerPreset(type, seconds) {
+      const fieldMap = {
+        qr: { inputId: 'sub_qrTimerSeconds', key: 'qrAutoDeleteSeconds', label: 'Payment QR' },
+        plans: { inputId: 'sub_plansTimerSeconds', key: 'plansAutoDeleteSeconds', label: 'Plans Menu' },
+        approval: { inputId: 'sub_approvalTimerSeconds', key: 'approvalAutoDeleteSeconds', label: 'Approval Confirmation' }
+      };
+      const info = fieldMap[type];
+      if (!info) return;
+      const el = document.getElementById(info.inputId);
+      if (el) el.value = seconds;
+      updateSubConfigField(info.key, Number(seconds));
+      showToast(seconds > 0 ? `⏱️ ${info.label} timer set to ${Math.round(seconds / 60)} min (${seconds}s)` : `⏱️ ${info.label} auto-delete disabled (Permanent)`);
     }
 
     function updateSubConfigField(field, val) {

@@ -1,0 +1,8 @@
+node_modules/
+.env
+audio/
+renders/
+vendor/
+index.html
+snapshots/
+.hyperframes/

@@ -1,0 +1,19 @@
+{
+  "name": "agent-promo-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "voices": "node src/voices.mjs",
+    "audio": "node src/audio.mjs",
+    "build": "node src/build.mjs",
+    "check": "npm run build && hyperframes check --safe-zone reels",
+    "render": "npm run build && hyperframes render --quality delivery --output renders/promo.mp4",
+    "video": "npm run audio && npm run render",
+    "draft": "node src/audio.mjs --placeholder && npm run build && hyperframes render --quality draft --output renders/draft-placeholder-voice.mp4"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-devanagari": "5.3.0",
+    "gsap": "3.15.0",
+    "hyperframes": "0.9.98"
+  }
+}

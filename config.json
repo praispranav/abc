@@ -33,7 +33,9 @@
           "fullWidth": true,
           "accessType": "drops_then_paywall",
           "contentType": "today",
-          "contentTitle": "✨ Today's Content"
+          "contentTitle": "✨ Today's Content",
+          "planId": "plan_6h",
+          "category": "today"
         },
         {
           "id": "bbtn_1",
@@ -43,7 +45,9 @@
           "fullWidth": false,
           "accessType": "locked",
           "contentType": "list_1795573154998",
-          "contentTitle": "Most Viewed"
+          "contentTitle": "Most Viewed",
+          "planId": "plan_1w",
+          "category": "bbtn_1"
         },
         {
           "id": "bbtn_2",
@@ -53,7 +57,9 @@
           "fullWidth": false,
           "accessType": "free",
           "contentType": "list_btn2",
-          "contentTitle": "Button 2"
+          "contentTitle": "Button 2",
+          "planId": "plan_1w",
+          "category": "bbtn_1"
         },
         {
           "id": "bbtn_3",
@@ -205,8 +211,7 @@
             },
             "buttons": []
           },
-          "createdAt": "2026-11-25T13:47:05.884Z",
-          "accessType": "limited"
+          "createdAt": "2026-11-25T13:47:05.884Z"
         },
         {
           "id": "today_msg_1",
@@ -241,8 +246,7 @@
             },
             "buttons": []
           },
-          "createdAt": "2026-11-25T01:26:01.464Z",
-          "accessType": "limited"
+          "createdAt": "2026-11-25T01:26:01.464Z"
         }
       ]
     },
@@ -719,10 +723,10 @@
       "enabled": true,
       "username": "avnifanbaseprembot",
       "url": "https://t.me/avnifanbaseprembot?start=vip",
-      "buttonText": "👑 Access VIP Bot 4 (@avnifanbaseprembot)",
-      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to launch your exclusive VIP Premium Bot:",
-      "shareBot1": true,
-      "bot1ButtonText": "🎬 Open Bot 1 (@avniffanbasebot)",
+      "buttonText": "👑 Access VIP Premium Subscription",
+      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to access your VIP Premium Subscription:\n\n⏱️ <i>This confirmation message will automatically self-destruct in 10 minutes.</i>",
+      "shareBot1": false,
+      "bot1ButtonText": "🎬 Open VIP Portal",
       "bot1Url": "https://t.me/avniffanbasebot"
     }
   },
@@ -733,10 +737,10 @@
     "bot3": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot3_9216615280#s1"
   },
   "_commandsSet": {
-    "bot1": true,
-    "bot2": true,
-    "bot3": true,
-    "bot4": true
+    "bot1": "[{\"command\":\"start\",\"description\":\"Welcome greeting & community links\"},{\"command\":\"today\",\"description\":\"View Today's fresh content drop\"},{\"command\":\"free\",\"description\":\"Access free content and channels\"},{\"command\":\"terms\",\"description\":\"View Terms & Policy\"},{\"command\":\"help\",\"description\":\"Bot commands and support\"}]",
+    "bot2": "[{\"command\":\"start\",\"description\":\"Receive video drop (auto-deletes)\"},{\"command\":\"video\",\"description\":\"Get next video drop\"},{\"command\":\"list\",\"description\":\"View all active video drops\"},{\"command\":\"timer\",\"description\":\"View auto-delete timer\"},{\"command\":\"help\",\"description\":\"Bot information and commands\"}]",
+    "bot3": "[{\"command\":\"start\",\"description\":\"Welcome & VIP Subscription Plans\"},{\"command\":\"plans\",\"description\":\"View VIP Plans & Payment QR Code\"},{\"command\":\"myplan\",\"description\":\"Check your active VIP pass status\"},{\"command\":\"help\",\"description\":\"Payment instructions & support\"}]",
+    "bot4": "[{\"command\":\"next\",\"description\":\"Load Next 10 Drops\"},{\"command\":\"renew\",\"description\":\"Renew or Extend Pass\"},{\"command\":\"myplan\",\"description\":\"Check VIP Subscription Status\"},{\"command\":\"saved\",\"description\":\"View Your Saved Content\"},{\"command\":\"show\",\"description\":\"Show / Load Unlocked Content\"},{\"command\":\"drops\",\"description\":\"Browse Unlocked VIP Drops\"},{\"command\":\"start\",\"description\":\"VIP Premium Welcome & Portal\"},{\"command\":\"help\",\"description\":\"VIP Support & Help\"}]"
   },
   "bot_name": "Avni FanBase",
   "welcome": {
@@ -943,8 +947,7 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-25T13:47:05.884Z",
-        "accessType": "limited"
+        "createdAt": "2026-11-25T13:47:05.884Z"
       },
       {
         "id": "today_msg_1",
@@ -979,8 +982,7 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-25T01:26:01.464Z",
-        "accessType": "limited"
+        "createdAt": "2026-11-25T01:26:01.464Z"
       }
     ]
   },
@@ -1322,6 +1324,9 @@
     "upiId": "avnifanbase@upi",
     "merchantName": "Avni FanBase VIP",
     "autoApprove": false,
+    "plansAutoDeleteSeconds": 600,
+    "qrAutoDeleteSeconds": 600,
+    "approvalAutoDeleteSeconds": 600,
     "instructions": "1. Scan the QR code above using any UPI app (GPay, PhonePe, Paytm, BHIM).\n2. Pay the exact amount for your chosen subscription plan.\n3. Send the 12-digit UTR/Transaction ID or payment screenshot here in @avnifanbasepaybot to activate your pass instantly!",
     "plans": [
       {
@@ -1359,10 +1364,10 @@
       "enabled": true,
       "username": "avnifanbaseprembot",
       "url": "https://t.me/avnifanbaseprembot?start=vip",
-      "buttonText": "👑 Access VIP Bot 4 (@avnifanbaseprembot)",
-      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to launch your exclusive VIP Premium Bot:",
-      "shareBot1": true,
-      "bot1ButtonText": "🎬 Open Bot 1 (@avniffanbasebot)",
+      "buttonText": "👑 Access VIP Premium Subscription",
+      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to access your VIP Premium Subscription:\n\n⏱️ <i>This confirmation message will automatically self-destruct in 10 minutes.</i>",
+      "shareBot1": false,
+      "bot1ButtonText": "🎬 Open VIP Portal",
       "bot1Url": "https://t.me/avniffanbasebot"
     },
     "adminChatId": ""
@@ -1463,7 +1468,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T09:59:19.540Z"
+        "createdAt": "2026-11-26T09:59:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_2",
@@ -1498,7 +1506,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:00:19.540Z"
+        "createdAt": "2026-11-26T10:00:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_3",
@@ -1533,7 +1544,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:01:19.540Z"
+        "createdAt": "2026-11-26T10:01:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_4",
@@ -1568,7 +1582,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:02:19.540Z"
+        "createdAt": "2026-11-26T10:02:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_5",
@@ -1603,7 +1620,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:03:19.540Z"
+        "createdAt": "2026-11-26T10:03:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_6",
@@ -1638,7 +1658,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:04:19.540Z"
+        "createdAt": "2026-11-26T10:04:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_7",
@@ -1673,7 +1696,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:05:19.540Z"
+        "createdAt": "2026-11-26T10:05:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_8",
@@ -1708,7 +1734,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:06:19.540Z"
+        "createdAt": "2026-11-26T10:06:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_9",
@@ -1743,7 +1772,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:07:19.540Z"
+        "createdAt": "2026-11-26T10:07:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_10",
@@ -1778,7 +1810,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:08:19.540Z"
+        "createdAt": "2026-11-26T10:08:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_11",
@@ -1813,7 +1848,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:09:19.540Z"
+        "createdAt": "2026-11-26T10:09:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_12",
@@ -1848,7 +1886,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:10:19.540Z"
+        "createdAt": "2026-11-26T10:10:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_13",
@@ -1883,7 +1924,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:11:19.540Z"
+        "createdAt": "2026-11-26T10:11:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_14",
@@ -1918,7 +1962,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:12:19.540Z"
+        "createdAt": "2026-11-26T10:12:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_15",
@@ -1953,7 +2000,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:13:19.540Z"
+        "createdAt": "2026-11-26T10:13:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_16",
@@ -1988,7 +2038,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:14:19.540Z"
+        "createdAt": "2026-11-26T10:14:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_17",
@@ -2023,7 +2076,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:15:19.540Z"
+        "createdAt": "2026-11-26T10:15:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_18",
@@ -2058,7 +2114,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:16:19.540Z"
+        "createdAt": "2026-11-26T10:16:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_19",
@@ -2093,7 +2152,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:17:19.540Z"
+        "createdAt": "2026-11-26T10:17:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_20",
@@ -2128,7 +2190,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:18:19.540Z"
+        "createdAt": "2026-11-26T10:18:19.540Z",
+        "linkedContent": "today",
+        "category": "today",
+        "contentTitle": "✨ Today's Content"
       },
       {
         "id": "prem_drop_21",
@@ -2163,7 +2228,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:19:19.540Z"
+        "createdAt": "2026-11-26T10:19:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_22",
@@ -2198,7 +2266,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:20:19.540Z"
+        "createdAt": "2026-11-26T10:20:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_23",
@@ -2233,7 +2304,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:21:19.540Z"
+        "createdAt": "2026-11-26T10:21:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_24",
@@ -2268,7 +2342,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:22:19.540Z"
+        "createdAt": "2026-11-26T10:22:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_25",
@@ -2303,7 +2380,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:23:19.540Z"
+        "createdAt": "2026-11-26T10:23:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_26",
@@ -2338,7 +2418,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:24:19.540Z"
+        "createdAt": "2026-11-26T10:24:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_27",
@@ -2373,7 +2456,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:25:19.540Z"
+        "createdAt": "2026-11-26T10:25:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_28",
@@ -2408,7 +2494,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:26:19.540Z"
+        "createdAt": "2026-11-26T10:26:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_29",
@@ -2443,7 +2532,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:27:19.540Z"
+        "createdAt": "2026-11-26T10:27:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_30",
@@ -2478,7 +2570,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:28:19.540Z"
+        "createdAt": "2026-11-26T10:28:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_31",
@@ -2513,7 +2608,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:29:19.540Z"
+        "createdAt": "2026-11-26T10:29:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_32",
@@ -2548,7 +2646,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:30:19.540Z"
+        "createdAt": "2026-11-26T10:30:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_33",
@@ -2583,7 +2684,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:31:19.540Z"
+        "createdAt": "2026-11-26T10:31:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_34",
@@ -2618,7 +2722,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:32:19.540Z"
+        "createdAt": "2026-11-26T10:32:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_35",
@@ -2653,7 +2760,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:33:19.540Z"
+        "createdAt": "2026-11-26T10:33:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_36",
@@ -2688,7 +2798,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:34:19.540Z"
+        "createdAt": "2026-11-26T10:34:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_37",
@@ -2723,7 +2836,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:35:19.540Z"
+        "createdAt": "2026-11-26T10:35:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_38",
@@ -2758,7 +2874,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:36:19.540Z"
+        "createdAt": "2026-11-26T10:36:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_39",
@@ -2793,7 +2912,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:37:19.540Z"
+        "createdAt": "2026-11-26T10:37:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_40",
@@ -2828,7 +2950,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:38:19.540Z"
+        "createdAt": "2026-11-26T10:38:19.540Z",
+        "linkedContent": "bbtn_1",
+        "category": "bbtn_1",
+        "contentTitle": "🌟 Most Viewed Vault"
       },
       {
         "id": "prem_drop_41",
@@ -2863,7 +2988,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:39:19.540Z"
+        "createdAt": "2026-11-26T10:39:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_42",
@@ -2898,7 +3026,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:40:19.540Z"
+        "createdAt": "2026-11-26T10:40:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_43",
@@ -2933,7 +3064,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:41:19.540Z"
+        "createdAt": "2026-11-26T10:41:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_44",
@@ -2968,7 +3102,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:42:19.540Z"
+        "createdAt": "2026-11-26T10:42:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_45",
@@ -3003,7 +3140,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:43:19.540Z"
+        "createdAt": "2026-11-26T10:43:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_46",
@@ -3038,7 +3178,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:44:19.540Z"
+        "createdAt": "2026-11-26T10:44:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_47",
@@ -3073,7 +3216,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:45:19.540Z"
+        "createdAt": "2026-11-26T10:45:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_48",
@@ -3108,7 +3254,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:46:19.540Z"
+        "createdAt": "2026-11-26T10:46:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_49",
@@ -3143,7 +3292,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:47:19.540Z"
+        "createdAt": "2026-11-26T10:47:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       },
       {
         "id": "prem_drop_50",
@@ -3178,7 +3330,10 @@
           },
           "buttons": []
         },
-        "createdAt": "2026-11-26T10:48:19.540Z"
+        "createdAt": "2026-11-26T10:48:19.540Z",
+        "linkedContent": "all",
+        "category": "all",
+        "contentTitle": "👑 All Content (Full VIP)"
       }
     ]
   }

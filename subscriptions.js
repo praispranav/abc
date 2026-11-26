@@ -168,7 +168,7 @@ function readConfigFile() {
   }
 }
 
-// A plan may point at a bottom button's id, its contentType or its list id. Treat all as the same content.
+// A plan may point at a bottom button's id, contentType, listId, category, planId, or linkedContent. Treat all as the same content.
 function contentAliases(key, config) {
   const aliases = new Set([key]);
   const buttons = [
@@ -176,25 +176,29 @@ function contentAliases(key, config) {
     ...(config.bot4?.welcome?.bottomButtons || [])
   ];
   for (const b of buttons) {
-    const ids = [b.id, b.contentType, b.listId, b.type === 'today' ? 'today' : null].filter(Boolean);
-    if (ids.includes(key)) ids.forEach((id) => aliases.add(id));
+    const ids = [b.id, b.contentType, b.listId, b.category, b.planId, b.linkedContent, b.type === 'today' ? 'today' : null].filter(Boolean);
+    if (ids.includes(key)) {
+      ids.forEach((id) => aliases.add(id));
+    }
   }
-  if (key === 'today' || key === 'bbtn_today') aliases.add('today').add('bbtn_today');
+  if (key === 'today' || key === 'bbtn_today') aliases.add('today').add('bbtn_today').add('plan_6h');
   return aliases;
 }
 
 export function planUnlocksContent(planKey, requiredKey, config = readConfigFile()) {
-  if (!planKey || planKey === 'all') return true;
-  return contentAliases(requiredKey, config).has(planKey);
+  if (!planKey || planKey === 'all' || requiredKey === 'all') return true;
+  if (planKey === requiredKey) return true;
+  const aliases = contentAliases(requiredKey, config);
+  return aliases.has(planKey);
 }
 
 export function planUnlocksBot4(plan) {
-  const key = plan.linkedContent || 'all';
-  return key === 'all' || key.startsWith('b4');
+  // Any active VIP subscription plan unlocks Bot 4
+  return true;
 }
 
 // Check if user has an active VIP subscription (optionally for a specific content type / bottom button)
-export function checkUserVipSubscription(userId, requiredContentType = 'all') {
+export function checkUserVipSubscription(userId, requiredContentType = 'any') {
   if (!userId) return { active: false };
   const uid = String(userId);
   const data = getSubscriptionsData();
@@ -245,6 +249,23 @@ export function checkUserVipSubscription(userId, requiredContentType = 'all') {
 
   // 1. Check if user has an All-Access pass ('all')
   const allAccessPass = activePasses.find((p) => p.linkedContent === 'all');
+  const primaryPass = allAccessPass || activePasses[0];
+
+  // If general VIP status, or Bot 4 access is requested: ANY active pass qualifies!
+  if (!requiredContentType || requiredContentType === 'any' || requiredContentType === 'b4' || requiredContentType === 'bot4') {
+    return {
+      active: true,
+      isAllAccess: !!allAccessPass,
+      planId: primaryPass.planId,
+      planName: primaryPass.planName,
+      contentTitle: primaryPass.contentTitle,
+      startsAt: primaryPass.startsAt,
+      expiresAt: primaryPass.expiresAt,
+      remainingText: primaryPass.remainingText,
+      activePasses
+    };
+  }
+
   if (allAccessPass) {
     return {
       active: true,
@@ -371,6 +392,43 @@ export async function sendPlanQrAndInstructions(ctx, planId, getConfig, formatTe
     return ctx.reply('❌ That plan is no longer available.', backButton);
   }
 
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const name = ctx.from?.first_name || 'Member';
+  const vip = checkUserVipSubscription(userId);
+  const activePasses = vip.activePasses || (vip.active ? [vip] : []);
+  const hasAllAccess = activePasses.some((p) => p.linkedContent === 'all' || p.planId === 'plan_1m');
+  const allAccessPass = activePasses.find((p) => p.linkedContent === 'all' || p.planId === 'plan_1m');
+
+  // WARN & PREVENT: If user already has 1-Month All-Access, they do NOT need a lower-tier pass!
+  if (hasAllAccess && plan.linkedContent !== 'all' && plan.id !== 'plan_1m') {
+    const expiryDate = new Date(allAccessPass.expiresAt).toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    const warnText = `⚠️ *Notice: You Already Have Full All-Access VIP!*\n\nHello ${name}, your account already holds an active **${allAccessPass.planName}** valid until *${expiryDate}*.\n\nSince this All-Access pass unlocks ALL exclusive drops & VIP Bot 4, purchasing a lower-tier pass is not needed!\n\nIf you want to extend your VIP duration, you can renew your 1-Month pass below:`;
+    const warnKeyboard = Markup.inlineKeyboard([
+      [Markup.button.callback('👑 Extend 1 Month VIP Pass (+30 Days)', 'buy_plan_plan_1m')],
+      [Markup.button.callback('🔗 Resend VIP Bot Link', 'resend_vip_link')],
+      [Markup.button.callback('« Back to Plans', 'open_vip_plans')]
+    ]);
+    try {
+      return await ctx.reply(formatTelegramHtml(warnText), { parse_mode: 'HTML', ...warnKeyboard });
+    } catch (_) {
+      return await ctx.reply(warnText, { parse_mode: 'Markdown', ...warnKeyboard });
+    }
+  }
+
+  // Check if user is extending their existing active pass
+  const isSamePlanActive = activePasses.find((p) => p.planId === plan.id || (p.linkedContent && p.linkedContent === plan.linkedContent));
+  let extensionNotice = '';
+  if (isSamePlanActive) {
+    const expiryDate = new Date(isSamePlanActive.expiresAt).toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    extensionNotice = `ℹ️ <i>Notice: You currently have this pass active until ${expiryDate}. Paying now will <b>EXTEND</b> it by another +${formatDurationLabel(plan.durationHours)}!</i>\n\n`;
+  }
+
   const checkout = startCheckout(ctx, plan);
   const qr = await buildPaymentQr(plan, subCfg, checkout.orderRef);
   if (!qr) {
@@ -384,11 +442,12 @@ export async function sendPlanQrAndInstructions(ctx, planId, getConfig, formatTe
     `🎯 Unlocks: <b>${escapeHtml(plan.contentTitle || 'All Content')}</b>`,
     `⏱ Duration: <b>${formatDurationLabel(plan.durationHours)}</b>`,
     '',
+    extensionNotice,
     `💵 Pay exactly <b>${escapeHtml(curr)}${escapeHtml(plan.price)}</b>`,
     `🔑 UPI ID: <code>${escapeHtml(subCfg.upiId || '')}</code>`,
     `🧾 Order ref: <code>${checkout.orderRef}</code>`,
     ''
-  ];
+  ].filter((l) => l !== '');
   // Instructions saved in the dashboard replace the default steps
   if (subCfg.instructions) {
     lines.push(formatTelegramHtml(subCfg.instructions));
@@ -401,15 +460,252 @@ export async function sendPlanQrAndInstructions(ctx, planId, getConfig, formatTe
       '2. Then send the <b>payment screenshot</b> or <b>12-digit UTR number</b> right here.'
     );
   }
+
+  // Configurable QR code auto-delete timer (default: 10 minutes = 600s)
+  const qrTimerSeconds = subCfg.qrAutoDeleteSeconds !== undefined ? Number(subCfg.qrAutoDeleteSeconds) : 600;
+  if (qrTimerSeconds > 0) {
+    const durText = qrTimerSeconds >= 60 ? `${Math.round(qrTimerSeconds / 60)} minutes` : `${qrTimerSeconds} seconds`;
+    lines.push('', `⏱️ <i>This payment QR will automatically self-destruct in ${durText}.</i>`);
+  }
   const caption = lines.join('\n');
 
+  let sent;
   try {
-    return await ctx.replyWithPhoto({ source: qr.source }, { caption, parse_mode: 'HTML', ...backButton });
+    sent = await ctx.replyWithPhoto({ source: qr.source }, { caption, parse_mode: 'HTML', ...backButton });
   } catch (err) {
     console.warn('[Subscriptions] Rich QR caption rejected, retrying plain:', err.message);
     const plain = caption.replace(/<[^>]+>/g, '');
-    return await ctx.replyWithPhoto({ source: qr.source }, { caption: plain.slice(0, 1024), ...backButton });
+    sent = await ctx.replyWithPhoto({ source: qr.source }, { caption: plain.slice(0, 1024), ...backButton });
   }
+
+  if (qrTimerSeconds > 0 && sent && sent.message_id && ctx.chat?.id) {
+    const chatId = ctx.chat.id;
+    const msgId = sent.message_id;
+    setTimeout(async () => {
+      try {
+        await ctx.telegram.deleteMessage(chatId, msgId);
+      } catch (_) {}
+    }, qrTimerSeconds * 1000);
+  }
+
+  return sent;
+}
+
+// Resend VIP Bot Link with 2-minute auto-deletion timer
+export async function handleResendVipLink(ctx, getConfig, formatTelegramHtml) {
+  try { await ctx.answerCbQuery(); } catch (_) {}
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const name = ctx.from?.first_name || 'Member';
+  const vip = checkUserVipSubscription(userId);
+
+  if (!vip.active && (!vip.activePasses || vip.activePasses.length === 0)) {
+    const text = `🔒 *VIP Subscription Required*\n\nHey ${name}, you don't have an active VIP subscription pass yet.\n\nSubscribe to a VIP pass to receive your exclusive private link to VIP Bot 4!`;
+    const keyboard = Markup.inlineKeyboard([
+      [Markup.button.callback('💎 View Subscription Plans', 'open_vip_plans')]
+    ]);
+    const fmt = typeof formatTelegramHtml === 'function' ? formatTelegramHtml : (t) => t;
+    try {
+      return await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
+    } catch (_) {
+      return await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    }
+  }
+
+  const currentCfg = typeof getConfig === 'function' ? getConfig() : readConfigFile();
+  const fb = getFinalBotConfig(currentCfg);
+  const botLink = fb.url || `https://t.me/${fb.username || 'avnifanbaseprembot'}?start=vip`;
+
+  const text = `👑 *Private VIP Subscription Link*\n\nHello ${name}! Here is your private link to access your VIP Premium Subscription:\n\n🔗 ${botLink}\n\n⏱️ *Auto-Destruct Notice:*\nThis message will automatically self-destruct in 2 minutes!`;
+
+  const keyboard = Markup.inlineKeyboard([
+    [Markup.button.url(fb.buttonText || '👑 Access VIP Premium Subscription', botLink)],
+    [Markup.button.callback('🔄 Refresh Status', 'check_my_plan')]
+  ]);
+
+  const fmt = typeof formatTelegramHtml === 'function' ? formatTelegramHtml : (t) => t;
+  let sent;
+  try {
+    sent = await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
+  } catch (_) {
+    sent = await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+  }
+
+  if (sent && sent.message_id && ctx.chat?.id) {
+    const chatId = ctx.chat.id;
+    const msgId = sent.message_id;
+    setTimeout(async () => {
+      try {
+        await ctx.telegram.deleteMessage(chatId, msgId);
+      } catch (_) {}
+    }, 120 * 1000);
+  }
+}
+
+// Smart VIP Plans Browser: filters out lower tiers if user already has 1-Month All-Access VIP
+export async function handlePlansCommand(ctx, getConfig, formatTelegramHtml) {
+  const payload = (ctx.startPayload || '').trim();
+  if (payload.startsWith('plan_')) {
+    return await sendPlanQrAndInstructions(ctx, payload, getConfig, formatTelegramHtml);
+  }
+
+  const config = typeof getConfig === 'function' ? getConfig() : readConfigFile();
+  const subCfg = config.subscriptions || {};
+  if (subCfg.enabled === false) {
+    return ctx.reply('🔒 VIP Subscriptions are currently paused. Please check back later!');
+  }
+
+  const plans = subCfg.plans || [];
+  if (plans.length === 0) {
+    return ctx.reply('📭 No subscription plans configured at the moment.');
+  }
+
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const name = ctx.from?.first_name || 'Member';
+  const vip = checkUserVipSubscription(userId);
+  const activePasses = vip.activePasses || (vip.active ? [vip] : []);
+  const allAccessPass = activePasses.find((p) => p.linkedContent === 'all' || p.planId === 'plan_1m');
+  const hasAllAccess = !!allAccessPass;
+  const curr = subCfg.currency || '₹';
+  const fmt = typeof formatTelegramHtml === 'function' ? formatTelegramHtml : (t) => t;
+
+  // SCENARIO 1: User holds an active 1-Month All-Access pass
+  // As requested: Do NOT show lower 2 plans (6h / 1w). Warn them and only offer 1-Month renewal or link resend!
+  if (hasAllAccess) {
+    const expiryDate = new Date(allAccessPass.expiresAt).toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    let text = `👑 *Avni FanBase VIP Subscription Plans*\n\n`;
+    text += `⚠️ *Active VIP Notice: You Already Have Full All-Access VIP!*\n\n`;
+    text += `Hello ${name}, your account currently holds an active **${allAccessPass.planName}**.\n`;
+    text += `• Unlocks: *All Content & VIP Bot 4*\n`;
+    text += `• Valid Until: *${expiryDate}*\n`;
+    text += `• Remaining: *${allAccessPass.remainingText}*\n\n`;
+    text += `✨ Because you have unlimited All-Access VIP, lower-tier content passes (6 Hours Flash & 1 Week Full) are hidden.\n\n`;
+    text += `👇 You can extend your 30-Day VIP duration or recover your private VIP Bot link below:`;
+
+    const buttons = [
+      [Markup.button.callback('👑 Extend 1 Month VIP (+30 Days) — ₹299', 'buy_plan_plan_1m')],
+      [Markup.button.callback('🔗 Resend VIP Bot Link (Auto-Deletes in 2m)', 'resend_vip_link')],
+      [Markup.button.callback('🔍 Check My Subscription Status', 'check_my_plan')]
+    ];
+    const keyboard = Markup.inlineKeyboard(buttons);
+    try {
+      return await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
+    } catch (_) {
+      return await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    }
+  }
+
+  // SCENARIO 2: User holds a content-specific pass (e.g. 6h Flash)
+  const contentSpecificActive = activePasses.find((p) => p.linkedContent && p.linkedContent !== 'all');
+  if (contentSpecificActive) {
+    const expiryDate = new Date(contentSpecificActive.expiresAt).toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    let text = `👑 *Avni FanBase VIP Subscription Plans*\n\n`;
+    text += `ℹ️ *Active Pass Notice:*\n`;
+    text += `Hello ${name}, you currently have **${contentSpecificActive.planName}** active until *${expiryDate}* (*${contentSpecificActive.remainingText}* remaining).\n\n`;
+    text += `🌟 *Upgrade to unlock more drops or VIP Bot 4, or extend your current pass:*\n\n`;
+
+    const buttons = [];
+    plans.forEach((p) => {
+      const dur = formatDurationLabel(p.durationHours);
+      const isCurrent = p.id === contentSpecificActive.planId || p.linkedContent === contentSpecificActive.linkedContent;
+      if (isCurrent) {
+        text += `• 🔄 *${p.name} [CURRENTLY ACTIVE]* — *${curr}${p.price}* (${dur})\n  Tap to extend (+${dur})\n\n`;
+        buttons.push([Markup.button.callback(`🔄 Extend ${p.name} (+${dur}) — ${curr}${p.price}`, `buy_plan_${p.id}`)]);
+      } else {
+        const badge = p.badge ? ` [${p.badge}]` : '';
+        const target = p.contentTitle || (p.linkedContent === 'all' ? 'All Content & VIP Bot 4' : p.linkedContent);
+        text += `• ⭐️ *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n  🎯 Unlocks: ${target}\n\n`;
+        buttons.push([Markup.button.callback(`⭐️ Upgrade: ${p.name} — ${curr}${p.price}`, `buy_plan_${p.id}`)]);
+      }
+    });
+
+    buttons.push([Markup.button.callback('🔗 Resend VIP Bot Link (Auto-Deletes in 2m)', 'resend_vip_link')]);
+    buttons.push([Markup.button.callback('🔍 Check My Subscription Status', 'check_my_plan')]);
+    const keyboard = Markup.inlineKeyboard(buttons);
+    try {
+      return await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
+    } catch (_) {
+      return await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    }
+  }
+
+  // SCENARIO 3: User has NO active subscription
+  let text = `👑 *Avni FanBase VIP Subscription Plans*\n\n`;
+  text += `Choose a content pass linked to your favorite drops, or get the **All-Access VIP** pass to unlock everything!\n\n`;
+
+  const allAccess = plans.filter((p) => p.linkedContent === 'all' || !p.linkedContent);
+  const contentSpecific = plans.filter((p) => p.linkedContent && p.linkedContent !== 'all');
+
+  if (allAccess.length > 0) {
+    text += `🌐 *ALL-ACCESS PASS (Unlocks All Content & VIP Bot 4):*\n`;
+    allAccess.forEach((p) => {
+      const dur = formatDurationLabel(p.durationHours);
+      const badge = p.badge ? ` [${p.badge}]` : '';
+      text += `• *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n`;
+      if (p.description) text += `  ${p.description}\n`;
+    });
+    text += `\n`;
+  }
+
+  if (contentSpecific.length > 0) {
+    text += `📁 *CONTENT-SPECIFIC PASSES (Linked with Bottom Buttons):*\n`;
+    contentSpecific.forEach((p) => {
+      const dur = formatDurationLabel(p.durationHours);
+      const badge = p.badge ? ` [${p.badge}]` : '';
+      const target = p.contentTitle || p.linkedContent;
+      text += `• *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n`;
+      text += `  🎯 *Unlocks:* ${target}\n`;
+      if (p.description) text += `  ${p.description}\n`;
+    });
+    text += `\n`;
+  }
+
+  text += `👇 Select a plan below to view UPI QR Code & pay:`;
+
+  // Configurable plans menu auto-delete timer (default: 10 minutes = 600s)
+  const plansTimerSeconds = subCfg.plansAutoDeleteSeconds !== undefined ? Number(subCfg.plansAutoDeleteSeconds) : 600;
+  if (plansTimerSeconds > 0) {
+    const durText = plansTimerSeconds >= 60 ? `${Math.round(plansTimerSeconds / 60)} minutes` : `${plansTimerSeconds} seconds`;
+    text += `\n\n⏱️ _This plans menu will automatically self-destruct in ${durText}._`;
+  }
+
+  const buttons = plans.map((p) => {
+    const dur = formatDurationLabel(p.durationHours);
+    const tag = p.contentTitle ? ` [${p.contentTitle}]` : '';
+    return [Markup.button.callback(`${p.name} — ${curr}${p.price}${tag}`, `buy_plan_${p.id}`)];
+  });
+
+  buttons.push([Markup.button.callback('🔍 Check My Subscription Status', 'check_my_plan')]);
+
+  const keyboard = Markup.inlineKeyboard(buttons);
+
+  let sent;
+  try {
+    sent = await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
+  } catch (_) {
+    try {
+      sent = await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    } catch (_) {
+      sent = await ctx.reply(text, keyboard);
+    }
+  }
+
+  if (plansTimerSeconds > 0 && sent && sent.message_id && ctx.chat?.id) {
+    const chatId = ctx.chat.id;
+    const msgId = sent.message_id;
+    setTimeout(async () => {
+      try {
+        await ctx.telegram.deleteMessage(chatId, msgId);
+      } catch (_) {}
+    }, plansTimerSeconds * 1000);
+  }
+
+  return sent;
 }
 
 // Setup Bot Handlers for Subscriptions
@@ -417,78 +713,7 @@ export function setupSubscriptionBotHandlers(bot, botLabel, getConfig, formatTel
   if (bot.botInfo?.username) botRegistry.set(bot.botInfo.username, bot);
 
   // 1. /subscribe, /vip, /plans, /pay, /qr commands
-  const handlePlansCommand = async (ctx) => {
-    const payload = (ctx.startPayload || '').trim();
-    if (payload.startsWith('plan_')) {
-      return await sendPlanQrAndInstructions(ctx, payload, getConfig, formatTelegramHtml);
-    }
-
-    const config = getConfig();
-    const subCfg = config.subscriptions || {};
-    if (subCfg.enabled === false) {
-      return ctx.reply('🔒 VIP Subscriptions are currently paused. Please check back later!');
-    }
-
-    const plans = subCfg.plans || [];
-    if (plans.length === 0) {
-      return ctx.reply('📭 No subscription plans configured at the moment.');
-    }
-
-    const curr = subCfg.currency || '₹';
-    let text = `👑 *Avni FanBase VIP Subscription Plans*\n\n`;
-    text += `Choose a content pass linked to your favorite drops, or get the **All-Access VIP** pass to unlock everything!\n\n`;
-
-    const allAccess = plans.filter((p) => p.linkedContent === 'all' || !p.linkedContent);
-    const contentSpecific = plans.filter((p) => p.linkedContent && p.linkedContent !== 'all');
-
-    if (allAccess.length > 0) {
-      text += `🌐 *ALL-ACCESS PASS (Unlocks All Content & VIP Bot 4):*\n`;
-      allAccess.forEach((p) => {
-        const dur = formatDurationLabel(p.durationHours);
-        const badge = p.badge ? ` [${p.badge}]` : '';
-        text += `• *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n`;
-        if (p.description) text += `  ${p.description}\n`;
-      });
-      text += `\n`;
-    }
-
-    if (contentSpecific.length > 0) {
-      text += `📁 *CONTENT-SPECIFIC PASSES (Linked with Bottom Buttons):*\n`;
-      contentSpecific.forEach((p) => {
-        const dur = formatDurationLabel(p.durationHours);
-        const badge = p.badge ? ` [${p.badge}]` : '';
-        const target = p.contentTitle || p.linkedContent;
-        text += `• *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n`;
-        text += `  🎯 *Unlocks:* ${target}\n`;
-        if (p.description) text += `  ${p.description}\n`;
-      });
-      text += `\n`;
-    }
-
-    text += `👇 Select a plan below to view UPI QR Code & pay:`;
-
-    const buttons = plans.map((p) => {
-      const dur = formatDurationLabel(p.durationHours);
-      const tag = p.contentTitle ? ` [${p.contentTitle}]` : '';
-      return [Markup.button.callback(`${p.name} — ${curr}${p.price}${tag}`, `buy_plan_${p.id}`)];
-    });
-
-    // Also add "Check My Status" button
-    buttons.push([Markup.button.callback('🔍 Check My Subscription Status', 'check_my_plan')]);
-
-    const keyboard = Markup.inlineKeyboard(buttons);
-    const htmlText = formatTelegramHtml(text);
-
-    try {
-      await ctx.reply(htmlText, { parse_mode: 'HTML', ...keyboard });
-    } catch (_) {
-      try {
-        await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
-      } catch (_) {
-        await ctx.reply(text, keyboard);
-      }
-    }
-  };
+  const onPlans = async (ctx) => handlePlansCommand(ctx, getConfig, formatTelegramHtml);
 
   // Deep links from other bots: ?start=plan_<id>, ?start=plans, ?start=subscribe
   bot.start(async (ctx, next) => {
@@ -496,15 +721,25 @@ export function setupSubscriptionBotHandlers(bot, botLabel, getConfig, formatTel
     if (payload.startsWith('plan_')) {
       return sendPlanQrAndInstructions(ctx, payload, getConfig, formatTelegramHtml);
     }
-    if (payload === 'plans' || payload === 'subscribe') return handlePlansCommand(ctx);
+    if (payload === 'plans' || payload === 'subscribe') return onPlans(ctx);
     return next();
   });
 
-  bot.command('subscribe', handlePlansCommand);
-  bot.command('vip', handlePlansCommand);
-  bot.command('plans', handlePlansCommand);
-  bot.command('pay', handlePlansCommand);
-  bot.command('qr', handlePlansCommand);
+  bot.command('subscribe', onPlans);
+  bot.command('vip', onPlans);
+  bot.command('plans', onPlans);
+  bot.command('pay', onPlans);
+  bot.command('qr', onPlans);
+  bot.action('open_vip_plans', async (ctx) => {
+    try { await ctx.answerCbQuery('Opening VIP Plans...'); } catch (_) {}
+    userPaymentStates.delete(String(ctx.from?.id));
+    await onPlans(ctx);
+  });
+
+  // Link commands and action
+  bot.command('link', (ctx) => handleResendVipLink(ctx, getConfig, formatTelegramHtml));
+  bot.command('viplink', (ctx) => handleResendVipLink(ctx, getConfig, formatTelegramHtml));
+  bot.action('resend_vip_link', (ctx) => handleResendVipLink(ctx, getConfig, formatTelegramHtml));
   bot.action('open_vip_plans', async (ctx) => {
     try { await ctx.answerCbQuery('Opening VIP Plans...'); } catch (_) {}
     userPaymentStates.delete(String(ctx.from?.id));
@@ -532,12 +767,34 @@ export function setupSubscriptionBotHandlers(bot, botLabel, getConfig, formatTel
         text += `• Remaining: *${p.remainingText}*\n\n`;
       });
 
-      text += `✨ Tap below to explore your unlocked drops! 🎬`;
-      const currentCfg = typeof getConfig === 'function' ? getConfig() : readConfigFile();
-      const buttons = [
-        ...accessButtons(passes.some((p) => planUnlocksBot4(p)), currentCfg),
-        [Markup.button.callback('🔄 Refresh Status', 'check_my_plan')]
-      ];
+      const isBot4 = (botLabel && botLabel.includes('Bot 4')) || (ctx.botInfo?.username && ctx.botInfo.username.includes('prem'));
+      const isPayBot = (botLabel && botLabel.includes('Bot 3')) || (ctx.botInfo?.username && ctx.botInfo.username.includes('pay'));
+
+      let buttons = [];
+      if (isBot4) {
+        // User is ALREADY inside Bot 4: no need for Access Bot 4, Open Bot 1, or Resend link (resend belongs in payment bot)
+        buttons = [
+          [Markup.button.callback('🔄 Refresh Status', 'check_my_plan')]
+        ];
+      } else if (isPayBot) {
+        // Payment Bot: provide links to access the unlocked bots & resend link
+        const currentCfg = typeof getConfig === 'function' ? getConfig() : readConfigFile();
+        const hasBot4Access = passes.some((p) => planUnlocksBot4(p));
+        text += `✨ Tap below to explore your unlocked drops! 🎬`;
+        buttons = [
+          ...accessButtons(hasBot4Access, currentCfg),
+          ...(hasBot4Access ? [[Markup.button.callback('🔗 Resend VIP Bot Link (Auto-Deletes in 2m)', 'resend_vip_link')]] : []),
+          [Markup.button.callback('🔄 Refresh Status', 'check_my_plan')]
+        ];
+      } else {
+        const currentCfg = typeof getConfig === 'function' ? getConfig() : readConfigFile();
+        const hasBot4Access = passes.some((p) => planUnlocksBot4(p));
+        text += `✨ Tap below to explore your unlocked drops! 🎬`;
+        buttons = [
+          ...accessButtons(hasBot4Access, currentCfg),
+          [Markup.button.callback('🔄 Refresh Status', 'check_my_plan')]
+        ];
+      }
       const keyboard = Markup.inlineKeyboard(buttons);
       const htmlText = formatTelegramHtml(text);
       try {
@@ -648,10 +905,10 @@ export function getFinalBotConfig(config = readConfigFile()) {
     enabled: fb.enabled !== false,
     username: fb.username || bot4Username,
     url: fb.url || `https://t.me/${bot4Username}?start=vip`,
-    buttonText: fb.buttonText || `👑 Access VIP Bot 4 (@${bot4Username})`,
+    buttonText: fb.buttonText || '👑 Access VIP Premium Subscription',
     message: fb.message || '',
-    shareBot1: fb.shareBot1 !== false,
-    bot1ButtonText: fb.bot1ButtonText || '🎬 Open Bot 1 (@avniffanbasebot)',
+    shareBot1: fb.shareBot1 === true, // Default to FALSE - do not show Bot 1 button
+    bot1ButtonText: fb.bot1ButtonText || '🎬 Open VIP Portal',
     bot1Url: fb.bot1Url || 'https://t.me/avniffanbasebot'
   };
 }
@@ -660,18 +917,18 @@ function accessButtons(includeBot4, config = readConfigFile()) {
   const fb = getFinalBotConfig(config);
   const rows = [];
 
-  // Final Bot / Premium VIP Bot button
+  // Final Bot / Premium VIP Subscription button (no Bot 4 or Bot 1 mention)
   if (includeBot4 && fb.enabled && fb.url) {
     let u = fb.url.trim();
     if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
-    rows.push([Markup.button.url(fb.buttonText || '👑 Access VIP Bot', u)]);
+    rows.push([Markup.button.url(fb.buttonText || '👑 Access VIP Premium Subscription', u)]);
   }
 
-  // Bot 1 Open button
+  // Bot 1 Open button: only included if explicitly enabled by admin (disabled by default)
   if (fb.shareBot1) {
     let b1Url = (fb.bot1Url || 'https://t.me/avniffanbasebot').trim();
     if (!b1Url.startsWith('http://') && !b1Url.startsWith('https://')) b1Url = `https://${b1Url}`;
-    rows.push([Markup.button.url(fb.bot1ButtonText || '🎬 Open Bot 1 (@avniffanbasebot)', b1Url)]);
+    rows.push([Markup.button.url(fb.bot1ButtonText || '🎬 Open VIP Portal', b1Url)]);
   }
 
   return rows;
@@ -684,11 +941,11 @@ async function notifyMember(payment, html, extra = {}) {
     const bot = botRegistry.get(username);
     if (!bot) continue;
     try {
-      await bot.telegram.sendMessage(payment.userId, html, { parse_mode: 'HTML', ...extra });
-      return true;
+      const msg = await bot.telegram.sendMessage(payment.userId, html, { parse_mode: 'HTML', ...extra });
+      return { success: true, bot, msg };
     } catch (_) {}
   }
-  return false;
+  return { success: false };
 }
 
 // One verification card for the admin, with everything needed to match the bank entry
@@ -795,11 +1052,10 @@ export async function handlePaymentTextSubmission(ctx, getConfig) {
   }
 
   const utr = text.replace(/[\s-]/g, '').toUpperCase();
-  const digitCount = utr.replace(/\D/g, '').length;
-  // Menu taps and chat messages are not a UTR: let the bot handle them normally.
-  if (digitCount < 6) return false;
-  if (!/^[A-Z0-9]{10,22}$/.test(utr) || digitCount < 8) {
-    await ctx.reply('⚠️ That does not look like a UTR. Send the 12-digit number from your payment app, or a screenshot.');
+  
+  // If user has an open checkout, accept any valid alphanumeric UTR or Transaction ID (6-30 chars)
+  if (!/^[A-Z0-9]{6,30}$/.test(utr)) {
+    await ctx.reply('⚠️ Please send a valid 12-digit UPI UTR number (e.g. <code>433129845123</code>) or upload your payment screenshot.', { parse_mode: 'HTML' });
     return true;
   }
 
@@ -919,7 +1175,7 @@ export async function approveSubscriptionPayment(paymentId, approverName = 'Admi
       .replace(/{duration}/g, formatDurationLabel(durationHours))
       .replace(/{expiry_date}/g, expiryDate)
       .replace(/{username}/g, escapeHtml(payment.username || 'VIP Member'))
-      .replace(/{bot_name}/g, escapeHtml(fb.username || 'VIP Bot'));
+      .replace(/{bot_name}/g, escapeHtml(fb.username || 'VIP'));
   } else {
     html = [
       '🎉 <b>Payment approved. Your VIP access is active!</b>',
@@ -927,14 +1183,38 @@ export async function approveSubscriptionPayment(paymentId, approverName = 'Admi
       `Plan: <b>${escapeHtml(payment.planName)}</b>`,
       `Unlocks: <b>${escapeHtml(contentTitle)}</b>`,
       `Added: <b>${formatDurationLabel(durationHours)}</b>`,
-      `Valid until: <b>${expiryDate}</b>`
+      `Valid until: <b>${expiryDate}</b>`,
+      '',
+      '👇 Tap below to access your VIP Premium Subscription:'
     ].join('\n');
   }
 
-  const buttons = accessButtons(planUnlocksBot4(payment), config);
-  const notified = await notifyMember(payment, html, Markup.inlineKeyboard(buttons));
+  // Configurable confirmation auto-delete timer (default: 10 minutes = 600s)
+  const subCfg = config.subscriptions || {};
+  const approvalTimerSeconds = subCfg.approvalAutoDeleteSeconds !== undefined ? Number(subCfg.approvalAutoDeleteSeconds) : 600;
 
-  return { success: true, payment, expiresAt, notified };
+  if (approvalTimerSeconds > 0) {
+    const durText = approvalTimerSeconds >= 60 ? `${Math.round(approvalTimerSeconds / 60)} minutes` : `${approvalTimerSeconds} seconds`;
+    if (!html.includes('self-destruct') && !html.includes('expire')) {
+      html += `\n\n⏱️ <i>This confirmation message will automatically self-destruct in ${durText}.</i>`;
+    }
+  }
+
+  const buttons = accessButtons(planUnlocksBot4(payment), config);
+  const notifyRes = await notifyMember(payment, html, Markup.inlineKeyboard(buttons));
+
+  // Auto-delete the confirmation message after configured timer (default: 10 minutes)
+  if (approvalTimerSeconds > 0 && notifyRes?.success && notifyRes.msg && notifyRes.bot) {
+    const chatId = payment.userId;
+    const msgId = notifyRes.msg.message_id;
+    setTimeout(async () => {
+      try {
+        await notifyRes.bot.telegram.deleteMessage(chatId, msgId);
+      } catch (_) {}
+    }, approvalTimerSeconds * 1000);
+  }
+
+  return { success: true, payment, expiresAt, notified: !!notifyRes?.success };
 }
 
 // Global Reusable Payment Rejecter
