@@ -1,81 +1,100 @@
-# Multi-Bot Telegram Server & Web Configuration Portal
+# Multi-Bot Telegram Suite & Dashboard
 
-A unified Node.js and Telegraf server running multiple Telegram bots side-by-side with a web-based administration dashboard.
-
----
-
-## 🤖 The Bots
-
-### 1. Bot 1: `@Avniffanbasebot` (Community & Welcome Hub)
-- **Token:** Configured in `TELEGRAM_BOT_TOKEN_1`
-- **Commands:**
-  - `/start` - Displays greeting, welcome banner image, and channel buttons
-  - `/free` - Delivers free channel link and promotional updates
-  - `/help` - Help message and community guidance
-  - Interactive *Terms & Policy* modal popup
-
-### 2. Bot 2: `@avnifanbbot` (Timed Video / Auto-Delete Bot)
-- **Username:** `t.me/avnifanbbot`
-- **Token:** Configured in `TELEGRAM_BOT_TOKEN_2` (`9202863846:AAHgjTadO-qhllGFg_0bmPoLXO9NV70e3Mc`)
-- **Concept & Features:**
-  - **Auto-Delete Timer (Self-Destruct):** Default timer deletes the delivered video and message automatically after a set period (e.g., 1 minute, 2 minutes, or custom duration).
-  - **Media Delivery:** Supports local video uploads (MP4, MOV, WebM up to 100MB) or external direct URLs / Telegram `file_id`s.
-  - **Commands:**
-    - `/start` - Delivers the configured video and message with the countdown timer
-    - `/video` - Requests the timed video message
-    - `/help` - Displays bot information, command guide, and current timer duration
-  - **Interactive Echo Mode:** Users or admins forwarding/sending a video directly to the bot will receive it protected with the auto-destruct timer.
+A production-ready Node.js multi-bot suite powered by **Telegraf** and **Express**. Supports running in both **decoupled standalone mode** (independent web server and independent bots) or **unified all-in-one mode**.
 
 ---
 
-## 🌐 Unified Configuration Portal
+## 🚀 Execution Commands
 
-Both bots are configured on the **same portal**:
-- Access via browser: `http://localhost:3000` (or `https://your-domain.com/admin`)
-- **Features:**
-  - Tab navigation switching seamlessly between **Bot 1** and **Bot 2**.
-  - **Bot 1 Tab:** Edit welcome message, upload header banner, manage buttons, configure `/free` and `/help`, update Terms & Policy.
-  - **Bot 2 Tab:** Upload video files (up to 100MB), set video URLs, customize captions, choose timer preset (30s, 1min, 2min, 5min, Custom), customize warning message, and configure `/help`.
-  - **Live Telegram Mockup Preview:** Real-time visual feedback on both bots with instant simulated phone preview.
-  - One-click **Save All Configuration Changes** syncing to `config.json`.
+### 1. Run the Web Server Separately (Decoupled Dashboard)
+Starts **only** the Express Web Server, Admin Portal, `/terms` WebApp page, and Configuration APIs on port `3789`:
 
----
-
-## 🚀 Getting Started
-
-### 1. Environment Setup
-Create or verify your `.env` file:
-```env
-# Bot 1
-TELEGRAM_BOT_TOKEN_1=9051597768:AAEsG3DJE8tYTrF3Kk8jSqpR5hRx5yhUDaE
-
-# Bot 2
-TELEGRAM_BOT_TOKEN_2=9202863846:AAHgjTadO-qhllGFg_0bmPoLXO9NV70e3Mc
-
-PORT=3000
-
-# Optional: Set domain for Webhook mode in production
-# Leave blank for local development (defaults to long polling)
-WEBHOOK_DOMAIN=
-```
-
-### 2. Start the Server
 ```bash
-npm install
-npm start
-# Or for auto-reload during development:
-npm run dev
+npm run server
+# or: npm run start:web
 ```
-
-Visit `http://localhost:3000` to open the configuration dashboard.
+* **Dashboard URL**: `http://localhost:3789`
+* **Terms & Policy**: `http://localhost:3789/terms`
+* **Status**: `http://localhost:3789/api/status`
+* **API Logs**: `http://localhost:3789/api/logs`
 
 ---
 
-## 🔒 Production & Webhook Setup
+### 2. Run Everything (the supported mode)
+Runs the dashboard and all 4 bots, including payments and approvals:
 
-When running behind Nginx:
-- Map both webhooks through Nginx:
-  - Bot 1: `/webhook/bot1_<token1_id>`
-  - Bot 2: `/webhook/bot2_<token2_id>`
-- Nginx automatically forwards all requests to `http://127.0.0.1:3000`.
-- See `nginx.conf.example` for the full configuration.
+```bash
+npm start
+```
+
+> `bot1.js`, `bot2.js`, `bot3.js` and `server.js` are older standalone scripts. They have **no payments, approvals or Bot 4**, and `bot3.js` still behaves as the old club bot. Do not run them alongside `npm start`.
+
+---
+
+## 🤖 The 4 Bots
+
+| Bot | Role | Token variable |
+|---|---|---|
+| `@avniffanbasebot` | Welcome, free and today's drops | `TELEGRAM_BOT_TOKEN_1` |
+| `@avnifanbbot` | Timed video drops, revealed content | `TELEGRAM_BOT_TOKEN_2` |
+| `@avnifanbasepaybot` | Plans, payment QR, approval alerts | `TELEGRAM_BOT_TOKEN_3` |
+| `@avnifanbaseprembot` | VIP members only | `TELEGRAM_BOT_TOKEN_4` |
+
+Deep links to the payment bot: `?start=plans` and `?start=<plan id>` (for example `?start=plan_1m`).
+
+---
+
+## 💳 Payment Approval
+
+**Setup (once)**
+1. Set `ADMIN_PASSWORD` in `.env` and restart. It protects the dashboard, its APIs and payment screenshots.
+2. In `@avnifanbasepaybot` send `/setadmin <password>` from your own Telegram account.
+3. In Dashboard → Subscriptions, enter your real UPI ID and keep Auto-Approve off.
+
+**Each payment**
+1. The member picks a plan and gets a QR with the amount and an order ref filled in.
+2. They send a screenshot or UTR straight into the chat.
+3. You get one card with amount, order ref, UTR and screenshot. Check your bank app, then tap **Approve** or **Reject** (Telegram or Dashboard).
+4. The member is messaged automatically. Renewing early adds time to what is left.
+
+A screenshot can be faked, so always confirm the money arrived before approving.
+
+---
+
+## 🔐 Multi-Client Mode (selling to clients)
+
+One server, one login page. Only you create accounts. Each client gets their own 4 bots, settings, media, subscribers and payments.
+
+**First start**
+1. In `.env` set `ADMIN_PASSWORD` (10+ characters). Optionally `PORT` and `WEBHOOK_DOMAIN`.
+2. Stop any `npm start` that uses the same bot tokens, then run:
+   ```bash
+   npm run start:hub
+   ```
+3. Sign in as `admin` with that password. After the first start, change it on the Account page (editing `.env` no longer changes it).
+
+**Adding a client**
+1. Clients → New client: business name, username, password. On your first client you can tick "Copy my current settings" to move your existing setup in.
+2. The client signs in, saves their 4 bot tokens under Account, sends the shown `/setadmin` code to their payment bot, and enters their UPI ID under Subscriptions.
+
+You can also set a client's bot keys, reset their password, restart their bots or disable them. Disabling stops their bots and signs them out.
+
+**Where things are:** everything lives in `hub-data/` (bot tokens are in `hub.json`, one folder per client with `config.json`, `data/`, `assets/`, `bot.log`). Back it up and keep it private.
+
+**Limits:** serve it over HTTPS only. Each client is a separate Node process (budget roughly 100 MB of RAM each; internal ports start at 4100). All run as the same OS user. Restarting the hub signs everyone out.
+
+---
+
+## 🌐 Production Deployment (Nginx + PM2)
+
+1. Point your domain (e.g. `avnibot1.praispranav.com`) to your server IP.
+2. In `.env`:
+   ```env
+   PORT=3789
+   WEBHOOK_DOMAIN=https://avnibot1.praispranav.com
+   ```
+3. Run with PM2:
+   ```bash
+   pm2 start hub.js --name "telegram-hub"     # multi-client
+   # or, single install: pm2 start index.js --name "telegram-suite"
+   ```

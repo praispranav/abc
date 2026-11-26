@@ -1,22 +1,22 @@
 {
   "bot1": {
-    "bot_name": "Avniffanbasebot",
+    "bot_name": "Avni FanBase",
     "welcome": {
       "useImage": true,
       "imagePath": "assets/welcome.jpg",
-      "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n≼Terms & Policy≽",
+      "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n",
       "buttons": [
         {
           "id": "btn_1",
           "text": "📢 Alerts Channel",
           "type": "url",
-          "url": "https://t.me/"
+          "url": "https://t.me/+TxsqlGdFOvk2MzNl "
         },
         {
           "id": "btn_2",
           "text": "🔒 Backup Channel",
           "type": "url",
-          "url": "https://t.me/"
+          "url": "https://t.me/+Gn_BIdByihZhZmI1"
         },
         {
           "id": "btn_3",
@@ -24,31 +24,561 @@
           "type": "terms",
           "url": ""
         }
-      ]
+      ],
+      "bottomButtons": [
+        {
+          "id": "bbtn_today",
+          "text": "✨ Today's Content",
+          "type": "today",
+          "fullWidth": true,
+          "accessType": "drops_then_paywall",
+          "contentType": "today",
+          "contentTitle": "✨ Today's Content"
+        },
+        {
+          "id": "bbtn_1",
+          "text": "Most Viewed",
+          "type": "list",
+          "listId": "list_1795573154998",
+          "fullWidth": false,
+          "accessType": "locked",
+          "contentType": "list_1795573154998",
+          "contentTitle": "Most Viewed"
+        },
+        {
+          "id": "bbtn_2",
+          "text": "Demo",
+          "type": "list",
+          "listId": "list_btn2",
+          "fullWidth": false,
+          "accessType": "free",
+          "contentType": "list_btn2",
+          "contentTitle": "Button 2"
+        },
+        {
+          "id": "bbtn_3",
+          "text": "Button 3",
+          "type": "list",
+          "listId": "list_btn3",
+          "fullWidth": false,
+          "accessType": "free",
+          "contentType": "list_btn3",
+          "contentTitle": "Button 3"
+        }
+      ],
+      "enabled": true,
+      "type": "permanent",
+      "timer": {
+        "enabled": false,
+        "seconds": 120,
+        "warningMessage": "⚠️ This welcome message self-destructs in {timer_text}!"
+      }
     },
     "free": {
-      "useImage": false,
-      "imagePath": "",
-      "message": "🎁 Welcome to Free Content!\n\nMake sure to stay joined in our channels for all upcoming fresh releases and updates.",
-      "buttons": [
+      "deliveryMode": "all_in_one",
+      "assignedBot": "bot1",
+      "messages": [
         {
-          "id": "btn_free_1",
-          "text": "🔥 Free Channel Link",
-          "type": "url",
-          "url": "https://t.me/"
+          "id": "free_msg_1",
+          "title": "Drop #1 - Official Community Access",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "🎁 *Free Drop #1 - Community Channels*\n\nWelcome {username}! Click below to view the exclusive free content and access links.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🔥 *Unlocked Content #1*\n\nHere is your full unlocked access, {username}!\nMake sure to join our official backup channel for all fresh announcements.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T05:00:00.000Z"
+        },
+        {
+          "id": "free_msg_2",
+          "title": "Drop #2 - Special Flash Video Drop",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "⚡ *Free Drop #2 - Flash Teaser Drop*\n\nHey {username}, tap the button below to view your temporary flash drop!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Unlocked Flash Drop #2*\n\n⚠️ *ATTENTION {username}*: This unlocked content is temporary and will automatically self-destruct in {timer_text}!\n\nSave or view it before the timer runs out.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120,
+              "preset": "2min",
+              "warningMessage": "⏳ *Auto-Delete Warning*: This revealed message will self-destruct in {timer_text}!"
+            },
+            "buttons": [
+              {
+                "id": "btn_f2",
+                "text": "⚡ Instant VIP Access",
+                "type": "url",
+                "url": "https://t.me/avniffanbasebot"
+              }
+            ]
+          },
+          "createdAt": "2026-11-25T05:10:00.000Z"
         }
       ]
     },
     "help": {
-      "message": "🤖 *Bot Help & Support*\n\nAvailable commands:\n• /free - Access free content & community links\n• /help - View this help guide\n\nNeed support? Check the announcements in our alert channel."
+      "message": "🤖 *Bot 1 (@avniffanbasebot) Help & Support*\n\nAvailable commands:\n• /start - Welcome greeting & community links\n• /today - View Today's fresh content drop\n• /free - Access free content & community drops\n• /terms - View Terms & Policy\n• /help - View this help guide\n\nNeed support? Check the announcements in our alert channel."
     },
     "terms": {
       "title": "Terms & Policy",
-      "content": "Welcome to our community.\n\n1. Community Guidelines:\nAll content shared is strictly for community members. Distribution, re-uploading, or piracy is strictly prohibited.\n\n2. Privacy:\nWe respect your privacy. No personal identifiable data beyond your basic Telegram interaction info is stored.\n\n3. Compliance:\nBy joining and accessing our channels, you confirm you meet the age and legal requirements of your local jurisdiction.\n\nFor queries or concerns, contact our bot administrator."
-    }
+      "windowMode": "dialog",
+      "buttonText": "≼ Terms & Policy ≽",
+      "content": "Welcome to our community.\n\n1. Community Guidelines:\nAll content shared is strictly for community members. Distribution, re-uploading, or piracy is strictly prohibited.\n\n2. Privacy:\nWe respect your privacy. No personal identifiable data beyond your basic Telegram interaction info is stored.\n\n3. Compliance:\nBy joining and accessing our channels, you confirm you meet the age and legal requirements of your local jurisdiction.\n\nFor queries or concerns, contact our bot administrator.",
+      "lastUpdated": "2026-11-26",
+      "dialogText": "📜 Terms & Policy\n\nAll content shared is strictly for community members. Distribution or piracy is strictly prohibited. You confirm you meet local age & legal requirements."
+    },
+    "today": {
+      "deliveryMode": "all_in_one",
+      "assignedBot": "bot1",
+      "messages": [
+        {
+          "id": "today_msg_1795614425884",
+          "title": "Drop #1 - Today's Featured Release (Copy)",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "✨ *Today's Exclusive Drop*\n\nHey {username}! Here is today's fresh content drop. Tap the button below to unlock full access!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Today's Unlocked Content*\n\nEnjoy today's exclusive release, {username}!\nNew fresh content is posted daily. Check back tomorrow for the next drop!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T13:47:05.884Z",
+          "accessType": "limited"
+        },
+        {
+          "id": "today_msg_1",
+          "title": "Drop #1 - Today's Featured Release",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "✨ *Today's Exclusive Drop*\n\nHey {username}! Here is today's fresh content drop. Tap the button below to unlock full access!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Today's Unlocked Content*\n\nEnjoy today's exclusive release, {username}!\nNew fresh content is posted daily. Check back tomorrow for the next drop!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T01:26:01.464Z",
+          "accessType": "limited"
+        }
+      ]
+    },
+    "messageLists": [
+      {
+        "id": "list_free",
+        "title": "🎁 /free Community Drops",
+        "command": "free",
+        "deliveryMode": "all_in_one",
+        "targetBot": "bot2",
+        "messages": [
+          {
+            "id": "free_msg_1",
+            "title": "Drop #1 - Official Community Access",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "🎁 *Free Drop #1 - Community Channels*\n\nWelcome {username}! Click below to view the exclusive free content and access links.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🔥 *Unlocked Content #1*\n\nHere is your full unlocked access, {username}!\nMake sure to join our official backup channel for all fresh announcements.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-25T05:00:00.000Z",
+            "accessType": "normal"
+          },
+          {
+            "id": "free_msg_2",
+            "title": "Drop #2 - Special Flash Video Drop",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "⚡ *Free Drop #2 - Flash Teaser Drop*\n\nHey {username}, tap the button below to view your temporary flash drop!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 *Unlocked Flash Drop #2*\n\n⚠️ *ATTENTION {username}*: This unlocked content is temporary and will automatically self-destruct in {timer_text}!\n\nSave or view it before the timer runs out.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120,
+                "preset": "2min",
+                "warningMessage": "⏳ *Auto-Delete Warning*: This revealed message will self-destruct in {timer_text}!"
+              },
+              "buttons": [
+                {
+                  "id": "btn_f2",
+                  "text": "⚡ Instant VIP Access",
+                  "type": "url",
+                  "url": "https://t.me/avniffanbasebot"
+                }
+              ]
+            },
+            "createdAt": "2026-11-25T05:10:00.000Z",
+            "accessType": "limited"
+          }
+        ]
+      },
+      {
+        "id": "list_btn1",
+        "title": "🔥 Button 1 Drops",
+        "command": "btn1",
+        "deliveryMode": "all_in_one",
+        "targetBot": "bot2",
+        "messages": [
+          {
+            "id": "drop_1795572765955",
+            "title": "Drop #2 - 🔥 Button 1 Drops",
+            "status": "active",
+            "accessType": "limited",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "✨ Drop #2 Preview\n\nTap below to unlock on Bot 2!",
+              "mediaType": "photo",
+              "mediaPath": "assets/welcome_1795573095635.jpg",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 Unlocked Drop #2 on Bot 2!\n\nEnjoy this exclusive release.",
+              "mediaType": "photo",
+              "mediaPath": "assets/welcome_1795572832300.jpg",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-25T02:12:45.955Z"
+          },
+          {
+            "id": "drop_btn1_1",
+            "title": "Drop #1 - Button 1 Featured Teaser",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "🔥 *Button 1 - Exclusive Drop*\n\nHey {username}! Here is your exclusive Button 1 teaser. Tap below to unlock the full revealed content on our backup bot!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 *Unlocked Button 1 Content*\n\nWelcome {username}! Here is your secret Button 1 content unlocked via @avnifanbbot.\n\n⚠️ *ATTENTION*: This content is temporary and self-destructs in {timer_text}!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120,
+                "preset": "2min",
+                "warningMessage": "⏳ *Auto-Delete Warning*: This message will self-destruct in {timer_text}!"
+              },
+              "buttons": [
+                {
+                  "id": "btn_b1_vip",
+                  "text": "⚡ Join VIP Access",
+                  "type": "url",
+                  "url": "https://t.me/avniffanbasebot"
+                }
+              ]
+            },
+            "createdAt": "2026-11-25T01:47:51.860Z",
+            "accessType": "normal"
+          }
+        ]
+      },
+      {
+        "id": "list_btn2",
+        "title": "⭐ Button 2 Drops",
+        "command": "btn2",
+        "deliveryMode": "all_in_one",
+        "targetBot": "bot2",
+        "messages": [
+          {
+            "id": "drop_btn2_1",
+            "title": "Drop #1 - Button 2 Special Release",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "⭐ *Button 2 - Special Release*\n\nHey {username}! Tap below to view your unlocked content on Bot 2.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "✨ *Unlocked Button 2 Content*\n\nEnjoy this exclusive release, {username}!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-25T01:47:51.864Z",
+            "accessType": "normal"
+          }
+        ]
+      },
+      {
+        "id": "list_btn3",
+        "title": "💎 Button 3 Drops",
+        "command": "btn3",
+        "deliveryMode": "all_in_one",
+        "targetBot": "bot2",
+        "messages": [
+          {
+            "id": "drop_btn3_1",
+            "title": "Drop #1 - Button 3 Vault",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "💎 *Button 3 - VIP Vault Drop*\n\nHey {username}! Click below to access the vault on Bot 2.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "💎 *Unlocked Button 3 Vault Content*\n\nFull VIP Access granted, {username}!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60,
+                "preset": "1min",
+                "warningMessage": ""
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-25T01:47:51.864Z",
+            "accessType": "normal"
+          }
+        ]
+      },
+      {
+        "id": "list_1795573154998",
+        "title": "New Content",
+        "deliveryMode": "all_in_one",
+        "targetBot": "bot2",
+        "messages": [
+          {
+            "id": "drop_1795573638976",
+            "title": "Drop #2 - New Content",
+            "status": "active",
+            "accessType": "limited",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "✨ Drop #2 Preview\n\nTap below to unlock on Bot 2!",
+              "mediaType": "photo",
+              "mediaPath": "assets/welcome_1795573643083.jpg",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 Unlocked Drop #2 on Bot 2!\n\nEnjoy this exclusive release.",
+              "mediaType": "photo",
+              "mediaPath": "assets/welcome_1795573646849.jpg",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-25T02:27:18.977Z"
+          },
+          {
+            "id": "drop_1795573169649",
+            "title": "Drop #1 - New Content",
+            "status": "active",
+            "accessType": "limited",
+            "viewButtonText": "👁️ View Content",
+            "preview": {
+              "message": "✨ Drop #1 Preview\n\nTap below to unlock on Bot 2!",
+              "mediaType": "photo",
+              "mediaPath": "assets/welcome_1795573173796.jpg",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 Unlocked Drop #1 on Bot 2!\n\nEnjoy this exclusive release.",
+              "mediaType": "photo",
+              "mediaPath": "assets/welcome_1795573176882.jpg",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-25T02:19:29.649Z"
+          }
+        ]
+      }
+    ]
   },
   "bot2": {
-    "bot_name": "avnifanbbot",
+    "bot_name": "Avni Fanbase Demo",
     "deliveryMode": "rotate",
     "defaultTimer": {
       "enabled": true,
@@ -61,6 +591,7 @@
         "id": "msg_1",
         "title": "Drop #1 - Featured Video",
         "status": "active",
+        "type": "temporary",
         "videoPath": "",
         "videoUrl": "",
         "message": "🎬 Hello {username}!\n\nHere is your requested video message #1.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}! Please watch or save it before time runs out.",
@@ -75,15 +606,17 @@
             "id": "b2_btn_1",
             "text": "📢 Alerts & Updates Channel",
             "type": "url",
-            "url": "https://t.me/"
+            "url": "https://t.me/avnifanbbot"
           }
         ],
-        "createdAt": "2026-11-24T08:00:00.000Z"
+        "createdAt": "2026-11-24T08:00:00.000Z",
+        "accessType": "normal"
       },
       {
         "id": "msg_2",
         "title": "Drop #2 - Special Release",
         "status": "active",
+        "type": "temporary",
         "videoPath": "",
         "videoUrl": "",
         "message": "🔥 Exclusive Content Drop #2 for {username}!\n\nEnjoy this video before the timer expires.\n\n⏳ Disappears in {timer_text}!",
@@ -98,56 +631,130 @@
             "id": "b2_btn_2",
             "text": "🔒 Backup Channel",
             "type": "url",
-            "url": "https://t.me/"
+            "url": "https://t.me/avnifanbbot"
           }
         ],
-        "createdAt": "2026-11-24T08:05:00.000Z"
+        "createdAt": "2026-11-24T08:05:00.000Z",
+        "accessType": "limited"
       },
       {
         "id": "msg_3",
-        "title": "Drop #3 - Archived Example",
-        "status": "archived",
+        "title": "Drop #3 - Permanent Welcome Drop",
+        "status": "active",
+        "type": "permanent",
         "videoPath": "",
         "videoUrl": "",
-        "message": "✨ Exclusive Archive Drop #3.\n\nThis is an archived message example that can be reactivated anytime from the dashboard.",
+        "message": "✨ Permanent Community Drop #3 for {username}!\n\nThis drop does not self-destruct and will stay in your chat permanently.",
         "timer": {
-          "enabled": true,
-          "seconds": 60,
-          "preset": "1min",
-          "warningMessage": "⏳ *Auto-Delete Warning*: This video will be deleted in {timer_text}!"
+          "enabled": false,
+          "seconds": 0,
+          "preset": "off",
+          "warningMessage": ""
         },
         "buttons": [
           {
             "id": "b2_btn_3",
             "text": "📢 Main Community",
             "type": "url",
-            "url": "https://t.me/"
+            "url": "https://t.me/avnifanbbot"
           }
         ],
-        "createdAt": "2026-11-24T07:30:00.000Z"
+        "createdAt": "2026-11-24T07:30:00.000Z",
+        "accessType": "limited"
       }
     ],
     "help": {
-      "message": "🤖 *avnifanbbot Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with an automatic self-destruction timer.\n\n📌 *Available Commands:*\n• /start - Receive a video message with auto-delete timer\n• /video - Fetch the next video message\n• /list - View all active drops\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}\nMessages will be permanently deleted once the timer runs out."
+      "message": "🤖 *Bot 2 (@avnifanbbot) Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with optional self-destruction timers.\n\n📌 *Available Commands:*\n• /start - Receive video message\n• /video - Fetch the next video message\n• /list - View all active drops\n• /timer - Check current self-destruct timer\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}"
+    },
+    "userLimit": {
+      "enabled": true,
+      "maxDrops": 3,
+      "limitReachedMessage": "🚫 *Daily Access Limit Reached!*\n\nHey {username}, you have unlocked all {limit} allowed content drops for today!\n\nUpgrade to VIP Access to unlock unlimited drops with zero limits.",
+      "buttons": [
+        {
+          "id": "btn_b2_limit_vip",
+          "text": "💎 Get VIP Unlimited Access",
+          "type": "url",
+          "url": "https://t.me/avniffanbasebot"
+        }
+      ]
+    },
+    "welcome": {
+      "message": "👋 *Welcome to {bot_name}, {username}!* 🎬\n\nAll exclusive content drops and unlocked releases from our main bot are delivered here below.",
+      "enabled": true,
+      "type": "permanent",
+      "timer": {
+        "seconds": 120,
+        "warningMessage": "⚠️ This welcome greeting self-destructs in {timer_text}!",
+        "enabled": false
+      },
+      "mediaType": "none"
+    },
+    "username": "avnifanbbot"
+  },
+  "bot3": {
+    "bot_name": "Avni FanBase Pay",
+    "username": "avnifanbasepaybot",
+    "welcome": {
+      "message": "💳 *Welcome to Avni FanBase Payment Gateway, {username}!* 👑\n\nChoose a VIP subscription plan below to unlock unrestricted drops, full-speed streaming, and our private Premium VIP Bot (@avnifanbaseprembot).\n\n👇 Select your plan to view the instant payment QR code:",
+      "buttons": [
+        {
+          "id": "b3_btn_1",
+          "text": "👑 Access Premium Bot (@avnifanbaseprembot)",
+          "type": "url",
+          "url": "https://t.me/avnifanbaseprembot"
+        },
+        {
+          "id": "b3_btn_2",
+          "text": "💬 VIP Support",
+          "type": "url",
+          "url": "https://t.me/+Gn_BIdByihZhZmI1"
+        }
+      ]
+    },
+    "help": {
+      "message": "🤖 *Payment Bot (@avnifanbasepaybot) Commands:*\n\n• /start - Welcome & Subscription Plans\n• /plans - Browse VIP Plans\n• /myplan - Check your active VIP status\n• /help - Payment & verification help"
+    },
+    "finalBot": {
+      "enabled": true,
+      "username": "avnifanbaseprembot",
+      "url": "https://t.me/avnifanbaseprembot?start=vip",
+      "buttonText": "👑 Access VIP Bot 4 (@avnifanbaseprembot)",
+      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to launch your exclusive VIP Premium Bot:",
+      "shareBot1": true,
+      "bot1ButtonText": "🎬 Open Bot 1 (@avniffanbasebot)",
+      "bot1Url": "https://t.me/avniffanbasebot"
     }
   },
-  "bot_name": "Avniffanbasebot",
+  "_webhooks": {
+    "bot1": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot1_9051597768#s1",
+    "bot2": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot2_9202863846#s1",
+    "bot4": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot4_9165273291#s1",
+    "bot3": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot3_9216615280#s1"
+  },
+  "_commandsSet": {
+    "bot1": true,
+    "bot2": true,
+    "bot3": true,
+    "bot4": true
+  },
+  "bot_name": "Avni FanBase",
   "welcome": {
     "useImage": true,
     "imagePath": "assets/welcome.jpg",
-    "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n≼Terms & Policy≽",
+    "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n",
     "buttons": [
       {
         "id": "btn_1",
         "text": "📢 Alerts Channel",
         "type": "url",
-        "url": "https://t.me/"
+        "url": "https://t.me/+TxsqlGdFOvk2MzNl "
       },
       {
         "id": "btn_2",
         "text": "🔒 Backup Channel",
         "type": "url",
-        "url": "https://t.me/"
+        "url": "https://t.me/+Gn_BIdByihZhZmI1"
       },
       {
         "id": "btn_3",
@@ -155,26 +762,2424 @@
         "type": "terms",
         "url": ""
       }
-    ]
+    ],
+    "bottomButtons": [
+      {
+        "id": "bbtn_today",
+        "text": "✨ Today's Content",
+        "type": "today",
+        "fullWidth": true,
+        "accessType": "drops_then_paywall",
+        "contentType": "today",
+        "contentTitle": "✨ Today's Content"
+      },
+      {
+        "id": "bbtn_1",
+        "text": "Most Viewed",
+        "type": "list",
+        "listId": "list_1795573154998",
+        "fullWidth": false,
+        "accessType": "locked",
+        "contentType": "list_1795573154998",
+        "contentTitle": "Most Viewed"
+      },
+      {
+        "id": "bbtn_2",
+        "text": "Demo",
+        "type": "list",
+        "listId": "list_btn2",
+        "fullWidth": false,
+        "accessType": "free",
+        "contentType": "list_btn2",
+        "contentTitle": "Button 2"
+      },
+      {
+        "id": "bbtn_3",
+        "text": "Button 3",
+        "type": "list",
+        "listId": "list_btn3",
+        "fullWidth": false,
+        "accessType": "free",
+        "contentType": "list_btn3",
+        "contentTitle": "Button 3"
+      }
+    ],
+    "enabled": true,
+    "type": "permanent",
+    "timer": {
+      "enabled": false,
+      "seconds": 120,
+      "warningMessage": "⚠️ This welcome message self-destructs in {timer_text}!"
+    }
   },
   "free": {
-    "useImage": false,
-    "imagePath": "",
-    "message": "🎁 Welcome to Free Content!\n\nMake sure to stay joined in our channels for all upcoming fresh releases and updates.",
-    "buttons": [
+    "deliveryMode": "all_in_one",
+    "assignedBot": "bot1",
+    "messages": [
       {
-        "id": "btn_free_1",
-        "text": "🔥 Free Channel Link",
-        "type": "url",
-        "url": "https://t.me/"
+        "id": "free_msg_1",
+        "title": "Drop #1 - Official Community Access",
+        "status": "active",
+        "viewButtonText": "👁️ View Content",
+        "preview": {
+          "message": "🎁 *Free Drop #1 - Community Channels*\n\nWelcome {username}! Click below to view the exclusive free content and access links.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🔥 *Unlocked Content #1*\n\nHere is your full unlocked access, {username}!\nMake sure to join our official backup channel for all fresh announcements.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-25T05:00:00.000Z"
+      },
+      {
+        "id": "free_msg_2",
+        "title": "Drop #2 - Special Flash Video Drop",
+        "status": "active",
+        "viewButtonText": "👁️ View Content",
+        "preview": {
+          "message": "⚡ *Free Drop #2 - Flash Teaser Drop*\n\nHey {username}, tap the button below to view your temporary flash drop!",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *Unlocked Flash Drop #2*\n\n⚠️ *ATTENTION {username}*: This unlocked content is temporary and will automatically self-destruct in {timer_text}!\n\nSave or view it before the timer runs out.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ *Auto-Delete Warning*: This revealed message will self-destruct in {timer_text}!"
+          },
+          "buttons": [
+            {
+              "id": "btn_f2",
+              "text": "⚡ Instant VIP Access",
+              "type": "url",
+              "url": "https://t.me/avniffanbasebot"
+            }
+          ]
+        },
+        "createdAt": "2026-11-25T05:10:00.000Z"
       }
     ]
   },
   "help": {
-    "message": "🤖 *Bot Help & Support*\n\nAvailable commands:\n• /free - Access free content & community links\n• /help - View this help guide\n\nNeed support? Check the announcements in our alert channel."
+    "message": "🤖 *Bot 1 (@avniffanbasebot) Help & Support*\n\nAvailable commands:\n• /start - Welcome greeting & community links\n• /today - View Today's fresh content drop\n• /free - Access free content & community drops\n• /terms - View Terms & Policy\n• /help - View this help guide\n\nNeed support? Check the announcements in our alert channel."
   },
   "terms": {
     "title": "Terms & Policy",
-    "content": "Welcome to our community.\n\n1. Community Guidelines:\nAll content shared is strictly for community members. Distribution, re-uploading, or piracy is strictly prohibited.\n\n2. Privacy:\nWe respect your privacy. No personal identifiable data beyond your basic Telegram interaction info is stored.\n\n3. Compliance:\nBy joining and accessing our channels, you confirm you meet the age and legal requirements of your local jurisdiction.\n\nFor queries or concerns, contact our bot administrator."
+    "windowMode": "dialog",
+    "buttonText": "≼ Terms & Policy ≽",
+    "content": "Welcome to our community.\n\n1. Community Guidelines:\nAll content shared is strictly for community members. Distribution, re-uploading, or piracy is strictly prohibited.\n\n2. Privacy:\nWe respect your privacy. No personal identifiable data beyond your basic Telegram interaction info is stored.\n\n3. Compliance:\nBy joining and accessing our channels, you confirm you meet the age and legal requirements of your local jurisdiction.\n\nFor queries or concerns, contact our bot administrator.",
+    "lastUpdated": "2026-11-26",
+    "dialogText": "📜 Terms & Policy\n\nAll content shared is strictly for community members. Distribution or piracy is strictly prohibited. You confirm you meet local age & legal requirements."
+  },
+  "today": {
+    "deliveryMode": "all_in_one",
+    "assignedBot": "bot1",
+    "messages": [
+      {
+        "id": "today_msg_1795614425884",
+        "title": "Drop #1 - Today's Featured Release (Copy)",
+        "status": "active",
+        "viewButtonText": "👁️ View Content",
+        "preview": {
+          "message": "✨ *Today's Exclusive Drop*\n\nHey {username}! Here is today's fresh content drop. Tap the button below to unlock full access!",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *Today's Unlocked Content*\n\nEnjoy today's exclusive release, {username}!\nNew fresh content is posted daily. Check back tomorrow for the next drop!",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-25T13:47:05.884Z",
+        "accessType": "limited"
+      },
+      {
+        "id": "today_msg_1",
+        "title": "Drop #1 - Today's Featured Release",
+        "status": "active",
+        "viewButtonText": "👁️ View Content",
+        "preview": {
+          "message": "✨ *Today's Exclusive Drop*\n\nHey {username}! Here is today's fresh content drop. Tap the button below to unlock full access!",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *Today's Unlocked Content*\n\nEnjoy today's exclusive release, {username}!\nNew fresh content is posted daily. Check back tomorrow for the next drop!",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "permanent",
+          "timer": {
+            "enabled": false,
+            "seconds": 60,
+            "preset": "1min",
+            "warningMessage": ""
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-25T01:26:01.464Z",
+        "accessType": "limited"
+      }
+    ]
+  },
+  "messageLists": [
+    {
+      "id": "list_free",
+      "title": "🎁 /free Community Drops",
+      "command": "free",
+      "deliveryMode": "all_in_one",
+      "targetBot": "bot2",
+      "messages": [
+        {
+          "id": "free_msg_1",
+          "title": "Drop #1 - Official Community Access",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "🎁 *Free Drop #1 - Community Channels*\n\nWelcome {username}! Click below to view the exclusive free content and access links.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🔥 *Unlocked Content #1*\n\nHere is your full unlocked access, {username}!\nMake sure to join our official backup channel for all fresh announcements.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T05:00:00.000Z",
+          "accessType": "normal"
+        },
+        {
+          "id": "free_msg_2",
+          "title": "Drop #2 - Special Flash Video Drop",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "⚡ *Free Drop #2 - Flash Teaser Drop*\n\nHey {username}, tap the button below to view your temporary flash drop!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Unlocked Flash Drop #2*\n\n⚠️ *ATTENTION {username}*: This unlocked content is temporary and will automatically self-destruct in {timer_text}!\n\nSave or view it before the timer runs out.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120,
+              "preset": "2min",
+              "warningMessage": "⏳ *Auto-Delete Warning*: This revealed message will self-destruct in {timer_text}!"
+            },
+            "buttons": [
+              {
+                "id": "btn_f2",
+                "text": "⚡ Instant VIP Access",
+                "type": "url",
+                "url": "https://t.me/avniffanbasebot"
+              }
+            ]
+          },
+          "createdAt": "2026-11-25T05:10:00.000Z",
+          "accessType": "limited"
+        }
+      ]
+    },
+    {
+      "id": "list_btn1",
+      "title": "🔥 Button 1 Drops",
+      "command": "btn1",
+      "deliveryMode": "all_in_one",
+      "targetBot": "bot2",
+      "messages": [
+        {
+          "id": "drop_1795572765955",
+          "title": "Drop #2 - 🔥 Button 1 Drops",
+          "status": "active",
+          "accessType": "limited",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "✨ Drop #2 Preview\n\nTap below to unlock on Bot 2!",
+            "mediaType": "photo",
+            "mediaPath": "assets/welcome_1795573095635.jpg",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 Unlocked Drop #2 on Bot 2!\n\nEnjoy this exclusive release.",
+            "mediaType": "photo",
+            "mediaPath": "assets/welcome_1795572832300.jpg",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T02:12:45.955Z"
+        },
+        {
+          "id": "drop_btn1_1",
+          "title": "Drop #1 - Button 1 Featured Teaser",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "🔥 *Button 1 - Exclusive Drop*\n\nHey {username}! Here is your exclusive Button 1 teaser. Tap below to unlock the full revealed content on our backup bot!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Unlocked Button 1 Content*\n\nWelcome {username}! Here is your secret Button 1 content unlocked via @avnifanbbot.\n\n⚠️ *ATTENTION*: This content is temporary and self-destructs in {timer_text}!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120,
+              "preset": "2min",
+              "warningMessage": "⏳ *Auto-Delete Warning*: This message will self-destruct in {timer_text}!"
+            },
+            "buttons": [
+              {
+                "id": "btn_b1_vip",
+                "text": "⚡ Join VIP Access",
+                "type": "url",
+                "url": "https://t.me/avniffanbasebot"
+              }
+            ]
+          },
+          "createdAt": "2026-11-25T01:47:51.860Z",
+          "accessType": "normal"
+        }
+      ]
+    },
+    {
+      "id": "list_btn2",
+      "title": "⭐ Button 2 Drops",
+      "command": "btn2",
+      "deliveryMode": "all_in_one",
+      "targetBot": "bot2",
+      "messages": [
+        {
+          "id": "drop_btn2_1",
+          "title": "Drop #1 - Button 2 Special Release",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "⭐ *Button 2 - Special Release*\n\nHey {username}! Tap below to view your unlocked content on Bot 2.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "✨ *Unlocked Button 2 Content*\n\nEnjoy this exclusive release, {username}!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T01:47:51.864Z",
+          "accessType": "normal"
+        }
+      ]
+    },
+    {
+      "id": "list_btn3",
+      "title": "💎 Button 3 Drops",
+      "command": "btn3",
+      "deliveryMode": "all_in_one",
+      "targetBot": "bot2",
+      "messages": [
+        {
+          "id": "drop_btn3_1",
+          "title": "Drop #1 - Button 3 Vault",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "💎 *Button 3 - VIP Vault Drop*\n\nHey {username}! Click below to access the vault on Bot 2.",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "💎 *Unlocked Button 3 Vault Content*\n\nFull VIP Access granted, {username}!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60,
+              "preset": "1min",
+              "warningMessage": ""
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T01:47:51.864Z",
+          "accessType": "normal"
+        }
+      ]
+    },
+    {
+      "id": "list_1795573154998",
+      "title": "New Content",
+      "deliveryMode": "all_in_one",
+      "targetBot": "bot2",
+      "messages": [
+        {
+          "id": "drop_1795573638976",
+          "title": "Drop #2 - New Content",
+          "status": "active",
+          "accessType": "limited",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "✨ Drop #2 Preview\n\nTap below to unlock on Bot 2!",
+            "mediaType": "photo",
+            "mediaPath": "assets/welcome_1795573643083.jpg",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 Unlocked Drop #2 on Bot 2!\n\nEnjoy this exclusive release.",
+            "mediaType": "photo",
+            "mediaPath": "assets/welcome_1795573646849.jpg",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T02:27:18.977Z"
+        },
+        {
+          "id": "drop_1795573169649",
+          "title": "Drop #1 - New Content",
+          "status": "active",
+          "accessType": "limited",
+          "viewButtonText": "👁️ View Content",
+          "preview": {
+            "message": "✨ Drop #1 Preview\n\nTap below to unlock on Bot 2!",
+            "mediaType": "photo",
+            "mediaPath": "assets/welcome_1795573173796.jpg",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 Unlocked Drop #1 on Bot 2!\n\nEnjoy this exclusive release.",
+            "mediaType": "photo",
+            "mediaPath": "assets/welcome_1795573176882.jpg",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-25T02:19:29.649Z"
+        }
+      ]
+    }
+  ],
+  "subscriptions": {
+    "enabled": true,
+    "currency": "₹",
+    "qrMode": "dynamic_upi",
+    "customQrPath": "assets/payment_qr.png",
+    "upiId": "avnifanbase@upi",
+    "merchantName": "Avni FanBase VIP",
+    "autoApprove": false,
+    "instructions": "1. Scan the QR code above using any UPI app (GPay, PhonePe, Paytm, BHIM).\n2. Pay the exact amount for your chosen subscription plan.\n3. Send the 12-digit UTR/Transaction ID or payment screenshot here in @avnifanbasepaybot to activate your pass instantly!",
+    "plans": [
+      {
+        "id": "plan_6h",
+        "name": "⚡ 6 Hours Flash VIP",
+        "price": 11,
+        "durationHours": 6,
+        "description": "Instant 6-hour unlimited access to all exclusive content drops.",
+        "badge": "Popular",
+        "linkedContent": "today",
+        "contentTitle": "✨ Today's Content"
+      },
+      {
+        "id": "plan_1w",
+        "name": "🌟 1 Week Full VIP",
+        "price": 99,
+        "durationHours": 168,
+        "description": "Full 7-day unrestricted access to all premium drops.",
+        "badge": "Best Value",
+        "linkedContent": "bbtn_1",
+        "contentTitle": "Most Viewed Vault"
+      },
+      {
+        "id": "plan_1m",
+        "name": "👑 1 Month VIP Pass",
+        "price": 299,
+        "durationHours": 720,
+        "description": "Full 30-day VIP pass with unlimited streaming & downloads.",
+        "badge": "VIP Club",
+        "linkedContent": "all",
+        "contentTitle": "All Content (Full VIP)"
+      }
+    ],
+    "finalBot": {
+      "enabled": true,
+      "username": "avnifanbaseprembot",
+      "url": "https://t.me/avnifanbaseprembot?start=vip",
+      "buttonText": "👑 Access VIP Bot 4 (@avnifanbaseprembot)",
+      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to launch your exclusive VIP Premium Bot:",
+      "shareBot1": true,
+      "bot1ButtonText": "🎬 Open Bot 1 (@avniffanbasebot)",
+      "bot1Url": "https://t.me/avniffanbasebot"
+    },
+    "adminChatId": ""
+  },
+  "bot4": {
+    "bot_name": "Avni FanBase Premium",
+    "username": "avnifanbaseprembot",
+    "welcome": {
+      "useImage": false,
+      "imagePath": "",
+      "message": "👑 *Welcome to Avni FanBase Premium VIP, {username}!*\n\nYou have exclusive VIP access. Enjoy uninterrupted drops, full-speed streaming, and saved content bookmarks.\n\n👇 Use the menu below or browse fresh drops directly!",
+      "buttons": [
+        {
+          "id": "b4_btn_1",
+          "text": "📢 Alerts Channel",
+          "type": "url",
+          "url": "https://t.me/+TxsqlGdFOvk2MzNl"
+        }
+      ],
+      "bottomButtons": [
+        {
+          "id": "b4_bbtn_drops",
+          "text": "🔥 Premium Drops",
+          "type": "drops",
+          "fullWidth": true
+        },
+        {
+          "id": "b4_bbtn_saved",
+          "text": "⭐ Saved Contents",
+          "type": "saved",
+          "fullWidth": false
+        },
+        {
+          "id": "b4_bbtn_plan",
+          "text": "💎 My Subscription",
+          "type": "myplan",
+          "fullWidth": false
+        },
+        {
+          "id": "b4_bbtn_renew",
+          "text": "👑 Renew / Extend Pass",
+          "type": "renew",
+          "fullWidth": false
+        },
+        {
+          "id": "b4_bbtn_help",
+          "text": "❓ Support & Help",
+          "type": "help",
+          "fullWidth": false
+        }
+      ]
+    },
+    "expiryReminder": {
+      "enabled": true,
+      "notifyMinutesBefore": 30,
+      "reminderMessage": "⚠️ *VIP Subscription Reminder*\n\nHey {username}! Your VIP pass will expire in *{time_left}* (at {expiry_time}).\n\nRenew your plan now to avoid losing access to premium drops!",
+      "reminderAutoDeleteSeconds": 300,
+      "onExpireMessage": "🔒 *VIP Subscription Expired*\n\nHey {username}, your VIP Access pass has just expired!\n\nUpgrade or renew your subscription to continue enjoying exclusive drops.",
+      "onExpireAutoDeleteSeconds": 0
+    },
+    "dropBatchLimit": 10,
+    "nonSubscriberGate": {
+      "message": "🔒 *VIP Access Restricted*\n\nHello {username}!\nThis bot is strictly reserved for **VIP Subscribed Members**.\n\nPlease subscribe to an active VIP plan to unlock unlimited drops and bookmarking features!",
+      "subscribeButtonText": "💎 View VIP Plans & Pay",
+      "subscribeUrl": "https://t.me/avnifanbasepaybot?start=plans"
+    },
+    "messages": [
+      {
+        "id": "prem_drop_1",
+        "title": "VIP Drop #01 - 4K Ultra HD Exclusive Premiere (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #01 - 4K Ultra HD Exclusive Premiere (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #01. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #01 - 4K Ultra HD Exclusive Premiere (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T09:59:19.540Z"
+      },
+      {
+        "id": "prem_drop_2",
+        "title": "VIP Drop #02 - Midnight Studio Vault (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #02 - Midnight Studio Vault (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #02. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #02 - Midnight Studio Vault (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:00:19.540Z"
+      },
+      {
+        "id": "prem_drop_3",
+        "title": "VIP Drop #03 - Golden Edition Director Cut (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #03 - Golden Edition Director Cut (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #03. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #03 - Golden Edition Director Cut (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:01:19.540Z"
+      },
+      {
+        "id": "prem_drop_4",
+        "title": "VIP Drop #04 - Private Unreleased Reel (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #04 - Private Unreleased Reel (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #04. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #04 - Private Unreleased Reel (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:02:19.540Z"
+      },
+      {
+        "id": "prem_drop_5",
+        "title": "VIP Drop #05 - VIP Backstage Spotlight (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #05 - VIP Backstage Spotlight (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #05. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #05 - VIP Backstage Spotlight (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:03:19.540Z"
+      },
+      {
+        "id": "prem_drop_6",
+        "title": "VIP Drop #06 - Diamond Member Vault (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #06 - Diamond Member Vault (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #06. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #06 - Diamond Member Vault (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:04:19.540Z"
+      },
+      {
+        "id": "prem_drop_7",
+        "title": "VIP Drop #07 - Sensational Sunset Session (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #07 - Sensational Sunset Session (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #07. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #07 - Sensational Sunset Session (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:05:19.540Z"
+      },
+      {
+        "id": "prem_drop_8",
+        "title": "VIP Drop #08 - Behind-The-Scenes Raw Cut (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #08 - Behind-The-Scenes Raw Cut (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #08. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #08 - Behind-The-Scenes Raw Cut (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:06:19.540Z"
+      },
+      {
+        "id": "prem_drop_9",
+        "title": "VIP Drop #09 - Exclusive After-Hours Reel (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #09 - Exclusive After-Hours Reel (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #09. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #09 - Exclusive After-Hours Reel (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:07:19.540Z"
+      },
+      {
+        "id": "prem_drop_10",
+        "title": "VIP Drop #10 - Platinum Hall of Fame Drop (Premiere Edition)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #10 - Platinum Hall of Fame Drop (Premiere Edition)*\n\nHey {username}! Welcome to exclusive release #10. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #10 - Platinum Hall of Fame Drop (Premiere Edition) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:08:19.540Z"
+      },
+      {
+        "id": "prem_drop_11",
+        "title": "VIP Drop #11 - 4K Ultra HD Exclusive Premiere (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #11 - 4K Ultra HD Exclusive Premiere (Special Archive)*\n\nHey {username}! Welcome to exclusive release #11. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #11 - 4K Ultra HD Exclusive Premiere (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:09:19.540Z"
+      },
+      {
+        "id": "prem_drop_12",
+        "title": "VIP Drop #12 - Midnight Studio Vault (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #12 - Midnight Studio Vault (Special Archive)*\n\nHey {username}! Welcome to exclusive release #12. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #12 - Midnight Studio Vault (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:10:19.540Z"
+      },
+      {
+        "id": "prem_drop_13",
+        "title": "VIP Drop #13 - Golden Edition Director Cut (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #13 - Golden Edition Director Cut (Special Archive)*\n\nHey {username}! Welcome to exclusive release #13. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #13 - Golden Edition Director Cut (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:11:19.540Z"
+      },
+      {
+        "id": "prem_drop_14",
+        "title": "VIP Drop #14 - Private Unreleased Reel (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #14 - Private Unreleased Reel (Special Archive)*\n\nHey {username}! Welcome to exclusive release #14. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #14 - Private Unreleased Reel (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:12:19.540Z"
+      },
+      {
+        "id": "prem_drop_15",
+        "title": "VIP Drop #15 - VIP Backstage Spotlight (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #15 - VIP Backstage Spotlight (Special Archive)*\n\nHey {username}! Welcome to exclusive release #15. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #15 - VIP Backstage Spotlight (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:13:19.540Z"
+      },
+      {
+        "id": "prem_drop_16",
+        "title": "VIP Drop #16 - Diamond Member Vault (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #16 - Diamond Member Vault (Special Archive)*\n\nHey {username}! Welcome to exclusive release #16. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #16 - Diamond Member Vault (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:14:19.540Z"
+      },
+      {
+        "id": "prem_drop_17",
+        "title": "VIP Drop #17 - Sensational Sunset Session (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #17 - Sensational Sunset Session (Special Archive)*\n\nHey {username}! Welcome to exclusive release #17. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #17 - Sensational Sunset Session (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:15:19.540Z"
+      },
+      {
+        "id": "prem_drop_18",
+        "title": "VIP Drop #18 - Behind-The-Scenes Raw Cut (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #18 - Behind-The-Scenes Raw Cut (Special Archive)*\n\nHey {username}! Welcome to exclusive release #18. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #18 - Behind-The-Scenes Raw Cut (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:16:19.540Z"
+      },
+      {
+        "id": "prem_drop_19",
+        "title": "VIP Drop #19 - Exclusive After-Hours Reel (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #19 - Exclusive After-Hours Reel (Special Archive)*\n\nHey {username}! Welcome to exclusive release #19. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #19 - Exclusive After-Hours Reel (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:17:19.540Z"
+      },
+      {
+        "id": "prem_drop_20",
+        "title": "VIP Drop #20 - Platinum Hall of Fame Drop (Special Archive)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #20 - Platinum Hall of Fame Drop (Special Archive)*\n\nHey {username}! Welcome to exclusive release #20. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #20 - Platinum Hall of Fame Drop (Special Archive) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:18:19.540Z"
+      },
+      {
+        "id": "prem_drop_21",
+        "title": "VIP Drop #21 - 4K Ultra HD Exclusive Premiere (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #21 - 4K Ultra HD Exclusive Premiere (Extended Version)*\n\nHey {username}! Welcome to exclusive release #21. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #21 - 4K Ultra HD Exclusive Premiere (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:19:19.540Z"
+      },
+      {
+        "id": "prem_drop_22",
+        "title": "VIP Drop #22 - Midnight Studio Vault (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #22 - Midnight Studio Vault (Extended Version)*\n\nHey {username}! Welcome to exclusive release #22. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #22 - Midnight Studio Vault (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:20:19.540Z"
+      },
+      {
+        "id": "prem_drop_23",
+        "title": "VIP Drop #23 - Golden Edition Director Cut (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #23 - Golden Edition Director Cut (Extended Version)*\n\nHey {username}! Welcome to exclusive release #23. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #23 - Golden Edition Director Cut (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:21:19.540Z"
+      },
+      {
+        "id": "prem_drop_24",
+        "title": "VIP Drop #24 - Private Unreleased Reel (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #24 - Private Unreleased Reel (Extended Version)*\n\nHey {username}! Welcome to exclusive release #24. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #24 - Private Unreleased Reel (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:22:19.540Z"
+      },
+      {
+        "id": "prem_drop_25",
+        "title": "VIP Drop #25 - VIP Backstage Spotlight (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #25 - VIP Backstage Spotlight (Extended Version)*\n\nHey {username}! Welcome to exclusive release #25. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #25 - VIP Backstage Spotlight (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:23:19.540Z"
+      },
+      {
+        "id": "prem_drop_26",
+        "title": "VIP Drop #26 - Diamond Member Vault (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #26 - Diamond Member Vault (Extended Version)*\n\nHey {username}! Welcome to exclusive release #26. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #26 - Diamond Member Vault (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:24:19.540Z"
+      },
+      {
+        "id": "prem_drop_27",
+        "title": "VIP Drop #27 - Sensational Sunset Session (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #27 - Sensational Sunset Session (Extended Version)*\n\nHey {username}! Welcome to exclusive release #27. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #27 - Sensational Sunset Session (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:25:19.540Z"
+      },
+      {
+        "id": "prem_drop_28",
+        "title": "VIP Drop #28 - Behind-The-Scenes Raw Cut (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #28 - Behind-The-Scenes Raw Cut (Extended Version)*\n\nHey {username}! Welcome to exclusive release #28. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #28 - Behind-The-Scenes Raw Cut (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:26:19.540Z"
+      },
+      {
+        "id": "prem_drop_29",
+        "title": "VIP Drop #29 - Exclusive After-Hours Reel (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #29 - Exclusive After-Hours Reel (Extended Version)*\n\nHey {username}! Welcome to exclusive release #29. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #29 - Exclusive After-Hours Reel (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:27:19.540Z"
+      },
+      {
+        "id": "prem_drop_30",
+        "title": "VIP Drop #30 - Platinum Hall of Fame Drop (Extended Version)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #30 - Platinum Hall of Fame Drop (Extended Version)*\n\nHey {username}! Welcome to exclusive release #30. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #30 - Platinum Hall of Fame Drop (Extended Version) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:28:19.540Z"
+      },
+      {
+        "id": "prem_drop_31",
+        "title": "VIP Drop #31 - 4K Ultra HD Exclusive Premiere (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #31 - 4K Ultra HD Exclusive Premiere (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #31. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #31 - 4K Ultra HD Exclusive Premiere (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:29:19.540Z"
+      },
+      {
+        "id": "prem_drop_32",
+        "title": "VIP Drop #32 - Midnight Studio Vault (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #32 - Midnight Studio Vault (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #32. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #32 - Midnight Studio Vault (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:30:19.540Z"
+      },
+      {
+        "id": "prem_drop_33",
+        "title": "VIP Drop #33 - Golden Edition Director Cut (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #33 - Golden Edition Director Cut (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #33. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #33 - Golden Edition Director Cut (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:31:19.540Z"
+      },
+      {
+        "id": "prem_drop_34",
+        "title": "VIP Drop #34 - Private Unreleased Reel (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #34 - Private Unreleased Reel (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #34. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #34 - Private Unreleased Reel (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:32:19.540Z"
+      },
+      {
+        "id": "prem_drop_35",
+        "title": "VIP Drop #35 - VIP Backstage Spotlight (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #35 - VIP Backstage Spotlight (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #35. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #35 - VIP Backstage Spotlight (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:33:19.540Z"
+      },
+      {
+        "id": "prem_drop_36",
+        "title": "VIP Drop #36 - Diamond Member Vault (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #36 - Diamond Member Vault (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #36. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #36 - Diamond Member Vault (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:34:19.540Z"
+      },
+      {
+        "id": "prem_drop_37",
+        "title": "VIP Drop #37 - Sensational Sunset Session (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #37 - Sensational Sunset Session (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #37. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #37 - Sensational Sunset Session (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:35:19.540Z"
+      },
+      {
+        "id": "prem_drop_38",
+        "title": "VIP Drop #38 - Behind-The-Scenes Raw Cut (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #38 - Behind-The-Scenes Raw Cut (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #38. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #38 - Behind-The-Scenes Raw Cut (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:36:19.540Z"
+      },
+      {
+        "id": "prem_drop_39",
+        "title": "VIP Drop #39 - Exclusive After-Hours Reel (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #39 - Exclusive After-Hours Reel (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #39. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #39 - Exclusive After-Hours Reel (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:37:19.540Z"
+      },
+      {
+        "id": "prem_drop_40",
+        "title": "VIP Drop #40 - Platinum Hall of Fame Drop (Collector Selection)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #40 - Platinum Hall of Fame Drop (Collector Selection)*\n\nHey {username}! Welcome to exclusive release #40. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #40 - Platinum Hall of Fame Drop (Collector Selection) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:38:19.540Z"
+      },
+      {
+        "id": "prem_drop_41",
+        "title": "VIP Drop #41 - 4K Ultra HD Exclusive Premiere (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #41 - 4K Ultra HD Exclusive Premiere (Director Vault)*\n\nHey {username}! Welcome to exclusive release #41. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #41 - 4K Ultra HD Exclusive Premiere (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:39:19.540Z"
+      },
+      {
+        "id": "prem_drop_42",
+        "title": "VIP Drop #42 - Midnight Studio Vault (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #42 - Midnight Studio Vault (Director Vault)*\n\nHey {username}! Welcome to exclusive release #42. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #42 - Midnight Studio Vault (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:40:19.540Z"
+      },
+      {
+        "id": "prem_drop_43",
+        "title": "VIP Drop #43 - Golden Edition Director Cut (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #43 - Golden Edition Director Cut (Director Vault)*\n\nHey {username}! Welcome to exclusive release #43. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #43 - Golden Edition Director Cut (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:41:19.540Z"
+      },
+      {
+        "id": "prem_drop_44",
+        "title": "VIP Drop #44 - Private Unreleased Reel (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #44 - Private Unreleased Reel (Director Vault)*\n\nHey {username}! Welcome to exclusive release #44. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #44 - Private Unreleased Reel (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:42:19.540Z"
+      },
+      {
+        "id": "prem_drop_45",
+        "title": "VIP Drop #45 - VIP Backstage Spotlight (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #45 - VIP Backstage Spotlight (Director Vault)*\n\nHey {username}! Welcome to exclusive release #45. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #45 - VIP Backstage Spotlight (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:43:19.540Z"
+      },
+      {
+        "id": "prem_drop_46",
+        "title": "VIP Drop #46 - Diamond Member Vault (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #46 - Diamond Member Vault (Director Vault)*\n\nHey {username}! Welcome to exclusive release #46. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #46 - Diamond Member Vault (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:44:19.540Z"
+      },
+      {
+        "id": "prem_drop_47",
+        "title": "VIP Drop #47 - Sensational Sunset Session (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #47 - Sensational Sunset Session (Director Vault)*\n\nHey {username}! Welcome to exclusive release #47. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #47 - Sensational Sunset Session (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:45:19.540Z"
+      },
+      {
+        "id": "prem_drop_48",
+        "title": "VIP Drop #48 - Behind-The-Scenes Raw Cut (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #48 - Behind-The-Scenes Raw Cut (Director Vault)*\n\nHey {username}! Welcome to exclusive release #48. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #48 - Behind-The-Scenes Raw Cut (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:46:19.540Z"
+      },
+      {
+        "id": "prem_drop_49",
+        "title": "VIP Drop #49 - Exclusive After-Hours Reel (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #49 - Exclusive After-Hours Reel (Director Vault)*\n\nHey {username}! Welcome to exclusive release #49. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #49 - Exclusive After-Hours Reel (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:47:19.540Z"
+      },
+      {
+        "id": "prem_drop_50",
+        "title": "VIP Drop #50 - Platinum Hall of Fame Drop (Director Vault)",
+        "status": "active",
+        "viewButtonText": "👁️ View Premium Content",
+        "preview": {
+          "message": "💎 *VIP Drop #50 - Platinum Hall of Fame Drop (Director Vault)*\n\nHey {username}! Welcome to exclusive release #50. This is an ultra-premium release prepared specially for our active VIP community.\n\n👇 Tap below to unlock full ultra-HD content:",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⚠️ This exclusive preview self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "revealedContent": {
+          "message": "🎬 *VIP Drop #50 - Platinum Hall of Fame Drop (Director Vault) [UNLOCKED]*\n\nEnjoy this exclusive premium VIP release, {username}!\n\n⭐️ *VIP Perks Active:* No daily limits, ultra-fast streaming & private viewing.\n\n👇 Tap *Save Content* below to bookmark this release permanently into your private saved vault.",
+          "mediaType": "none",
+          "mediaPath": "",
+          "mediaUrl": "",
+          "type": "temporary",
+          "timer": {
+            "enabled": true,
+            "seconds": 120,
+            "preset": "2min",
+            "warningMessage": "⏳ Unlocked VIP drop self-destructs in {timer_text}!"
+          },
+          "buttons": []
+        },
+        "createdAt": "2026-11-26T10:48:19.540Z"
+      }
+    ]
   }
 }
