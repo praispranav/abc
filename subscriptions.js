@@ -3,13 +3,22 @@ import path from 'path';
 import { Markup } from 'telegraf';
 import QRCode from 'qrcode';
 import { IS_TENANT, ROOT, botUsername } from './tenant.js';
+import { sendAdminAlert } from './alertBot.js';
 
 const SUBS_DATA_FILE = path.join(ROOT, 'data', 'subscriptions.json');
 
 // Ensure data file exists
 export function getSubscriptionsData() {
   try {
+    const backupFile = path.join(path.dirname(SUBS_DATA_FILE), 'subscriptions.backup.json');
     if (!fs.existsSync(SUBS_DATA_FILE)) {
+      if (fs.existsSync(backupFile)) {
+        try {
+          const bData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
+          fs.writeFileSync(SUBS_DATA_FILE, JSON.stringify(bData, null, 2), 'utf8');
+          return bData;
+        } catch (_) {}
+      }
       const initial = { subscriptions: {}, pendingPayments: [], paymentHistory: [], savedContent: {} };
       fs.mkdirSync(path.dirname(SUBS_DATA_FILE), { recursive: true });
       fs.writeFileSync(SUBS_DATA_FILE, JSON.stringify(initial, null, 2), 'utf8');
@@ -18,6 +27,21 @@ export function getSubscriptionsData() {
     const raw = fs.readFileSync(SUBS_DATA_FILE, 'utf8');
     const parsed = JSON.parse(raw);
     if (!parsed.savedContent) parsed.savedContent = {};
+    if ((!parsed.subscriptions || Object.keys(parsed.subscriptions).length === 0) && fs.existsSync(backupFile)) {
+      try {
+        const bData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
+        if (bData.subscriptions && Object.keys(bData.subscriptions).length > 0) {
+          parsed.subscriptions = bData.subscriptions;
+          if (bData.pendingPayments && (!parsed.pendingPayments || parsed.pendingPayments.length === 0)) {
+            parsed.pendingPayments = bData.pendingPayments;
+          }
+          if (bData.paymentHistory && (!parsed.paymentHistory || parsed.paymentHistory.length === 0)) {
+            parsed.paymentHistory = bData.paymentHistory;
+          }
+          fs.writeFileSync(SUBS_DATA_FILE, JSON.stringify(parsed, null, 2), 'utf8');
+        }
+      } catch (_) {}
+    }
     return parsed;
   } catch (err) {
     console.error('[Subscriptions] Error reading subscriptions data:', err.message);
@@ -124,7 +148,10 @@ export function markExpiredSent(userId) {
 export function saveSubscriptionsData(data) {
   try {
     fs.mkdirSync(path.dirname(SUBS_DATA_FILE), { recursive: true });
-    fs.writeFileSync(SUBS_DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+    const content = JSON.stringify(data, null, 2);
+    fs.writeFileSync(SUBS_DATA_FILE, content, 'utf8');
+    const backupFile = path.join(path.dirname(SUBS_DATA_FILE), 'subscriptions.backup.json');
+    fs.writeFileSync(backupFile, content, 'utf8');
     return true;
   } catch (err) {
     console.error('[Subscriptions] Error saving subscriptions data:', err.message);
@@ -314,7 +341,7 @@ export function checkUserVipSubscription(userId, requiredContentType = 'any') {
   };
 }
 
-const PAY_BOT_USERNAME = botUsername(3);
+const PAY_BOT_USERNAME = botUsername(1);
 const CHECKOUT_TTL_MS = 60 * 60 * 1000;
 const botRegistry = new Map(); // username -> Telegraf instance
 
@@ -338,6 +365,22 @@ function startCheckout(ctx, plan) {
     timestamp: Date.now()
   };
   userPaymentStates.set(String(ctx.from.id), checkout);
+
+  try {
+    sendAdminAlert('purchase_attempt', {
+      user: ctx.from,
+      userId: String(ctx.from?.id),
+      username: ctx.from?.username ? `@${ctx.from.username}` : '',
+      fullName: `${ctx.from?.first_name || ''} ${ctx.from?.last_name || ''}`.trim() || ctx.from?.username || 'User',
+      plan,
+      planName: plan.name,
+      price: plan.price,
+      durationHours: plan.durationHours,
+      orderRef: checkout.orderRef,
+      sourceBot: checkout.sourceBot
+    });
+  } catch (_) {}
+
   return checkout;
 }
 
@@ -381,15 +424,24 @@ async function buildPaymentQr(plan, subCfg, orderRef) {
 // Display Plan Details, QR Code, and open a checkout that accepts proof straight away
 export async function sendPlanQrAndInstructions(ctx, planId, getConfig, formatTelegramHtml) {
   const subCfg = getConfig().subscriptions || {};
-  const plan = (subCfg.plans || []).find((p) => p.id === planId);
   const backButton = Markup.inlineKeyboard([[Markup.button.callback('« All Plans', 'open_vip_plans')]]);
+
+  // Clean and find plan flexibly across prefixes (plan_1w, plan_plan_1w, 1w)
+  const cleanId = String(planId || '').trim();
+  const plan = (subCfg.plans || []).find((p) =>
+    p.id === cleanId ||
+    p.id === cleanId.replace(/^plan_plan_/, 'plan_') ||
+    cleanId === `plan_${p.id}` ||
+    cleanId.replace(/^plan_/, '') === p.id.replace(/^plan_/, '')
+  );
 
   if (subCfg.enabled === false) {
     return ctx.reply('🔒 VIP Subscriptions are currently paused. Please check back later!');
   }
   // Never fall back to a different plan: the user would be charged the wrong amount.
   if (!plan) {
-    return ctx.reply('❌ That plan is no longer available.', backButton);
+    await ctx.reply('❌ That plan is no longer available. Here are our active VIP plans:');
+    return await handlePlansCommand(ctx, getConfig, formatTelegramHtml);
   }
 
   const userId = ctx.from?.id ? String(ctx.from.id) : null;
@@ -475,7 +527,11 @@ export async function sendPlanQrAndInstructions(ctx, planId, getConfig, formatTe
   } catch (err) {
     console.warn('[Subscriptions] Rich QR caption rejected, retrying plain:', err.message);
     const plain = caption.replace(/<[^>]+>/g, '');
-    sent = await ctx.replyWithPhoto({ source: qr.source }, { caption: plain.slice(0, 1024), ...backButton });
+    try {
+      sent = await ctx.replyWithPhoto({ source: qr.source }, { caption: plain.slice(0, 1024), ...backButton });
+    } catch (err2) {
+      console.warn('Could not send QR photo:', err2.message);
+    }
   }
 
   if (qrTimerSeconds > 0 && sent && sent.message_id && ctx.chat?.id) {
@@ -527,7 +583,11 @@ export async function handleResendVipLink(ctx, getConfig, formatTelegramHtml) {
   try {
     sent = await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
   } catch (_) {
-    sent = await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    try {
+      sent = await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    } catch (err2) {
+      console.warn('Could not send myplan message:', err2.message);
+    }
   }
 
   if (sent && sent.message_id && ctx.chat?.id) {
@@ -543,18 +603,27 @@ export async function handleResendVipLink(ctx, getConfig, formatTelegramHtml) {
 
 // Smart VIP Plans Browser: filters out lower tiers if user already has 1-Month All-Access VIP
 export async function handlePlansCommand(ctx, getConfig, formatTelegramHtml) {
-  const payload = (ctx.startPayload || '').trim();
-  if (payload.startsWith('plan_')) {
-    return await sendPlanQrAndInstructions(ctx, payload, getConfig, formatTelegramHtml);
-  }
-
   const config = typeof getConfig === 'function' ? getConfig() : readConfigFile();
   const subCfg = config.subscriptions || {};
+  const plans = subCfg.plans || [];
+
+  const payload = (ctx.startPayload || '').trim();
+  if (payload.startsWith('plan_')) {
+    const cleanPayload = payload.replace(/^plan_plan_/, 'plan_');
+    const matched = plans.find((p) =>
+      p.id === cleanPayload ||
+      p.id === payload ||
+      cleanPayload === `plan_${p.id}` ||
+      cleanPayload.replace(/^plan_/, '') === p.id.replace(/^plan_/, '')
+    );
+    if (matched) {
+      return await sendPlanQrAndInstructions(ctx, matched.id, getConfig, formatTelegramHtml);
+    }
+  }
   if (subCfg.enabled === false) {
     return ctx.reply('🔒 VIP Subscriptions are currently paused. Please check back later!');
   }
 
-  const plans = subCfg.plans || [];
   if (plans.length === 0) {
     return ctx.reply('📭 No subscription plans configured at the moment.');
   }
@@ -635,49 +704,41 @@ export async function handlePlansCommand(ctx, getConfig, formatTelegramHtml) {
   }
 
   // SCENARIO 3: User has NO active subscription
-  let text = `👑 *Avni FanBase VIP Subscription Plans*\n\n`;
-  text += `Choose a content pass linked to your favorite drops, or get the **All-Access VIP** pass to unlock everything!\n\n`;
+  let text = `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄VIP Plans & Passes࿐ 🌸 ━━━━━━━\n:- Membership : Exclusive VIP Access\n\n`;
+  text += `<blockquote>🎀 <b>AVNI FANBASE VIP PASS</b>\nChoose a pass below to unlock unlimited video drops, high-speed streaming, and permanent video bookmarking!</blockquote>\n\n`;
 
   const allAccess = plans.filter((p) => p.linkedContent === 'all' || !p.linkedContent);
   const contentSpecific = plans.filter((p) => p.linkedContent && p.linkedContent !== 'all');
 
   if (allAccess.length > 0) {
-    text += `🌐 *ALL-ACCESS PASS (Unlocks All Content & VIP Bot 4):*\n`;
     allAccess.forEach((p) => {
       const dur = formatDurationLabel(p.durationHours);
       const badge = p.badge ? ` [${p.badge}]` : '';
-      text += `• *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n`;
-      if (p.description) text += `  ${p.description}\n`;
+      text += `<blockquote>👑 <b>${p.name}</b>${badge} — <b>${curr}${p.price}</b> (${dur})\n• Access: <b>🌐 All Drops & Demo Bot VIP</b>\n• Perks: <i>${p.description || 'Full unrestricted access to all vault drops & saved library.'}</i></blockquote>\n\n`;
     });
-    text += `\n`;
   }
 
   if (contentSpecific.length > 0) {
-    text += `📁 *CONTENT-SPECIFIC PASSES (Linked with Bottom Buttons):*\n`;
     contentSpecific.forEach((p) => {
       const dur = formatDurationLabel(p.durationHours);
       const badge = p.badge ? ` [${p.badge}]` : '';
       const target = p.contentTitle || p.linkedContent;
-      text += `• *${p.name}*${badge} — *${curr}${p.price}* (${dur})\n`;
-      text += `  🎯 *Unlocks:* ${target}\n`;
-      if (p.description) text += `  ${p.description}\n`;
+      text += `<blockquote>💖 <b>${p.name}</b>${badge} — <b>${curr}${p.price}</b> (${dur})\n• Unlocks: <b>🎯 ${target}</b>\n• Perks: <i>${p.description || 'Instant unlimited access to this drop collection.'}</i></blockquote>\n\n`;
     });
-    text += `\n`;
   }
 
-  text += `👇 Select a plan below to view UPI QR Code & pay:`;
+  text += `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄Instant UPI Checkout࿐ 🌸 ━━━━━━━\n<blockquote>👇 <i>Tap your preferred plan button below to open instant UPI QR checkout:</i></blockquote>`;
 
   // Configurable plans menu auto-delete timer (default: 10 minutes = 600s)
   const plansTimerSeconds = subCfg.plansAutoDeleteSeconds !== undefined ? Number(subCfg.plansAutoDeleteSeconds) : 600;
   if (plansTimerSeconds > 0) {
     const durText = plansTimerSeconds >= 60 ? `${Math.round(plansTimerSeconds / 60)} minutes` : `${plansTimerSeconds} seconds`;
-    text += `\n\n⏱️ _This plans menu will automatically self-destruct in ${durText}._`;
+    text += `\n\n⏱️ <i>This plans menu will automatically self-destruct in ${durText}.</i>`;
   }
 
   const buttons = plans.map((p) => {
     const dur = formatDurationLabel(p.durationHours);
-    const tag = p.contentTitle ? ` [${p.contentTitle}]` : '';
-    return [Markup.button.callback(`${p.name} — ${curr}${p.price}${tag}`, `buy_plan_${p.id}`)];
+    return [Markup.button.callback(`💳 ${p.name} — ${curr}${p.price} (${dur})`, `buy_plan_${p.id}`)];
   });
 
   buttons.push([Markup.button.callback('🔍 Check My Subscription Status', 'check_my_plan')]);
@@ -687,11 +748,12 @@ export async function handlePlansCommand(ctx, getConfig, formatTelegramHtml) {
   let sent;
   try {
     sent = await ctx.reply(fmt(text), { parse_mode: 'HTML', ...keyboard });
-  } catch (_) {
+  } catch (err1) {
     try {
-      sent = await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
-    } catch (_) {
-      sent = await ctx.reply(text, keyboard);
+      const plain = text.replace(/<[^>]+>/g, '');
+      sent = await ctx.reply(plain, keyboard);
+    } catch (err2) {
+      console.warn('Could not send plans message:', err2.message);
     }
   }
 
@@ -718,10 +780,23 @@ export function setupSubscriptionBotHandlers(bot, botLabel, getConfig, formatTel
   // Deep links from other bots: ?start=plan_<id>, ?start=plans, ?start=subscribe
   bot.start(async (ctx, next) => {
     const payload = (ctx.startPayload || '').trim();
-    if (payload.startsWith('plan_')) {
-      return sendPlanQrAndInstructions(ctx, payload, getConfig, formatTelegramHtml);
+    if (payload) {
+      if (payload === 'plans' || payload === 'subscribe') return onPlans(ctx);
+      if (payload === 'myplan' || payload === 'status') return handleMyPlanCommand(ctx);
+      if (payload === 'vip') return handleResendVipLink(ctx, getConfig, formatTelegramHtml);
+
+      // Check if payload matches any plan ID (flexible matching for plan_1w, plan_plan_1w, 1w)
+      const cleanPayload = payload.replace(/^plan_plan_/, 'plan_');
+      const matchedPlan = (getConfig().subscriptions?.plans || []).find((p) =>
+        p.id === cleanPayload ||
+        p.id === payload ||
+        cleanPayload === `plan_${p.id}` ||
+        cleanPayload.replace(/^plan_/, '') === p.id.replace(/^plan_/, '')
+      );
+      if (matchedPlan) {
+        return sendPlanQrAndInstructions(ctx, matchedPlan.id, getConfig, formatTelegramHtml);
+      }
     }
-    if (payload === 'plans' || payload === 'subscribe') return onPlans(ctx);
     return next();
   });
 
@@ -900,15 +975,15 @@ export function getFinalBotConfig(config = readConfigFile()) {
   const subCfg = config?.subscriptions || {};
   const b3Cfg = config?.bot3 || {};
   const fb = subCfg.finalBot || b3Cfg.finalBot || {};
-  const bot4Username = config?.bot4?.username || 'avnifanbaseprembot';
+  const bot2Username = config?.bot2?.username || 'avnifanbbot';
   return {
     enabled: fb.enabled !== false,
-    username: fb.username || bot4Username,
-    url: fb.url || `https://t.me/${bot4Username}?start=vip`,
-    buttonText: fb.buttonText || '👑 Access VIP Premium Subscription',
+    username: fb.username || bot2Username,
+    url: fb.url || `https://t.me/${bot2Username}?start=vip`,
+    buttonText: fb.buttonText || `🎬 Access Content in Demo Bot (@${bot2Username})`,
     message: fb.message || '',
-    shareBot1: fb.shareBot1 === true, // Default to FALSE - do not show Bot 1 button
-    bot1ButtonText: fb.bot1ButtonText || '🎬 Open VIP Portal',
+    shareBot1: fb.shareBot1 !== false, // Show Bot 1 so user can easily toggle between bots
+    bot1ButtonText: fb.bot1ButtonText || '✨ Explore Drops in Bot 1',
     bot1Url: fb.bot1Url || 'https://t.me/avniffanbasebot'
   };
 }
@@ -950,7 +1025,7 @@ async function notifyMember(payment, html, extra = {}) {
 
 // One verification card for the admin, with everything needed to match the bank entry
 async function notifyAdmin(payment, subCfg) {
-  const adminChatId = subCfg.adminChatId;
+  const adminChatId = subCfg.adminChatId || process.env.ADMIN_CHAT_ID || '5459778091';
   if (!adminChatId) {
     console.warn(`[Subscriptions] No Admin Chat ID set. Approve ${payment.orderRef} from the dashboard.`);
     return;
@@ -1033,6 +1108,9 @@ async function submitPaymentProof(ctx, checkout, proof, getConfig) {
     { parse_mode: 'HTML' }
   );
   await notifyAdmin(paymentEntry, subCfg);
+  try {
+    sendAdminAlert('payment_proof', paymentEntry);
+  } catch (_) {}
 }
 
 const newPaymentId = () => `PAY_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -1175,7 +1253,8 @@ export async function approveSubscriptionPayment(paymentId, approverName = 'Admi
       .replace(/{duration}/g, formatDurationLabel(durationHours))
       .replace(/{expiry_date}/g, expiryDate)
       .replace(/{username}/g, escapeHtml(payment.username || 'VIP Member'))
-      .replace(/{bot_name}/g, escapeHtml(fb.username || 'VIP'));
+      .replace(/{bot_name}/g, escapeHtml(fb.username || 'VIP'))
+      .replace(/{bot_link}/g, `<a href="${fb.url}">@${escapeHtml(fb.username)}</a>`);
   } else {
     html = [
       '🎉 <b>Payment approved. Your VIP access is active!</b>',
@@ -1185,7 +1264,9 @@ export async function approveSubscriptionPayment(paymentId, approverName = 'Admi
       `Added: <b>${formatDurationLabel(durationHours)}</b>`,
       `Valid until: <b>${expiryDate}</b>`,
       '',
-      '👇 Tap below to access your VIP Premium Subscription:'
+      `🎬 <b>Demo Content Bot:</b> <a href="${fb.url}">@${escapeHtml(fb.username)}</a>`,
+      '',
+      `👇 Tap below to launch your exclusive content in Demo Bot (@${escapeHtml(fb.username)}):`
     ].join('\n');
   }
 
@@ -1214,6 +1295,11 @@ export async function approveSubscriptionPayment(paymentId, approverName = 'Admi
     }, approvalTimerSeconds * 1000);
   }
 
+  // Notify admin alert bot
+  try {
+    sendAdminAlert('payment_approved', { payment, expiresAt, approvedBy: approverName });
+  } catch (_) {}
+
   return { success: true, payment, expiresAt, notified: !!notifyRes?.success };
 }
 
@@ -1235,6 +1321,11 @@ export async function rejectSubscriptionPayment(paymentId, reason) {
   const html = `❌ <b>Payment not verified</b>\n\nOrder ref: <code>${escapeHtml(payment.orderRef || payment.id)}</code>\nReason: ${escapeHtml(payment.rejectReason)}\n\nIf you did pay, contact support with this reference.`;
   const retry = Markup.inlineKeyboard([[Markup.button.callback('💎 Try Again', 'open_vip_plans')]]);
   const notified = await notifyMember(payment, html, retry);
+
+  // Notify admin alert bot
+  try {
+    sendAdminAlert('payment_rejected', { payment, reason });
+  } catch (_) {}
 
   return { success: true, payment, notified };
 }
@@ -1395,32 +1486,29 @@ export async function sendContentLockedPaywall(ctx, btn, contentType, getConfig,
     ? [...specificPlans, ...allAccessPlans]
     : plans;
 
-  let text = `🔒 *VIP Subscription Required: ${contentTitle}*\n\n`;
-  text += `Hey ${username}! Content drops under *${contentTitle}* are exclusively reserved for active VIP members.\n\n`;
-  text += `👇 *Choose a plan below to unlock instant access:*\n\n`;
+  let text = `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄VIP Required࿐ 🌸 ━━━━━━━\n:- Collection : ${contentTitle}\n\n`;
+  text += `<blockquote>🎀 <b>VIP SUBSCRIPTION REQUIRED</b>\nHey ${username}! Content drops under <b>${contentTitle}</b> are exclusively reserved for active VIP members.</blockquote>\n\n`;
 
   eligiblePlans.forEach((p, idx) => {
     const dur = formatDurationLabel(p.durationHours);
     const badge = p.badge ? ` [${p.badge}]` : '';
-    const unlocks = (p.linkedContent || 'all') === 'all' ? '🌐 All Content & VIP Bot 4' : `🎯 ${p.contentTitle || contentTitle}`;
-    text += `*${idx + 1}. ${p.name}*${badge}\n`;
-    text += `• Price: *${curr}${p.price}* (${dur})\n`;
-    text += `• Access: *${unlocks}*\n\n`;
+    const unlocks = (p.linkedContent || 'all') === 'all' ? '🌐 All Content & Demo Bot VIP' : `🎯 ${p.contentTitle || contentTitle}`;
+    text += `<blockquote>💖 <b>${idx + 1}. ${p.name}</b>${badge}\n• Price: <b>${curr}${p.price}</b> (${dur})\n• Access: <b>${unlocks}</b>\n• Details: <i>${p.description || 'Instant 1-tap UPI activation.'}</i></blockquote>\n\n`;
   });
 
-  text += `Tap a plan button below to open instant UPI checkout:`;
+  text += `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄Instant Checkout࿐ 🌸 ━━━━━━━\n<blockquote>👇 <i>Tap a plan button below to open instant UPI QR checkout:</i></blockquote>`;
 
   const keyboardButtons = [];
   eligiblePlans.forEach((p) => {
     const dur = formatDurationLabel(p.durationHours);
     const label = `💳 ${p.name} — ${curr}${p.price} (${dur})`;
     keyboardButtons.push([
-      Markup.button.url(label, `https://t.me/avnifanbasepaybot?start=plan_${p.id}`)
+      Markup.button.callback(label, `buy_plan_${p.id}`)
     ]);
   });
 
   keyboardButtons.push([
-    Markup.button.url('✨ View All VIP Plans (@avnifanbasepaybot)', 'https://t.me/avnifanbasepaybot?start=plans')
+    Markup.button.callback('✨ View All VIP Plans', 'open_vip_plans')
   ]);
 
   const inlineKeyboard = Markup.inlineKeyboard(keyboardButtons);
@@ -1428,7 +1516,13 @@ export async function sendContentLockedPaywall(ctx, btn, contentType, getConfig,
 
   try {
     return await ctx.reply(htmlText, { parse_mode: 'HTML', ...inlineKeyboard });
-  } catch (_) {
-    return await ctx.reply(text, { parse_mode: 'Markdown', ...inlineKeyboard });
+  } catch (err1) {
+    try {
+      const plain = text.replace(/<[^>]+>/g, '');
+      return await ctx.reply(plain, inlineKeyboard);
+    } catch (err2) {
+      console.warn('Could not send paywall message:', err2.message);
+      return null;
+    }
   }
 }

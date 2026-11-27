@@ -4,7 +4,7 @@
     "welcome": {
       "useImage": true,
       "imagePath": "assets/welcome.jpg",
-      "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n",
+      "message": "NICE TO MEET YOU <a href=\"tg://user?id={user_id}\">{name}</a>\n\n<blockquote><b>DID YOU JOIN??</b></blockquote>\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\n\n<blockquote>If Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There</blockquote>\n\n<a href=\"{terms_url}\">«Terms & Policy»</a>\n\n<b>WELCOME TO {bot_name_upper} BOT</b>\n",
       "buttons": [
         {
           "id": "btn_1",
@@ -39,7 +39,7 @@
         },
         {
           "id": "bbtn_1",
-          "text": "Most Viewed",
+          "text": "🔥 Most Viewed",
           "type": "list",
           "listId": "list_1795573154998",
           "fullWidth": false,
@@ -51,25 +51,15 @@
         },
         {
           "id": "bbtn_2",
-          "text": "Demo",
+          "text": "⭐ Button 2",
           "type": "list",
           "listId": "list_btn2",
           "fullWidth": false,
-          "accessType": "free",
+          "accessType": "locked",
           "contentType": "list_btn2",
           "contentTitle": "Button 2",
           "planId": "plan_1w",
           "category": "bbtn_1"
-        },
-        {
-          "id": "bbtn_3",
-          "text": "Button 3",
-          "type": "list",
-          "listId": "list_btn3",
-          "fullWidth": false,
-          "accessType": "free",
-          "contentType": "list_btn3",
-          "contentTitle": "Button 3"
         }
       ],
       "enabled": true,
@@ -80,13 +70,21 @@
         "warningMessage": "⚠️ This welcome message self-destructs in {timer_text}!"
       }
     },
+    "backupChannel": {
+      "enabled": true,
+      "channelId": "@ShanayaBackupTG",
+      "channelTitle": "Shanaya Backup TG",
+      "inviteLink": "https://t.me/+Gn_BIdByihZhZmI1",
+      "restrictedMessage": "⛔ <b>ACCESS RESTRICTED!</b>\n\nHey {username}! You must be an active member of our official <b>Backup Channel</b> to use this bot and access content drops.\n\n⚠️ <i>If you leave the backup channel, your bot access is immediately restricted!</i>\n\n👇 Please join our backup channel below, then tap <b>\"🔄 Verify Membership\"</b> to continue:",
+      "handle": "@ShanayaBackupTG"
+    },
     "free": {
       "deliveryMode": "all_in_one",
       "assignedBot": "bot1",
       "messages": [
         {
           "id": "free_msg_1",
-          "title": "Drop #1 - Official Community Access",
+          "title": "Exclusive Community Teaser",
           "status": "active",
           "viewButtonText": "👁️ View Content",
           "preview": {
@@ -121,7 +119,7 @@
         },
         {
           "id": "free_msg_2",
-          "title": "Drop #2 - Special Flash Video Drop",
+          "title": "VIP Flash Release",
           "status": "active",
           "viewButtonText": "👁️ View Content",
           "preview": {
@@ -180,7 +178,7 @@
       "messages": [
         {
           "id": "today_msg_1795614425884",
-          "title": "Drop #1 - Today's Featured Release (Copy)",
+          "title": "Wah",
           "status": "active",
           "viewButtonText": "👁️ View Content",
           "preview": {
@@ -215,7 +213,7 @@
         },
         {
           "id": "today_msg_1",
-          "title": "Drop #1 - Today's Featured Release",
+          "title": "Summer Special Premiere",
           "status": "active",
           "viewButtonText": "👁️ View Content",
           "preview": {
@@ -292,7 +290,10 @@
               "buttons": []
             },
             "createdAt": "2026-11-25T05:00:00.000Z",
-            "accessType": "normal"
+            "accessType": "normal",
+            "episode": 25410,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           },
           {
             "id": "free_msg_2",
@@ -335,7 +336,10 @@
               ]
             },
             "createdAt": "2026-11-25T05:10:00.000Z",
-            "accessType": "limited"
+            "accessType": "limited",
+            "episode": 25411,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           }
         ]
       },
@@ -374,7 +378,10 @@
               },
               "buttons": []
             },
-            "createdAt": "2026-11-25T02:12:45.955Z"
+            "createdAt": "2026-11-25T02:12:45.955Z",
+            "episode": 25410,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           },
           {
             "id": "drop_btn1_1",
@@ -417,7 +424,10 @@
               ]
             },
             "createdAt": "2026-11-25T01:47:51.860Z",
-            "accessType": "normal"
+            "accessType": "normal",
+            "episode": 25411,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           }
         ]
       },
@@ -462,7 +472,10 @@
               "buttons": []
             },
             "createdAt": "2026-11-25T01:47:51.864Z",
-            "accessType": "normal"
+            "accessType": "normal",
+            "episode": 25410,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           }
         ]
       },
@@ -507,7 +520,10 @@
               "buttons": []
             },
             "createdAt": "2026-11-25T01:47:51.864Z",
-            "accessType": "normal"
+            "accessType": "normal",
+            "episode": 25410,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           }
         ]
       },
@@ -545,7 +561,10 @@
               },
               "buttons": []
             },
-            "createdAt": "2026-11-25T02:27:18.977Z"
+            "createdAt": "2026-11-25T02:27:18.977Z",
+            "episode": 25410,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           },
           {
             "id": "drop_1795573169649",
@@ -575,7 +594,10 @@
               },
               "buttons": []
             },
-            "createdAt": "2026-11-25T02:19:29.649Z"
+            "createdAt": "2026-11-25T02:19:29.649Z",
+            "episode": 25411,
+            "views": "1M",
+            "description": "@ShanayaBackupTG"
           }
         ]
       }
@@ -721,32 +743,32 @@
     },
     "finalBot": {
       "enabled": true,
-      "username": "avnifanbaseprembot",
-      "url": "https://t.me/avnifanbaseprembot?start=vip",
-      "buttonText": "👑 Access VIP Premium Subscription",
-      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to access your VIP Premium Subscription:\n\n⏱️ <i>This confirmation message will automatically self-destruct in 10 minutes.</i>",
-      "shareBot1": false,
-      "bot1ButtonText": "🎬 Open VIP Portal",
+      "username": "avnifanbbot",
+      "url": "https://t.me/avnifanbbot?start=vip",
+      "buttonText": "🎬 Access Content in Demo Bot (@avnifanbbot)",
+      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n🎬 <b>Demo Content Bot:</b> <a href=\"https://t.me/avnifanbbot?start=vip\">@avnifanbbot</a>\n\n👇 Tap below to launch your exclusive content in Demo Bot:",
+      "shareBot1": true,
+      "bot1ButtonText": "✨ Explore Drops in Bot 1",
       "bot1Url": "https://t.me/avniffanbasebot"
     }
   },
   "_webhooks": {
     "bot1": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot1_9051597768#s1",
     "bot2": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot2_9202863846#s1",
-    "bot4": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot4_9165273291#s1",
-    "bot3": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot3_9216615280#s1"
+    "bot5": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot5_9014426568#s1"
   },
   "_commandsSet": {
     "bot1": "[{\"command\":\"start\",\"description\":\"Welcome greeting & community links\"},{\"command\":\"today\",\"description\":\"View Today's fresh content drop\"},{\"command\":\"free\",\"description\":\"Access free content and channels\"},{\"command\":\"terms\",\"description\":\"View Terms & Policy\"},{\"command\":\"help\",\"description\":\"Bot commands and support\"}]",
     "bot2": "[{\"command\":\"start\",\"description\":\"Receive video drop (auto-deletes)\"},{\"command\":\"video\",\"description\":\"Get next video drop\"},{\"command\":\"list\",\"description\":\"View all active video drops\"},{\"command\":\"timer\",\"description\":\"View auto-delete timer\"},{\"command\":\"help\",\"description\":\"Bot information and commands\"}]",
     "bot3": "[{\"command\":\"start\",\"description\":\"Welcome & VIP Subscription Plans\"},{\"command\":\"plans\",\"description\":\"View VIP Plans & Payment QR Code\"},{\"command\":\"myplan\",\"description\":\"Check your active VIP pass status\"},{\"command\":\"help\",\"description\":\"Payment instructions & support\"}]",
-    "bot4": "[{\"command\":\"next\",\"description\":\"Load Next 10 Drops\"},{\"command\":\"renew\",\"description\":\"Renew or Extend Pass\"},{\"command\":\"myplan\",\"description\":\"Check VIP Subscription Status\"},{\"command\":\"saved\",\"description\":\"View Your Saved Content\"},{\"command\":\"show\",\"description\":\"Show / Load Unlocked Content\"},{\"command\":\"drops\",\"description\":\"Browse Unlocked VIP Drops\"},{\"command\":\"start\",\"description\":\"VIP Premium Welcome & Portal\"},{\"command\":\"help\",\"description\":\"VIP Support & Help\"}]"
+    "bot4": "[{\"command\":\"next\",\"description\":\"Load Next 10 Drops\"},{\"command\":\"renew\",\"description\":\"Renew or Extend Pass\"},{\"command\":\"myplan\",\"description\":\"Check VIP Subscription Status\"},{\"command\":\"saved\",\"description\":\"View Your Saved Content\"},{\"command\":\"show\",\"description\":\"Show / Load Unlocked Content\"},{\"command\":\"drops\",\"description\":\"Browse Unlocked VIP Drops\"},{\"command\":\"start\",\"description\":\"VIP Premium Welcome & Portal\"},{\"command\":\"help\",\"description\":\"VIP Support & Help\"}]",
+    "bot5": "[{\"command\":\"start\",\"description\":\"Admin Control Center\"},{\"command\":\"pending\",\"description\":\"View & verify pending payments\"},{\"command\":\"active\",\"description\":\"List active VIP members\"},{\"command\":\"stats\",\"description\":\"System revenue and member stats\"},{\"command\":\"test\",\"description\":\"Verify real-time alert delivery\"},{\"command\":\"help\",\"description\":\"Admin commands guide\"}]"
   },
   "bot_name": "Avni FanBase",
   "welcome": {
     "useImage": true,
     "imagePath": "assets/welcome.jpg",
-    "message": "NICE TO MEET YOU {username}\n\nDID YOU JOIN??\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\nIf Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There\n",
+    "message": "NICE TO MEET YOU <a href=\"tg://user?id={user_id}\">{name}</a>\n\n<blockquote><b>DID YOU JOIN??</b></blockquote>\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\n\n<blockquote>If Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There</blockquote>\n\n<a href=\"{terms_url}\">«Terms & Policy»</a>\n\n<b>WELCOME TO {bot_name_upper} BOT</b>\n",
     "buttons": [
       {
         "id": "btn_1",
@@ -775,37 +797,33 @@
         "fullWidth": true,
         "accessType": "drops_then_paywall",
         "contentType": "today",
-        "contentTitle": "✨ Today's Content"
+        "contentTitle": "✨ Today's Content",
+        "planId": "plan_6h",
+        "category": "today"
       },
       {
         "id": "bbtn_1",
-        "text": "Most Viewed",
+        "text": "🔥 Most Viewed",
         "type": "list",
         "listId": "list_1795573154998",
         "fullWidth": false,
         "accessType": "locked",
         "contentType": "list_1795573154998",
-        "contentTitle": "Most Viewed"
+        "contentTitle": "Most Viewed",
+        "planId": "plan_1w",
+        "category": "bbtn_1"
       },
       {
         "id": "bbtn_2",
-        "text": "Demo",
+        "text": "⭐ Button 2",
         "type": "list",
         "listId": "list_btn2",
         "fullWidth": false,
-        "accessType": "free",
+        "accessType": "locked",
         "contentType": "list_btn2",
-        "contentTitle": "Button 2"
-      },
-      {
-        "id": "bbtn_3",
-        "text": "Button 3",
-        "type": "list",
-        "listId": "list_btn3",
-        "fullWidth": false,
-        "accessType": "free",
-        "contentType": "list_btn3",
-        "contentTitle": "Button 3"
+        "contentTitle": "Button 2",
+        "planId": "plan_1w",
+        "category": "bbtn_1"
       }
     ],
     "enabled": true,
@@ -822,7 +840,7 @@
     "messages": [
       {
         "id": "free_msg_1",
-        "title": "Drop #1 - Official Community Access",
+        "title": "Exclusive Community Teaser",
         "status": "active",
         "viewButtonText": "👁️ View Content",
         "preview": {
@@ -857,7 +875,7 @@
       },
       {
         "id": "free_msg_2",
-        "title": "Drop #2 - Special Flash Video Drop",
+        "title": "VIP Flash Release",
         "status": "active",
         "viewButtonText": "👁️ View Content",
         "preview": {
@@ -916,7 +934,7 @@
     "messages": [
       {
         "id": "today_msg_1795614425884",
-        "title": "Drop #1 - Today's Featured Release (Copy)",
+        "title": "Wah",
         "status": "active",
         "viewButtonText": "👁️ View Content",
         "preview": {
@@ -951,7 +969,7 @@
       },
       {
         "id": "today_msg_1",
-        "title": "Drop #1 - Today's Featured Release",
+        "title": "Summer Special Premiere",
         "status": "active",
         "viewButtonText": "👁️ View Content",
         "preview": {
@@ -1028,7 +1046,10 @@
             "buttons": []
           },
           "createdAt": "2026-11-25T05:00:00.000Z",
-          "accessType": "normal"
+          "accessType": "normal",
+          "episode": 25410,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         },
         {
           "id": "free_msg_2",
@@ -1071,7 +1092,10 @@
             ]
           },
           "createdAt": "2026-11-25T05:10:00.000Z",
-          "accessType": "limited"
+          "accessType": "limited",
+          "episode": 25411,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         }
       ]
     },
@@ -1110,7 +1134,10 @@
             },
             "buttons": []
           },
-          "createdAt": "2026-11-25T02:12:45.955Z"
+          "createdAt": "2026-11-25T02:12:45.955Z",
+          "episode": 25410,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         },
         {
           "id": "drop_btn1_1",
@@ -1153,7 +1180,10 @@
             ]
           },
           "createdAt": "2026-11-25T01:47:51.860Z",
-          "accessType": "normal"
+          "accessType": "normal",
+          "episode": 25411,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         }
       ]
     },
@@ -1198,7 +1228,10 @@
             "buttons": []
           },
           "createdAt": "2026-11-25T01:47:51.864Z",
-          "accessType": "normal"
+          "accessType": "normal",
+          "episode": 25410,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         }
       ]
     },
@@ -1243,7 +1276,10 @@
             "buttons": []
           },
           "createdAt": "2026-11-25T01:47:51.864Z",
-          "accessType": "normal"
+          "accessType": "normal",
+          "episode": 25410,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         }
       ]
     },
@@ -1281,7 +1317,10 @@
             },
             "buttons": []
           },
-          "createdAt": "2026-11-25T02:27:18.977Z"
+          "createdAt": "2026-11-25T02:27:18.977Z",
+          "episode": 25410,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         },
         {
           "id": "drop_1795573169649",
@@ -1311,7 +1350,10 @@
             },
             "buttons": []
           },
-          "createdAt": "2026-11-25T02:19:29.649Z"
+          "createdAt": "2026-11-25T02:19:29.649Z",
+          "episode": 25411,
+          "views": "1M",
+          "description": "@ShanayaBackupTG"
         }
       ]
     }
@@ -1327,7 +1369,7 @@
     "plansAutoDeleteSeconds": 600,
     "qrAutoDeleteSeconds": 600,
     "approvalAutoDeleteSeconds": 600,
-    "instructions": "1. Scan the QR code above using any UPI app (GPay, PhonePe, Paytm, BHIM).\n2. Pay the exact amount for your chosen subscription plan.\n3. Send the 12-digit UTR/Transaction ID or payment screenshot here in @avnifanbasepaybot to activate your pass instantly!",
+    "instructions": "1. Scan the QR code above using any UPI app (GPay, PhonePe, Paytm, BHIM).\n2. Pay the exact amount for your chosen subscription plan.\n3. Send the 12-digit UTR/Transaction ID or payment screenshot right here in @avniffanbasebot to activate your pass instantly!",
     "plans": [
       {
         "id": "plan_6h",
@@ -1362,15 +1404,15 @@
     ],
     "finalBot": {
       "enabled": true,
-      "username": "avnifanbaseprembot",
-      "url": "https://t.me/avnifanbaseprembot?start=vip",
-      "buttonText": "👑 Access VIP Premium Subscription",
-      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n👇 Tap below to access your VIP Premium Subscription:\n\n⏱️ <i>This confirmation message will automatically self-destruct in 10 minutes.</i>",
-      "shareBot1": false,
-      "bot1ButtonText": "🎬 Open VIP Portal",
+      "username": "avnifanbbot",
+      "url": "https://t.me/avnifanbbot?start=vip",
+      "buttonText": "🎬 Access Content in Demo Bot (@avnifanbbot)",
+      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n🎬 <b>Demo Content Bot:</b> <a href=\"https://t.me/avnifanbbot?start=vip\">@avnifanbbot</a>\n\n👇 Tap below to launch your exclusive content in Demo Bot:",
+      "shareBot1": true,
+      "bot1ButtonText": "✨ Explore Drops in Bot 1",
       "bot1Url": "https://t.me/avniffanbasebot"
     },
-    "adminChatId": ""
+    "adminChatId": "5459778091"
   },
   "bot4": {
     "bot_name": "Avni FanBase Premium",
@@ -1426,13 +1468,13 @@
       "reminderMessage": "⚠️ *VIP Subscription Reminder*\n\nHey {username}! Your VIP pass will expire in *{time_left}* (at {expiry_time}).\n\nRenew your plan now to avoid losing access to premium drops!",
       "reminderAutoDeleteSeconds": 300,
       "onExpireMessage": "🔒 *VIP Subscription Expired*\n\nHey {username}, your VIP Access pass has just expired!\n\nUpgrade or renew your subscription to continue enjoying exclusive drops.",
-      "onExpireAutoDeleteSeconds": 0
+      "onExpireAutoDeleteSeconds": 21600
     },
     "dropBatchLimit": 10,
     "nonSubscriberGate": {
       "message": "🔒 *VIP Access Restricted*\n\nHello {username}!\nThis bot is strictly reserved for **VIP Subscribed Members**.\n\nPlease subscribe to an active VIP plan to unlock unlimited drops and bookmarking features!",
       "subscribeButtonText": "💎 View VIP Plans & Pay",
-      "subscribeUrl": "https://t.me/avnifanbasepaybot?start=plans"
+      "subscribeUrl": "https://t.me/avniffanbasebot?start=plans"
     },
     "messages": [
       {
@@ -3336,5 +3378,33 @@
         "contentTitle": "👑 All Content (Full VIP)"
       }
     ]
+  },
+  "alertBot": {
+    "enabled": true,
+    "token": "9014426568:AAEw5AxpLqYf5k7myF0CdrKlYJfAf6ue4vs",
+    "username": "botalertsafmbot",
+    "authorizedPhones": [
+      "6203902842",
+      "6232172355"
+    ],
+    "authorizedAdmins": [
+      {
+        "userId": "5459778091",
+        "chatId": "5459778091",
+        "phone": "6203902842",
+        "name": "Pranav Kumar",
+        "role": "Super Admin",
+        "verifiedAt": "2026-11-26T20:30:00.000Z"
+      }
+    ],
+    "notifications": {
+      "userJoins": true,
+      "purchaseAttempts": true,
+      "paymentProofs": true,
+      "paymentApprovals": true,
+      "paymentRejections": true,
+      "expirations": true
+    },
+    "adminChatId": "5459778091"
   }
 }

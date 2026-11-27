@@ -744,12 +744,34 @@
       background: rgba(255, 255, 255, 0.12);
     }
     .sim-quote {
-      border-left: 3px solid #38bdf8;
-      padding-left: 8px;
-      margin: 4px 0;
-      color: #cbd5e1;
-      background: rgba(56, 189, 248, 0.05);
-      border-radius: 0 4px 4px 0;
+      border-left: 3.5px solid #22c55e;
+      padding: 6px 12px;
+      margin: 6px 0;
+      color: #e2e8f0;
+      background: rgba(34, 197, 94, 0.09);
+      border-radius: 4px;
+      position: relative;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .sim-quote::after {
+      content: '”';
+      position: absolute;
+      right: 8px;
+      top: 1px;
+      color: #22c55e;
+      font-size: 1.15rem;
+      font-weight: 900;
+      opacity: 0.85;
+      font-family: serif;
+    }
+    .sim-quote-pink {
+      border-left: 3.5px solid #ec4899;
+      background: rgba(236, 72, 153, 0.12);
+      color: #fdf2f8;
+    }
+    .sim-quote-pink::after {
+      color: #ec4899;
     }
     .sim-code {
       background: rgba(0, 0, 0, 0.35);
@@ -959,6 +981,9 @@
       <button class="tab-btn" id="tabBtn4" onclick="switchTab('bot4')">
         👑 Bot 4: @avnifanbaseprembot <span class="tab-pill" id="b4_tabCounter" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">Premium Members</span>
       </button>
+      <button class="tab-btn" id="tabBtnAlerts" onclick="switchTab('alertBot')">
+        🔔 Bot 5: @botalertsafmbot <span class="tab-pill" id="alertBot_tabPill" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">Admin Alerts & Approvals</span>
+      </button>
     </div>
 
     <div class="grid">
@@ -992,6 +1017,9 @@
             </button>
             <button type="button" class="subtab-btn" id="subtabBtn_b1_help" onclick="switchB1Subtab('help')">
               ℹ️ 6. Help Info
+            </button>
+            <button type="button" class="subtab-btn" id="subtabBtn_b1_backup" onclick="switchB1Subtab('backup')">
+              🔒 7. Backup Channel Gate
             </button>
           </div>
 
@@ -1067,9 +1095,14 @@
               </div>
               <div id="toolbar_b1_welcomeMsg"></div>
               <textarea id="b1_welcomeMsg" class="with-rich-toolbar" rows="5" oninput="updateB1Preview()"></textarea>
-              <div class="fmt-helper-bar">
-                <span>Variables: <code>{username}</code>, <code>{bot_name}</code></span>
-                <span style="cursor:pointer; color:#38bdf8; font-weight:600;" onclick="switchB1Subtab('inline')">➡️ Configure Buttons Below Message</span>
+              <div class="fmt-helper-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <span>Variables: <code>{user_mention}</code>, <code>{name}</code>, <code>{bot_name}</code>, <code>{terms_link}</code></span>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="applyQuoteTemplate()" style="font-size:0.75rem; padding:3px 8px; border:1px solid rgba(34,197,94,0.4); color:#34d399; background:rgba(34,197,94,0.1); cursor:pointer;">
+                    🎨 Load Screenshot Quote UI
+                  </button>
+                  <span style="cursor:pointer; color:#38bdf8; font-weight:600; font-size:0.8rem;" onclick="switchB1Subtab('inline')">➡️ Buttons Below</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1238,6 +1271,42 @@
               <div id="toolbar_b1_helpMsg"></div>
               <textarea id="b1_helpMsg" class="with-rich-toolbar" rows="4" oninput="updateB1Preview()"></textarea>
               <div class="hint">Supports Markdown formatting. Changes take effect immediately after saving.</div>
+            </div>
+          </div>
+
+          <!-- SUBTAB 7: BACKUP CHANNEL GATE -->
+          <div id="subtabPane_b1_backup" class="b1-subtab-pane">
+            <div class="card" style="--card-accent: 239, 68, 68;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+                <div class="card-title" style="margin-bottom:0; color:#f87171;">🔒 Backup Channel Gate & Member Restriction</div>
+                <div class="checkbox-row" style="margin-bottom:0;">
+                  <input type="checkbox" id="b1_backupEnabled" />
+                  <label for="b1_backupEnabled" style="margin-bottom:0; font-weight:600; color:#f87171;">ENABLE CHANNEL RESTRICTION</label>
+                </div>
+              </div>
+              <div class="card-subtitle">
+                Restricts all bot actions and content drops if a user is not an active member of your official Backup Channel. If they leave the channel, bot access is immediately restricted!
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom:14px;">
+                <div>
+                  <label>Backup Channel Telegram ID</label>
+                  <input type="text" id="b1_backupChannelId" placeholder="e.g. -1002345678901 or @channel_username" />
+                  <div class="hint">💡 <b>Auto-Detection:</b> Add <b>@avniffanbasebot</b> as an Administrator to your channel, and this ID will be auto-detected and saved automatically!</div>
+                </div>
+                <div>
+                  <label>Backup Channel Invite Link</label>
+                  <input type="text" id="b1_backupInviteLink" placeholder="https://t.me/+Gn_BIdByihZhZmI1" />
+                  <div class="hint">The invite link provided to restricted users to join your channel.</div>
+                </div>
+              </div>
+
+              <label>Restricted Notice Message (Sent when non-member tries to use bot)</label>
+              <textarea id="b1_backupRestrictedMsg" rows="4" placeholder="⛔ ACCESS RESTRICTED! You must be a member of our Backup Channel..."></textarea>
+              <div class="fmt-helper-bar">
+                <span>Variables: <code>{username}</code></span>
+                <span>Buttons Attached: <b>[ 🔒 Join Backup Channel ]</b> & <b>[ 🔄 Verify Membership ]</b></span>
+              </div>
             </div>
           </div>
 
@@ -2120,6 +2189,162 @@
           </div>
         </div>
 
+        <!-- ============================================== -->
+        <!-- TAB 5: BOT 5: @botalertsafmbot (ALERTS & APPROVALS) -->
+        <!-- ============================================== -->
+        <div id="sectionAlertBot" class="tab-section">
+          
+          <!-- Banner Card -->
+          <div class="card" style="--card-accent: 239, 68, 68; border-color: rgba(239, 68, 68, 0.4); margin-bottom: 14px; background: rgba(239, 68, 68, 0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <div class="card-title" style="margin-bottom:2px; color:#f87171; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                  🔔 Bot 5: @botalertsafmbot (Admin Alerts & Payment Approvals)
+                  <span class="badge" style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(34,197,94,0.3); font-size:0.75rem;">🟢 Live & Connected</span>
+                </div>
+                <div class="card-subtitle" style="margin-bottom:0; font-size:0.84rem;">
+                  A dedicated high-priority bot for administrators. Receives instant alerts for user joins, VIP purchase checkouts, and payment verification requests with <b>1-click Approve / Reject</b> buttons right inside Telegram.
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn btn-secondary" style="font-size:0.82rem; padding:6px 12px; border-color:rgba(239,68,68,0.5); color:#fca5a5;" onclick="triggerTestAlert()">
+                  📲 Send Test Alert
+                </button>
+                <a href="https://t.me/botalertsafmbot" target="_blank" class="btn btn-primary" style="font-size:0.82rem; padding:6px 12px; background:rgba(239,68,68,0.3); border:1px solid rgba(239,68,68,0.6); color:#fff; text-decoration:none;">
+                  ↗ Open @botalertsafmbot
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bot Configuration & Credentials -->
+          <div class="card" style="margin-bottom: 14px;">
+            <div class="card-title">🤖 Bot Credentials & Activation</div>
+            <div class="card-subtitle">Telegram Bot API credentials for the alert engine.</div>
+            
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+              <input type="checkbox" id="alertBot_enabled" style="width:18px; height:18px; cursor:pointer;" checked />
+              <label for="alertBot_enabled" style="font-weight:600; cursor:pointer; margin-bottom:0;">
+                Enable Alert & Approval Bot
+              </label>
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Bot API Token (from @BotFather):</label>
+              <input type="text" id="alertBot_token" value="9014426568:AAEw5AxpLqYf5k7myF0CdrKlYJfAf6ue4vs" placeholder="123456:ABC-DEF..." />
+            </div>
+          </div>
+
+          <!-- Admin Authorization & Spam Protection -->
+          <div class="card" style="margin-bottom: 14px; border-color: rgba(59, 130, 246, 0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div class="card-title" style="margin-bottom:0; color:#60a5fa;">🔒 Strict Admin Access Control & Spam Filter</div>
+              <span class="badge" style="background:rgba(59,130,246,0.2); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);">Spam: Zero Reply (Silent)</span>
+            </div>
+            <div class="card-subtitle">
+              Only authorized phone numbers can interact with this bot. Non-authorized users receive <b>no response</b> at all, protecting the bot from spam.
+            </div>
+
+            <div class="form-group" style="margin-bottom:14px;">
+              <label>Authorized Mobile Numbers (comma-separated):</label>
+              <input type="text" id="alertBot_authorizedPhones" value="6203902842, 6232172355" placeholder="6203902842, 6232172355" />
+              <div class="form-hint" style="color:var(--text-muted); font-size:0.75rem; margin-top:4px;">
+                Admins can send <code>/start</code> in <b>@botalertsafmbot</b> and tap <b>[📱 Verify Admin Access]</b> to verify their number. Formats with or without <code>+91</code> are automatically recognized.
+              </div>
+            </div>
+
+            <div style="font-weight:700; color:var(--text); font-size:0.85rem; margin-bottom:8px;">
+              👑 Verified & Authorized Administrators:
+            </div>
+            <div id="alertBot_adminsList" style="margin-bottom:14px; display:flex; flex-direction:column; gap:8px;">
+              <!-- Admin cards rendered dynamically -->
+            </div>
+
+            <div style="background:rgba(0,0,0,0.25); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+              <div style="font-weight:600; font-size:0.82rem; margin-bottom:8px; color:#93c5fd;">➕ Manually Pre-Authorize Telegram Admin ID:</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="alertBot_newUserId" placeholder="Telegram User ID (e.g. 5459778091)" style="flex:1; min-width:160px; margin-bottom:0;" />
+                <input type="text" id="alertBot_newName" placeholder="Admin Name (e.g. Pranav)" style="flex:1; min-width:120px; margin-bottom:0;" />
+                <input type="text" id="alertBot_newPhone" placeholder="Phone (e.g. 6203902842)" style="flex:1; min-width:120px; margin-bottom:0;" />
+                <button type="button" class="btn btn-secondary" style="padding:6px 14px; white-space:nowrap;" onclick="addAdminManually()">
+                  ➕ Add Admin
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customizable Notification Triggers -->
+          <div class="card" style="margin-bottom: 14px; border-color: rgba(16, 185, 129, 0.4);">
+            <div class="card-title" style="color:#34d399;">🔔 Customizable Real-Time Notifications</div>
+            <div class="card-subtitle">Select which events trigger immediate notifications to authorized admins in @botalertsafmbot.</div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:10px;">
+              
+              <div style="padding:10px 12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:flex-start; gap:10px;">
+                <input type="checkbox" id="alert_notif_joins" style="width:18px; height:18px; margin-top:2px; cursor:pointer;" checked />
+                <div>
+                  <label for="alert_notif_joins" style="font-weight:600; cursor:pointer; margin-bottom:2px; display:block;">
+                    👤 New User Joins (Bots 1, 2, 3, 4)
+                  </label>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">
+                    Get alerted whenever a member starts Bot 1, Bot 2, Bot 3, or Bot 4.
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:10px 12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:flex-start; gap:10px;">
+                <input type="checkbox" id="alert_notif_purchases" style="width:18px; height:18px; margin-top:2px; cursor:pointer;" checked />
+                <div>
+                  <label for="alert_notif_purchases" style="font-weight:600; cursor:pointer; margin-bottom:2px; display:block;">
+                    🛒 VIP Purchase / Checkout Attempts
+                  </label>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">
+                    Alerts when a user clicks a VIP plan and generates a payment QR code.
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:10px 12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:flex-start; gap:10px;">
+                <input type="checkbox" id="alert_notif_proofs" style="width:18px; height:18px; margin-top:2px; cursor:pointer;" checked />
+                <div>
+                  <label for="alert_notif_proofs" style="font-weight:600; cursor:pointer; margin-bottom:2px; display:block; color:#fca5a5;">
+                    💳 Payment Verification Requests
+                  </label>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">
+                    Delivers UTR/screenshot proof with <b>[✅ Approve]</b> & <b>[❌ Reject]</b> buttons directly in bot.
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:10px 12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:flex-start; gap:10px;">
+                <input type="checkbox" id="alert_notif_approvals" style="width:18px; height:18px; margin-top:2px; cursor:pointer;" checked />
+                <div>
+                  <label for="alert_notif_approvals" style="font-weight:600; cursor:pointer; margin-bottom:2px; display:block; color:#86efac;">
+                    🎉 Account Approvals & Activations
+                  </label>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">
+                    Confirms when a VIP account has been successfully approved & activated.
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:10px 12px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:flex-start; gap:10px; grid-column: span 2;">
+                <input type="checkbox" id="alert_notif_rejections" style="width:18px; height:18px; margin-top:2px; cursor:pointer;" checked />
+                <div>
+                  <label for="alert_notif_rejections" style="font-weight:600; cursor:pointer; margin-bottom:2px; display:block;">
+                    ❌ Payment Rejections
+                  </label>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">
+                    Logs rejected or unverified payment proofs.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
         <!-- Sticky Save Button -->
         <div class="btn-save-sticky">
           <button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.05rem;" onclick="saveConfig()">
@@ -2251,11 +2476,13 @@
       document.getElementById('tabBtn3').classList.toggle('active', tab === 'bot3');
       if (document.getElementById('tabBtnSubs')) document.getElementById('tabBtnSubs').classList.toggle('active', tab === 'subscriptions');
       if (document.getElementById('tabBtn4')) document.getElementById('tabBtn4').classList.toggle('active', tab === 'bot4');
+      if (document.getElementById('tabBtnAlerts')) document.getElementById('tabBtnAlerts').classList.toggle('active', tab === 'alertBot');
       document.getElementById('sectionBot1').classList.toggle('active', tab === 'bot1');
       document.getElementById('sectionBot2').classList.toggle('active', tab === 'bot2');
       document.getElementById('sectionBot3').classList.toggle('active', tab === 'bot3');
       if (document.getElementById('sectionSubscriptions')) document.getElementById('sectionSubscriptions').classList.toggle('active', tab === 'subscriptions');
       if (document.getElementById('sectionBot4')) document.getElementById('sectionBot4').classList.toggle('active', tab === 'bot4');
+      if (document.getElementById('sectionAlertBot')) document.getElementById('sectionAlertBot').classList.toggle('active', tab === 'alertBot');
 
       // Manage preview subtabs visibility
       const b1Subtabs = document.getElementById('b1_previewSubtabs');
@@ -2416,6 +2643,15 @@
         document.getElementById('b1_termsContent').value = b1.terms?.content || '';
         document.getElementById('b1_termsDialogText').value = b1.terms?.dialogText || '📜 Terms & Policy\n\nAll content shared is strictly for community members. Distribution or piracy is strictly prohibited. You confirm you meet local age & legal requirements.';
         updateTermsDialogCount();
+
+        // Backup Channel Gate
+        const b1Backup = b1.backupChannel || {};
+        if (document.getElementById('b1_backupEnabled')) {
+          document.getElementById('b1_backupEnabled').checked = b1Backup.enabled !== false;
+          document.getElementById('b1_backupChannelId').value = b1Backup.channelId || '';
+          document.getElementById('b1_backupInviteLink').value = b1Backup.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1';
+          document.getElementById('b1_backupRestrictedMsg').value = b1Backup.restrictedMessage || '';
+        }
 
         // Bot 1 Configurable Welcome
         document.getElementById('b1_welcomeEnabled').checked = b1.welcome?.enabled !== false;
@@ -2582,6 +2818,7 @@
         }
 
         loadSubscriptionPortal();
+        loadAlertBotPortal();
         initTrafficCollapse();
         switchTab('bot1');
       } catch (err) {
@@ -2736,8 +2973,16 @@
     function renderTelegramFormattedText(text, username = '@alex_telegram', botName = 'Avni FanBase') {
       if (!text) return '';
       let str = text
+        .replace(/{user_mention}/g, `<a href="#" class="sim-link" style="color:#38bdf8; text-decoration:underline;">${username.replace('@','')}</a>`)
+        .replace(/{user_link}/g, `<a href="#" class="sim-link" style="color:#38bdf8; text-decoration:underline;">${username.replace('@','')}</a>`)
+        .replace(/{name}/g, username.replace('@',''))
+        .replace(/{first_name}/g, username.replace('@',''))
         .replace(/{username}/g, username)
+        .replace(/{user_id}/g, '5459778091')
         .replace(/{bot_name}/g, botName)
+        .replace(/{bot_name_upper}/g, botName.toUpperCase())
+        .replace(/{terms_url}/g, '#')
+        .replace(/{terms_link}/g, '<a href="#" class="sim-link" style="color:#38bdf8; text-decoration:underline;">«Terms & Policy»</a>')
         .replace(/{timer_text}/g, '2 min')
         .replace(/{limit}/g, '3');
 
@@ -2748,6 +2993,7 @@
 
       // Unescape safe Telegram HTML tags
       out = out
+        .replace(/&lt;a\s+href=["']([^"']+)["']&gt;([\s\S]+?)&lt;\/a&gt;/gi, '<a href="$1" target="_blank" class="sim-link" style="color:#38bdf8; text-decoration:underline;">$2</a>')
         .replace(/&lt;u&gt;/gi, '<u>')
         .replace(/&lt;\/u&gt;/gi, '</u>')
         .replace(/&lt;b&gt;/gi, '<b>')
@@ -2760,8 +3006,15 @@
         .replace(/&lt;\/tg-spoiler&gt;/gi, '</span>')
         .replace(/&lt;code&gt;/gi, '<code class="sim-code">')
         .replace(/&lt;\/code&gt;/gi, '</code>')
+        .replace(/&lt;blockquote&gt;([\s\S]*?)&lt;\/blockquote&gt;/gi, (m, c) => {
+          const isPink = /[🌸🎀💖👑]/.test(c) || activeTab === 'subscriptions';
+          return `<blockquote class="sim-quote ${isPink ? 'sim-quote-pink' : ''}">${c}</blockquote>`;
+        })
         .replace(/&lt;blockquote&gt;/gi, '<blockquote class="sim-quote">')
         .replace(/&lt;\/blockquote&gt;/gi, '</blockquote>');
+
+      // Unescape literal <::> or &lt;::&gt;
+      out = out.replace(/&lt;::&gt;|<::>/g, '&lt;::&gt;');
 
       // Markdown conversions
       out = out.replace(/\|\|([\s\S]+?)\|\|/g, '<span class="sim-spoiler" onclick="this.classList.toggle(\x27revealed\x27)" title="Click to reveal spoiler">$1</span>');
@@ -2771,8 +3024,13 @@
       out = out.replace(/_([^_\n]+?)_/g, '<i>$1</i>');
       out = out.replace(/```(?:[a-zA-Z0-9_-]+)?\n?([\s\S]+?)```/g, '<pre class="sim-codeblock">$1</pre>');
       out = out.replace(/`([^`\n]+?)`/g, '<code class="sim-code">$1</code>');
-      out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" class="sim-link">$1</a>');
-      out = out.replace(/^&gt;\s?(.*)$/gm, '<blockquote class="sim-quote">$1</blockquote>');
+      out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" class="sim-link" style="color:#38bdf8; text-decoration:underline;">$1</a>');
+      out = out.replace(/(?:^&gt;[\t ]?(.*(?:\n|$)))+/gm, (match) => {
+        const lines = match.split('\n').filter(l => l.trim().length > 0);
+        const content = lines.map(l => l.replace(/^&gt;[\t ]?/, '')).join('<br/>');
+        const isPink = /[🌸🎀💖👑]/.test(content) || activeTab === 'subscriptions';
+        return `<blockquote class="sim-quote ${isPink ? 'sim-quote-pink' : ''}">${content}</blockquote>`;
+      });
 
       out = out.replace(/\n/g, '<br/>');
       return out;
@@ -2800,6 +3058,16 @@
     let b1PreviewMode = 'welcome'; // 'welcome', 'today', 'free', 'terms', 'help'
     let todayPreviewSubTab = 'preview'; // 'preview' or 'revealed'
     let freePreviewSubTab = 'preview'; // 'preview' or 'revealed'
+
+    function applyQuoteTemplate() {
+      const tpl = 'NICE TO MEET YOU <a href="tg://user?id={user_id}">{name}</a>\\n\\n<blockquote><b>DID YOU JOIN??</b></blockquote>\\n✧ The {bot_name} Alerts Channel And Send A Join Request To The Backup Channel??\\n\\n<blockquote>If Not, Send It Now, As All Upcoming Fresh Content And Announcements Will Be Shared There</blockquote>\\n\\n<a href="{terms_url}">«Terms & Policy»</a>\\n\\n<b>WELCOME TO {bot_name_upper} BOT</b>';
+      const el = document.getElementById('b1_welcomeMsg');
+      if (el) {
+        el.value = tpl.replace(/\\\\n/g, '\n');
+        updateB1Preview();
+      }
+      showToast('🎨 Applied Screenshot Quote UI Template!');
+    }
 
     function updateB1Preview() {
       if (activeTab !== 'bot1') return;
@@ -2870,7 +3138,29 @@
           document.getElementById('b2_previewTimerText').textContent = `Auto-deletes in ${tText}`;
         }
 
-        previewText.innerHTML = renderTelegramFormattedText(content.message || msg.title || 'Today Featured Drop', '@alex_telegram', botName);
+        if (todayPreviewSubTab === 'preview') {
+          const epNum = msg.episode !== undefined ? msg.episode : 25406;
+          const vViews = msg.views || '1M';
+          const vTitle = msg.title || 'Featured Premiere';
+          const vDesc = msg.description || '@ShanayaBackupTG';
+          const link = `https://t.me/avnifanbbot?start=${msg.id || 'today_drop'}`;
+          let raw = content.message || '';
+          let template = (raw && raw.trim() !== '') ? raw :
+            `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄BOTLink࿐ ━━━━━━━\n<blockquote>{bot_link}</blockquote>`;
+          let simText = template
+            .replace(/{bot_name}/g, botName)
+            .replace(/{bot_name_upper}/g, botName.toUpperCase())
+            .replace(/{description}/g, vDesc)
+            .replace(/{title}/g, vTitle)
+            .replace(/{video_title}/g, vTitle)
+            .replace(/{episode}/g, epNum)
+            .replace(/{views}/g, vViews)
+            .replace(/{bot_link}/g, link)
+            .replace(/{deep_link}/g, link);
+          previewText.innerHTML = renderTelegramFormattedText(simText, '@alex_telegram', botName);
+        } else {
+          previewText.innerHTML = renderTelegramFormattedText(content.message || msg.title || '🎬 Unlocked Full Premiere', '@alex_telegram', botName);
+        }
 
         if (todayPreviewSubTab === 'preview') {
           const viewBtn = document.createElement('div');
@@ -2913,7 +3203,29 @@
           document.getElementById('b2_previewTimerText').textContent = `Auto-deletes in ${tText}`;
         }
 
-        previewText.innerHTML = renderTelegramFormattedText(content.message || msg.title || 'Free Community Drop', '@alex_telegram', botName);
+        if (freePreviewSubTab === 'preview') {
+          const epNum = msg.episode !== undefined ? msg.episode : 25407;
+          const vViews = msg.views || '1M';
+          const vTitle = msg.title || 'Free Premiere';
+          const vDesc = msg.description || '@ShanayaBackupTG';
+          const link = `https://t.me/avnifanbbot?start=${msg.id || 'free_drop'}`;
+          let raw = content.message || '';
+          let template = (raw && raw.trim() !== '') ? raw :
+            `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄BOTLink࿐ ━━━━━━━\n<blockquote>{bot_link}</blockquote>`;
+          let simText = template
+            .replace(/{bot_name}/g, botName)
+            .replace(/{bot_name_upper}/g, botName.toUpperCase())
+            .replace(/{description}/g, vDesc)
+            .replace(/{title}/g, vTitle)
+            .replace(/{video_title}/g, vTitle)
+            .replace(/{episode}/g, epNum)
+            .replace(/{views}/g, vViews)
+            .replace(/{bot_link}/g, link)
+            .replace(/{deep_link}/g, link);
+          previewText.innerHTML = renderTelegramFormattedText(simText, '@alex_telegram', botName);
+        } else {
+          previewText.innerHTML = renderTelegramFormattedText(content.message || msg.title || '🎁 Unlocked Free Content', '@alex_telegram', botName);
+        }
 
         if (freePreviewSubTab === 'preview') {
           const viewBtn = document.createElement('div');
@@ -2939,8 +3251,26 @@
         const list = (b1.messageLists || []).find(l => l.id === currentMListId);
         const msg = list?.messages?.[0] || {};
         const prev = msg.preview || {};
+        const epNum = msg.episode !== undefined ? msg.episode : 25406;
+        const vViews = msg.views || '1M';
+        const vTitle = msg.title || list?.title || 'Featured Premiere';
+        const vDesc = msg.description || '@ShanayaBackupTG';
+        const link = `https://t.me/avnifanbbot?start=${msg.id || 'list_drop'}`;
+        let raw = prev.message || '';
+        let template = (raw && raw.trim() !== '') ? raw :
+          `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄BOTLink࿐ ━━━━━━━\n<blockquote>{bot_link}</blockquote>`;
+        let simText = template
+          .replace(/{bot_name}/g, botName)
+          .replace(/{bot_name_upper}/g, botName.toUpperCase())
+          .replace(/{description}/g, vDesc)
+          .replace(/{title}/g, vTitle)
+          .replace(/{video_title}/g, vTitle)
+          .replace(/{episode}/g, epNum)
+          .replace(/{views}/g, vViews)
+          .replace(/{bot_link}/g, link)
+          .replace(/{deep_link}/g, link);
 
-        previewText.innerHTML = renderTelegramFormattedText(prev.message || `🔥 <b>${list?.name || 'Exclusive Drop List'}</b>\n\nTap below to explore releases.`, '@alex_telegram', botName);
+        previewText.innerHTML = renderTelegramFormattedText(simText, '@alex_telegram', botName);
 
         const vBtn = document.createElement('div');
         vBtn.className = 'tg-btn-preview';
@@ -3712,11 +4042,29 @@
           </div>
 
           <div class="msg-body-editor" id="mlist_drop_editor_${msg.id}">
-            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px;">
               <div>
-                <label>Drop Title / Identifier</label>
-                <input type="text" value="${escapeHtml(msg.title || '')}" oninput="updateMListDropField('${msg.id}', 'title', this.value)" />
+                <label style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>Video Title</span>
+                  <button type="button" class="btn btn-secondary" style="padding:1px 6px; font-size:0.7rem;" onclick="autoExtractMListDropTitle('${msg.id}')" title="Auto-extract video title from uploaded file">✨ Auto-Take</button>
+                </label>
+                <input type="text" id="mlist_title_${msg.id}" value="${escapeHtml(msg.title || '')}" oninput="updateMListDropField('${msg.id}', 'title', this.value)" placeholder="e.g. Wah" />
               </div>
+              <div>
+                <label>Episode Number</label>
+                <input type="number" value="${msg.episode !== undefined ? msg.episode : (25400 + filtered.indexOf(msg) + 1)}" oninput="updateMListDropField('${msg.id}', 'episode', Number(this.value))" placeholder="25406" />
+              </div>
+              <div>
+                <label>Views Count</label>
+                <input type="text" value="${escapeHtml(msg.views || '1M')}" oninput="updateMListDropField('${msg.id}', 'views', this.value)" placeholder="1M" />
+              </div>
+              <div>
+                <label>Channel / Desc</label>
+                <input type="text" value="${escapeHtml(msg.description || '@ShanayaBackupTG')}" oninput="updateMListDropField('${msg.id}', 'description', this.value)" placeholder="@ShanayaBackupTG" />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
               <div>
                 <label>View Button Text (Redirects to Bot 2)</label>
                 <input type="text" value="${escapeHtml(msg.viewButtonText || '👁️ View Content')}" oninput="updateMListDropField('${msg.id}', 'viewButtonText', this.value)" />
@@ -3739,7 +4087,10 @@
                 </div>
                 <div class="hint" style="margin-bottom:8px;">The user sees this preview in Bot 1 with the "${escapeHtml(msg.viewButtonText || '👁️ View Content')}" button below it.</div>
                 
-                <label>Preview Caption</label>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <label style="margin:0;">Preview Caption</label>
+                  <button type="button" class="btn btn-secondary" style="font-size:0.7rem; padding:2px 8px;" onclick="loadScreenshotDropTemplate('${msg.id}')">🎨 Load Screenshot Card Format</button>
+                </div>
                 ${buildRichToolbarHtml('ta_prev_' + msg.id)}
                 <textarea id="ta_prev_${msg.id}" class="with-rich-toolbar" rows="3" oninput="updateMListDropSubField('${msg.id}', 'preview', 'message', this.value)">${escapeHtml(msg.preview?.message || '')}</textarea>
                 
@@ -3847,6 +4198,11 @@
         if (data.success && data.path) {
           msg[sub].mediaPath = data.path;
           msg[sub].mediaType = data.mediaType || (file.type.startsWith('video') ? 'video' : 'photo');
+          // Auto-Take video title if title is empty or default
+          if ((!msg.title || msg.title === 'Drop' || msg.title.trim() === '') && file.name) {
+            const clean = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ').trim();
+            msg.title = clean;
+          }
           renderCurrentMessageListDrops();
           toggleMListDropEditor(id);
           showToast('Media uploaded successfully!');
@@ -3854,6 +4210,38 @@
       } catch (err) {
         alert('Failed to upload media');
       }
+    }
+
+    function autoExtractMListDropTitle(id) {
+      const msg = getActiveMListMsg(id);
+      if (!msg) return;
+      const media = msg.revealedContent?.mediaPath || msg.preview?.mediaPath || '';
+      if (media) {
+        const basename = media.split('/').pop().replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ').trim();
+        msg.title = basename;
+        const el = document.getElementById(`mlist_title_${id}`);
+        if (el) el.value = basename;
+        renderCurrentMessageListDrops();
+        toggleMListDropEditor(id);
+        showToast(`Auto-extracted video title: "${basename}"`);
+      } else {
+        const manual = prompt('Upload a video first, or enter video title directly:');
+        if (manual && manual.trim()) {
+          msg.title = manual.trim();
+          renderCurrentMessageListDrops();
+          toggleMListDropEditor(id);
+        }
+      }
+    }
+
+    function loadScreenshotDropTemplate(id) {
+      const msg = getActiveMListMsg(id);
+      if (!msg) return;
+      if (!msg.preview) msg.preview = {};
+      msg.preview.message = `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄BOTLink࿐ ━━━━━━━\n<blockquote>{bot_link}</blockquote>`;
+      renderCurrentMessageListDrops();
+      toggleMListDropEditor(id);
+      showToast('Loaded Screenshot Drop Format template!');
     }
 
     function clearMListMedia(id, sub) {
@@ -5606,6 +5994,14 @@
           currentConfig.bot1.terms.dialogText = val('b1_termsDialogText');
           currentConfig.bot1.terms.content = val('b1_termsContent');
           currentConfig.bot1.terms.lastUpdated = new Date().toISOString().slice(0, 10);
+
+          if (!currentConfig.bot1.backupChannel) currentConfig.bot1.backupChannel = {};
+          if (document.getElementById('b1_backupEnabled')) {
+            currentConfig.bot1.backupChannel.enabled = checked('b1_backupEnabled', true);
+            currentConfig.bot1.backupChannel.channelId = val('b1_backupChannelId', '');
+            currentConfig.bot1.backupChannel.inviteLink = val('b1_backupInviteLink', 'https://t.me/+Gn_BIdByihZhZmI1');
+            currentConfig.bot1.backupChannel.restrictedMessage = val('b1_backupRestrictedMsg', '');
+          }
         }
 
         // 2. Pack Bot 2
@@ -5696,6 +6092,21 @@
           currentConfig.bot4.nonSubscriberGate.subscribeUrl = val('b4_gateBtnUrl', 'https://t.me/avniffanbasebot?start=subscribe');
         }
 
+        // Save Bot 5: Alert & Admin Bot Config
+        if (!currentConfig.alertBot) currentConfig.alertBot = {};
+        currentConfig.alertBot.enabled = document.getElementById('alertBot_enabled')?.checked ?? true;
+        currentConfig.alertBot.token = (document.getElementById('alertBot_token')?.value || '').trim();
+        currentConfig.alertBot.authorizedPhones = (document.getElementById('alertBot_authorizedPhones')?.value || '')
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+        if (!currentConfig.alertBot.notifications) currentConfig.alertBot.notifications = {};
+        currentConfig.alertBot.notifications.userJoins = document.getElementById('alert_notif_joins')?.checked ?? true;
+        currentConfig.alertBot.notifications.purchaseAttempts = document.getElementById('alert_notif_purchases')?.checked ?? true;
+        currentConfig.alertBot.notifications.paymentProofs = document.getElementById('alert_notif_proofs')?.checked ?? true;
+        currentConfig.alertBot.notifications.paymentApprovals = document.getElementById('alert_notif_approvals')?.checked ?? true;
+        currentConfig.alertBot.notifications.paymentRejections = document.getElementById('alert_notif_rejections')?.checked ?? true;
+
         // Post to API
         const res = await fetch('/api/config', {
           method: 'POST',
@@ -5710,6 +6121,128 @@
       } catch (err) {
         console.error('Error saving configuration:', err);
         alert('Error saving configuration: ' + err.message);
+      }
+    }
+
+    // ====================================================
+    // BOT 5: ALERT & APPROVAL ENGINE PORTAL HANDLERS
+    // ====================================================
+    function loadAlertBotPortal() {
+      const ab = currentConfig.alertBot || {};
+      if (document.getElementById('alertBot_enabled')) document.getElementById('alertBot_enabled').checked = ab.enabled !== false;
+      if (document.getElementById('alertBot_token')) document.getElementById('alertBot_token').value = ab.token || '9014426568:AAEw5AxpLqYf5k7myF0CdrKlYJfAf6ue4vs';
+      if (document.getElementById('alertBot_authorizedPhones')) document.getElementById('alertBot_authorizedPhones').value = (ab.authorizedPhones || ['6203902842', '6232172355']).join(', ');
+
+      const notifs = ab.notifications || {};
+      if (document.getElementById('alert_notif_joins')) document.getElementById('alert_notif_joins').checked = notifs.userJoins !== false;
+      if (document.getElementById('alert_notif_purchases')) document.getElementById('alert_notif_purchases').checked = notifs.purchaseAttempts !== false;
+      if (document.getElementById('alert_notif_proofs')) document.getElementById('alert_notif_proofs').checked = notifs.paymentProofs !== false;
+      if (document.getElementById('alert_notif_approvals')) document.getElementById('alert_notif_approvals').checked = notifs.paymentApprovals !== false;
+      if (document.getElementById('alert_notif_rejections')) document.getElementById('alert_notif_rejections').checked = notifs.paymentRejections !== false;
+
+      renderAlertBotAdminsList(ab.authorizedAdmins || []);
+    }
+
+    function renderAlertBotAdminsList(admins) {
+      const container = document.getElementById('alertBot_adminsList');
+      if (!container) return;
+
+      if (!admins || admins.length === 0) {
+        container.innerHTML = `
+          <div style="padding:10px; background:rgba(0,0,0,0.2); border-radius:6px; color:var(--text-muted); font-size:0.8rem; text-align:center;">
+            No verified admins yet. Start <b>@botalertsafmbot</b> and share your phone contact to verify, or add manually below.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = admins.map(a => `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); gap:10px;">
+          <div>
+            <div style="font-weight:600; font-size:0.85rem; color:#93c5fd; display:flex; align-items:center; gap:6px;">
+              👑 ${escapeHtmlPortal(a.name || 'Admin')} ${a.username ? `<span style="color:var(--text-muted); font-weight:normal; font-size:0.78rem;">(${a.username})</span>` : ''}
+              <span class="badge" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3); font-size:0.68rem; padding:1px 6px;">Verified Admin</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+              ID: <code>${a.userId}</code> ${a.phone ? `• 📱 <code>${a.phone}</code>` : ''} ${a.verifiedAt ? `• Verified: ${new Date(a.verifiedAt).toLocaleDateString()}` : ''}
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger" style="padding:3px 8px; font-size:0.72rem;" onclick="removeAdminManually('${a.userId}')">
+            🗑️ Remove
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtmlPortal(val) {
+      return String(val || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    async function addAdminManually() {
+      const userId = document.getElementById('alertBot_newUserId')?.value.trim();
+      const name = document.getElementById('alertBot_newName')?.value.trim() || 'Admin';
+      const phone = document.getElementById('alertBot_newPhone')?.value.trim() || '';
+
+      if (!userId) {
+        alert('Please enter a valid Telegram User ID (e.g. 5459778091).');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/alertbot/add-admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, name, phone })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (!currentConfig.alertBot) currentConfig.alertBot = {};
+          currentConfig.alertBot.authorizedAdmins = data.authorizedAdmins;
+          renderAlertBotAdminsList(data.authorizedAdmins);
+          document.getElementById('alertBot_newUserId').value = '';
+          document.getElementById('alertBot_newName').value = '';
+          document.getElementById('alertBot_newPhone').value = '';
+          showToast('✅ Admin successfully added!');
+        } else {
+          alert('Could not add admin: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Error adding admin: ' + err.message);
+      }
+    }
+
+    async function removeAdminManually(userId) {
+      if (!confirm(`Are you sure you want to remove admin ID ${userId}?`)) return;
+      try {
+        const res = await fetch('/api/alertbot/remove-admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (!currentConfig.alertBot) currentConfig.alertBot = {};
+          currentConfig.alertBot.authorizedAdmins = data.authorizedAdmins;
+          renderAlertBotAdminsList(data.authorizedAdmins);
+          showToast('🗑️ Admin removed.');
+        }
+      } catch (err) {
+        alert('Error removing admin: ' + err.message);
+      }
+    }
+
+    async function triggerTestAlert() {
+      try {
+        showToast('🚀 Dispatching test alert to Telegram...');
+        const res = await fetch('/api/alertbot/test', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('✅ Test alert sent to all verified admins in @botalertsafmbot!');
+        } else {
+          alert('Could not send test alert: ' + (data.error || 'Check server logs'));
+        }
+      } catch (err) {
+        alert('Error sending test alert: ' + err.message);
       }
     }
 
@@ -6511,34 +7044,76 @@
       return `${d} Day${d === 1 ? '' : 's'} ${rem} Hour${rem === 1 ? '' : 's'}`;
     }
 
+    let subPreviewMode = 'plans'; // 'plans' or 'checkout'
+
     function updateSubscriptionPreview() {
       renderSubSetupWarnings();
       if (activeTab !== 'subscriptions') return;
       const s = currentConfig.subscriptions || {};
       const plans = s.plans || [];
-      const firstPlan = plans[0] || { name: '⚡ 6 Hours Flash VIP', price: 49, durationHours: 6 };
       const curr = s.currency || '₹';
-      const dur = formatDurationLabel(firstPlan.durationHours);
-      const upiId = s.upiId || 'avnifanbase@upi';
+      const botName = currentConfig.bot1?.bot_name || 'Avni FanBase';
 
-      let text = `👑 *${firstPlan.name}*\n`;
-      text += `⏱ Duration: *${dur}*\n\n`;
-      text += `💵 Pay exactly *${curr}${firstPlan.price}*\n`;
-      text += `🔑 UPI ID: \`${upiId}\`\n`;
-      text += `🧾 Order ref: \`AV1X2Y3\`\n\n`;
-      text += s.instructions
-        ? `${s.instructions}\n\n👇 Send the *screenshot* or *UTR number* right here.`
-        : `1. Scan the QR with any UPI app.\n2. Then send the *payment screenshot* or *12-digit UTR number* right here.`;
-
-      document.getElementById('previewText').innerHTML = renderTelegramFormattedText(text, '@alex_telegram', s.merchantName || 'Avni FanBase VIP');
-
+      const previewText = document.getElementById('previewText');
       const previewButtons = document.getElementById('previewButtons');
       previewButtons.innerHTML = '';
 
-      const b3 = document.createElement('div');
-      b3.className = 'tg-btn-preview';
-      b3.textContent = '« All Plans';
-      previewButtons.appendChild(b3);
+      if (subPreviewMode === 'checkout') {
+        const firstPlan = plans[0] || { name: '⚡ 6 Hours Flash VIP', price: 49, durationHours: 6 };
+        const dur = formatDurationLabel(firstPlan.durationHours);
+        const upiId = s.upiId || 'avnifanbase@upi';
+
+        let text = `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄Instant UPI Checkout࿐ 🌸 ━━━━━━━\n\n`;
+        text += `<blockquote>💖 <b>${firstPlan.name}</b>\n• Price: <b>${curr}${firstPlan.price}</b> (${dur})\n• UPI ID: <code>${upiId}</code>\n• Order Ref: <code>AV1X2Y3</code></blockquote>\n\n`;
+        text += s.instructions
+          ? `<blockquote>${s.instructions}</blockquote>`
+          : `<blockquote>1. Scan the QR with any UPI app.\n2. Send the payment screenshot or 12-digit UTR number here.</blockquote>`;
+
+        previewText.innerHTML = renderTelegramFormattedText(text, '@alex_telegram', s.merchantName || 'Avni FanBase VIP');
+
+        const bBack = document.createElement('div');
+        bBack.className = 'tg-btn-preview';
+        bBack.textContent = '« Back to Plans';
+        bBack.onclick = () => { subPreviewMode = 'plans'; updateSubscriptionPreview(); };
+        previewButtons.appendChild(bBack);
+
+        const bSubmit = document.createElement('div');
+        bSubmit.className = 'tg-btn-preview';
+        bSubmit.style.background = 'linear-gradient(135deg, #ec4899, #be185d)';
+        bSubmit.style.color = '#fff';
+        bSubmit.textContent = '📸 Submit Screenshot / UTR';
+        previewButtons.appendChild(bSubmit);
+      } else {
+        let text = `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄VIP Plans & Passes࿐ 🌸 ━━━━━━━\n\n`;
+        text += `<blockquote>🎀 <b>VIP SUBSCRIPTION PLANS</b>\nGet unlimited instant access to exclusive 1080p full-length premieres & all content channels.</blockquote>\n\n`;
+
+        plans.forEach((p, idx) => {
+          const dur = formatDurationLabel(p.durationHours);
+          const badge = p.badge ? ` [${p.badge}]` : '';
+          const target = p.contentTitle || ((p.linkedContent || 'all') === 'all' ? '🌐 All Content & Demo Bot VIP' : p.linkedContent);
+          text += `<blockquote>💖 <b>${idx + 1}. ${p.name}</b>${badge}\n• Price: <b>${curr}${p.price}</b> (${dur})\n• Access: <b>${target}</b>\n• Details: <i>${p.description || 'Instant 1-tap UPI activation.'}</i></blockquote>\n\n`;
+        });
+
+        text += `━━━━━━━ 🌸 ༄ᶦᶰᵈ᭄Instant Checkout࿐ 🌸 ━━━━━━━\n<blockquote>👇 <i>Tap a plan button below to open instant UPI QR checkout:</i></blockquote>`;
+
+        previewText.innerHTML = renderTelegramFormattedText(text, '@alex_telegram', botName);
+
+        plans.forEach((p) => {
+          const dur = formatDurationLabel(p.durationHours);
+          const b = document.createElement('div');
+          b.className = 'tg-btn-preview';
+          b.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+          b.style.color = '#fff';
+          b.textContent = `💳 ${p.name} — ${curr}${p.price} (${dur})`;
+          b.onclick = () => { subPreviewMode = 'checkout'; updateSubscriptionPreview(); };
+          previewButtons.appendChild(b);
+        });
+
+        const bStatus = document.createElement('div');
+        bStatus.className = 'tg-btn-preview';
+        bStatus.textContent = '🔍 Check My Subscription Status';
+        previewButtons.appendChild(bStatus);
+      }
     }
 
 </script>

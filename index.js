@@ -32,6 +32,12 @@ import {
 import { adminAuth, warnIfUnprotected } from './auth.js';
 import crypto from 'crypto';
 import { IS_TENANT, ROOT, botUsername, brandText, brandDeep, unbrandDeep, findUnsafePath } from './tenant.js';
+import {
+  initAlertBot,
+  sendAdminAlert,
+  setupAlertBotApiRoutes,
+  getAlertBotInstance
+} from './alertBot.js';
 
 dotenv.config();
 
@@ -43,6 +49,9 @@ const CONFIG_PATH = path.join(ROOT, 'config.json');
 function formatTelegramHtml(text) {
   if (!text) return '';
   let out = text;
+  // Escape non-HTML angle brackets like <::> or math symbols to avoid Telegram 400 errors
+  out = out.replace(/<::>/g, '&lt;::&gt;');
+  out = out.replace(/<(?!\/?(?:b|i|u|s|code|pre|blockquote|tg-spoiler|a(?:\s+[^>]+)?)(?:>|\s))/gi, '&lt;');
   // Spoilers: ||text|| -> <tg-spoiler>text</tg-spoiler>
   out = out.replace(/\|\|([\s\S]+?)\|\|/g, '<tg-spoiler>$1</tg-spoiler>');
   // Bold: **text** or *text* -> <b>text</b>
@@ -50,16 +59,20 @@ function formatTelegramHtml(text) {
   out = out.replace(/\*([^\*\n]+?)\*/g, '<b>$1</b>');
   // Strikethrough: ~text~ -> <s>text</s>
   out = out.replace(/~([\s\S]+?)~/g, '<s>$1</s>');
-  // Italic: _text_ -> <i>text</i>
-  out = out.replace(/_([^\_\r\n]+?)_/g, '<i>$1</i>');
+  // Italic: _text_ -> <i>text</i> (safe: does not match inside URLs or snake_case words)
+  out = out.replace(/(?<![a-zA-Z0-9_\/])_([^\_\r\n]+?)_(?![a-zA-Z0-9_])/g, '<i>$1</i>');
   // Code block: ```code``` -> <pre>code</pre>
   out = out.replace(/```(?:[a-zA-Z0-9_-]+)?\n?([\s\S]+?)```/g, '<pre>$1</pre>');
   // Inline code: `text` -> <code>text</code>
   out = out.replace(/`([^`\n]+?)`/g, '<code>$1</code>');
   // Hyperlinks: [text](url) -> <a href="url">text</a>
   out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2">$1</a>');
-  // Blockquotes: > line -> <blockquote>line</blockquote>
-  out = out.replace(/^>\s?(.*)$/gm, '<blockquote>$1</blockquote>');
+  // Blockquotes: combine consecutive > lines into a single <blockquote>
+  out = out.replace(/(?:^>[\t ]?(.*(?:\n|$)))+/gm, (match) => {
+    const lines = match.split('\n').filter((l) => l.trim().length > 0);
+    const content = lines.map((l) => l.replace(/^>[\t ]?/, '')).join('\n');
+    return `<blockquote>${content}</blockquote>\n`;
+  });
   return out;
 }
 
@@ -90,7 +103,12 @@ async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType
         try {
           return await ctx.replyWithPhoto({ source: mediaPath }, { caption: content, ...(extra || {}) });
         } catch (_) {
-          return await ctx.replyWithDocument({ source: mediaPath }, { caption: content, ...(extra || {}) });
+          try {
+            return await ctx.replyWithDocument({ source: mediaPath }, { caption: content, ...(extra || {}) });
+          } catch (e) {
+            console.warn('[Telegram] Could not send local photo:', e.message);
+            return null;
+          }
         }
       }
     }
@@ -104,7 +122,12 @@ async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType
       try {
         return await ctx.replyWithPhoto(mediaUrl, { caption: content, parse_mode: 'Markdown', ...(extra || {}) });
       } catch (_) {
-        return await ctx.replyWithPhoto(mediaUrl, { caption: content, ...(extra || {}) });
+        try {
+          return await ctx.replyWithPhoto(mediaUrl, { caption: content, ...(extra || {}) });
+        } catch (e) {
+          console.warn('[Telegram] Could not send photo url:', e.message);
+          return null;
+        }
       }
     }
   }
@@ -117,7 +140,12 @@ async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType
       try {
         return await ctx.replyWithVideo({ source: mediaPath }, { caption: content, parse_mode: 'Markdown', ...(extra || {}) });
       } catch (_) {
-        return await ctx.replyWithVideo({ source: mediaPath }, { caption: content, ...(extra || {}) });
+        try {
+          return await ctx.replyWithVideo({ source: mediaPath }, { caption: content, ...(extra || {}) });
+        } catch (e) {
+          console.warn('[Telegram] Could not send local video:', e.message);
+          return null;
+        }
       }
     }
   }
@@ -130,7 +158,12 @@ async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType
       try {
         return await ctx.replyWithVideo(mediaUrl, { caption: content, parse_mode: 'Markdown', ...(extra || {}) });
       } catch (_) {
-        return await ctx.replyWithVideo(mediaUrl, { caption: content, ...(extra || {}) });
+        try {
+          return await ctx.replyWithVideo(mediaUrl, { caption: content, ...(extra || {}) });
+        } catch (e) {
+          console.warn('[Telegram] Could not send video url:', e.message);
+          return null;
+        }
       }
     }
   }
@@ -142,7 +175,12 @@ async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType
     try {
       return await ctx.reply(content, { parse_mode: 'Markdown', ...(extra || {}) });
     } catch (_) {
-      return await ctx.reply(content, extra || {});
+      try {
+        return await ctx.reply(content, extra || {});
+      } catch (e) {
+        console.warn('[Telegram] Could not send text message:', e.message);
+        return null;
+      }
     }
   }
 }
@@ -660,11 +698,13 @@ const token1 = (process.env.TELEGRAM_BOT_TOKEN_1 || '').trim();
 const token2 = (process.env.TELEGRAM_BOT_TOKEN_2 || '').trim();
 const token3 = (process.env.TELEGRAM_BOT_TOKEN_3 || '').trim();
 const token4 = (process.env.TELEGRAM_BOT_TOKEN_4 || '').trim();
+const token5 = (process.env.TELEGRAM_BOT_TOKEN_5 || '9014426568:AAEw5AxpLqYf5k7myF0CdrKlYJfAf6ue4vs').trim();
 
 const bot1Enabled = !!token1 && process.env.BOT1_ENABLED?.toLowerCase() !== 'false';
 const bot2Enabled = !!token2 && process.env.BOT2_ENABLED?.toLowerCase() !== 'false';
 const bot3Enabled = !!token3 && process.env.BOT3_ENABLED?.toLowerCase() !== 'false';
 const bot4Enabled = !!token4 && process.env.BOT4_ENABLED?.toLowerCase() !== 'false';
+const bot5Enabled = !!token5 && process.env.BOT5_ENABLED?.toLowerCase() !== 'false';
 
 const telegrafOptions = process.env.TELEGRAM_API_ROOT
   ? { telegram: { apiRoot: process.env.TELEGRAM_API_ROOT } }
@@ -737,17 +777,35 @@ const secretPath1 = `/webhook/bot1_${token1.split(':')[0]}`;
 const secretPath2 = `/webhook/bot2_${token2.split(':')[0]}`;
 const secretPath3 = `/webhook/bot3_${token3.split(':')[0]}`;
 const secretPath4 = `/webhook/bot4_${token4.split(':')[0]}`;
+const secretPath5 = `/webhook/bot5_${token5.split(':')[0]}`;
+
+// Bot 5: @botalertsafmbot (Alert & Admin Approval Bot)
+const bot5 = initAlertBot({
+  token: token5,
+  telegrafOptions,
+  getConfig,
+  saveConfig,
+  app,
+  webhookDomain,
+  secretPath: secretPath5,
+  webhookSecret
+});
+if (bot5) {
+  attachTelegramApiLogger(bot5, 'Bot 5: botalertsafmbot (Alerts)');
+}
 
 if (webhookDomain && webhookDomain.trim() !== '') {
   if (bot1Enabled) app.use(bot1.webhookCallback(secretPath1, { secretToken: webhookSecret(token1) }));
   if (bot2Enabled) app.use(bot2.webhookCallback(secretPath2, { secretToken: webhookSecret(token2) }));
   if (bot3Enabled) app.use(bot3.webhookCallback(secretPath3, { secretToken: webhookSecret(token3) }));
   if (bot4Enabled) app.use(bot4.webhookCallback(secretPath4, { secretToken: webhookSecret(token4) }));
+  if (bot5Enabled && bot5) app.use(bot5.webhookCallback(secretPath5, { secretToken: webhookSecret(token5) }));
   console.log(`🌐 Webhook routes mounted on Express immediately:`);
   if (bot1Enabled) console.log(`   • Bot 1: ${secretPath1}`);
   if (bot2Enabled) console.log(`   • Bot 2: ${secretPath2}`);
   if (bot3Enabled) console.log(`   • Bot 3: ${secretPath3}`);
   if (bot4Enabled) console.log(`   • Bot 4: ${secretPath4}`);
+  if (bot5Enabled && bot5) console.log(`   • Bot 5: ${secretPath5}`);
 }
 
 app.use(adminAuth);
@@ -783,7 +841,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 100 * 1024 * 1024 },
+  limits: { fileSize: 2000 * 1024 * 1024 }, // 2GB upload limit
 });
 
 // Admin Dashboard Routes
@@ -874,11 +932,25 @@ app.post('/api/register-webhook', async (req, res) => {
     }
   }
 
+  if (bot5Enabled && bot5) {
+    try {
+      await callTelegramOnce('Manual Bot 5 setWebhook', () =>
+        bot5.telegram.setWebhook(`${cleanDomain}${secretPath5}`, { secret_token: webhookSecret(token5) })
+      );
+      results.bot5 = { success: true, url: `${cleanDomain}${secretPath5}` };
+    } catch (err) {
+      results.bot5 = { success: false, error: err.message };
+    }
+  }
+
   res.json(results);
 });
 
 // Setup Subscription & Payments Management REST APIs
 setupSubscriptionApiRoutes(app, upload);
+
+// Setup Alert Bot Management REST APIs
+setupAlertBotApiRoutes(app, getConfig, saveConfig);
 
 // API: Get current config
 app.get('/api/config', (req, res) => {
@@ -1408,7 +1480,11 @@ function buildInlineKeyboard(buttons, extraRow = null, forceTerms = false, inclu
   }
 
   if (extraRow && Array.isArray(extraRow) && extraRow.length > 0) {
-    rows.push(extraRow);
+    if (Array.isArray(extraRow[0])) {
+      rows.push(...extraRow);
+    } else {
+      rows.push(extraRow);
+    }
   }
 
   return rows.length > 0 ? Markup.inlineKeyboard(rows) : null;
@@ -1420,13 +1496,27 @@ function buildInlineKeyboard(buttons, extraRow = null, forceTerms = false, inclu
 function formatBot1Message(template, ctx) {
   const config = getConfig();
   const botName = config.bot1?.bot_name || 'Avni FanBase';
+  const name = ctx.from?.first_name || 'Friend';
   const username = ctx.from?.username
     ? `@${ctx.from.username}`
-    : ctx.from?.first_name || 'Friend';
+    : name;
+  const userId = ctx.from?.id ? String(ctx.from.id) : '';
+  const userMention = userId ? `<a href="tg://user?id=${userId}">${escapeHtml(name)}</a>` : escapeHtml(name);
+  const termsUrl = config.bot1?.terms?.url || 'https://t.me/avniffanbasebot';
+  const backupLink = config.bot1?.backupChannel?.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1';
 
   return template
+    .replace(/{user_mention}/g, userMention)
+    .replace(/{user_link}/g, userMention)
+    .replace(/{name}/g, escapeHtml(name))
+    .replace(/{first_name}/g, escapeHtml(name))
     .replace(/{username}/g, username)
-    .replace(/{bot_name}/g, botName);
+    .replace(/{user_id}/g, userId)
+    .replace(/{bot_name}/g, botName)
+    .replace(/{bot_name_upper}/g, botName.toUpperCase())
+    .replace(/{terms_url}/g, termsUrl)
+    .replace(/{terms_link}/g, `<a href="${termsUrl}">«Terms & Policy»</a>`)
+    .replace(/{backup_link}/g, backupLink);
 }
 
 // Welcome Message: Terms & Policy is ALWAYS intact at the end of the message
@@ -1512,11 +1602,71 @@ function buildStickyReplyKeyboard(userId = null, config = getConfig()) {
 
   if (rows.length === 0) {
     rows.push(["✨ Today's Content"]);
-    rows.push(['Most Viewed', 'Button 2', 'Button 3']);
+    rows.push(['🔥 Most Viewed', '⭐ Button 2']);
   }
 
   // Telegram persistent reply keyboard: is_persistent = true keeps it stuck to the bottom!
   return Markup.keyboard(rows).resize().persistent();
+}
+
+// ====================================================
+// BACKUP CHANNEL MEMBERSHIP GATE
+// "If leave backup channel bot will be restricted"
+// ====================================================
+async function checkBackupChannelMembership(ctx, userId = null) {
+  const cfg = getConfig();
+  const gate = cfg.bot1?.backupChannel || cfg.backupChannel || {};
+  if (gate.enabled === false) return { allowed: true };
+
+  const channelId = (gate.channelId || '').trim();
+  const inviteLink = gate.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1';
+
+  if (!channelId) {
+    // Channel ID not configured yet; allow access gracefully so bot is usable
+    return { allowed: true, unconfigured: true };
+  }
+
+  const uid = Number(userId || ctx.from?.id);
+  if (!uid) return { allowed: true };
+
+  try {
+    const member = await ctx.telegram.getChatMember(channelId, uid);
+    const validStatuses = ['creator', 'administrator', 'member', 'restricted'];
+    if (validStatuses.includes(member.status)) {
+      return { allowed: true, status: member.status };
+    }
+    return { allowed: false, status: member.status, inviteLink, gate };
+  } catch (err) {
+    const errMsg = err.message || '';
+    if (errMsg.includes('PARTICIPANT_ID_INVALID') || errMsg.includes('user not found')) {
+      return { allowed: false, status: 'left', inviteLink, gate };
+    }
+    console.warn(`[Backup Channel Gate] Could not verify membership for ${uid} in ${channelId}:`, errMsg);
+    return { allowed: true, warning: errMsg };
+  }
+}
+
+async function sendBackupChannelRestrictedMessage(ctx, gateConfig = null) {
+  const cfg = getConfig();
+  const gate = gateConfig || cfg.bot1?.backupChannel || cfg.backupChannel || {};
+  const invite = gate.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1';
+  const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
+
+  const text = (gate.restrictedMessage || '⛔ <b>ACCESS RESTRICTED!</b>\n\nHey {username}! You must be an active member of our official <b>Backup Channel</b> to use this bot and access content drops.\n\n⚠️ <i>If you leave the backup channel, your bot access is immediately restricted!</i>\n\n👇 Please join our backup channel below, then tap <b>\"🔄 Verify Membership\"</b> to continue:')
+    .replace(/{username}/g, escapeHtml(username));
+
+  const keyboard = Markup.inlineKeyboard([
+    [Markup.button.url('🔒 Join Backup Channel', invite)],
+    [Markup.button.callback('🔄 Verify Membership', 'verify_backup_membership')]
+  ]);
+
+  try {
+    await ctx.reply(formatTelegramHtml(text), { parse_mode: 'HTML', ...keyboard });
+  } catch (_) {
+    try {
+      await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    } catch (_) {}
+  }
 }
 
 async function sendBot1Welcome(ctx) {
@@ -1524,6 +1674,12 @@ async function sendBot1Welcome(ctx) {
     const config = getConfig();
     const welcome = config.bot1?.welcome || {};
     const userId = ctx.from?.id ? String(ctx.from.id) : null;
+
+    // Check Backup Channel Gate
+    const memCheck = await checkBackupChannelMembership(ctx, userId);
+    if (!memCheck.allowed) {
+      return await sendBackupChannelRestrictedMessage(ctx, memCheck.gate);
+    }
 
     if (welcome.enabled === false) {
       try {
@@ -1607,17 +1763,55 @@ function getTargetBotUsername(targetBotKey = 'bot2') {
   return map[targetBotKey] || 'avnifanbbot';
 }
 
-async function sendSingleListPreview(ctx, msg, list, username, botName, showNextBtn = false) {
+function formatDropCardCaption(msg, { botName, username, timerText, targetUsername = 'avnifanbbot', episodeNumber = 1 }) {
+  const config = getConfig();
+  const backupCfg = config.bot1?.backupChannel || {};
+  const backupHandle = backupCfg.handle || backupCfg.inviteLink || '@ShanayaBackupTG';
+  const cleanBackup = backupHandle.startsWith('https://t.me/+') ? backupHandle : (backupHandle.startsWith('@') ? backupHandle : `@${backupHandle}`);
+
+  const target = targetUsername || getTargetBotUsername('bot2') || 'avnifanbbot';
+  const deepLink = `https://t.me/${target}?start=${msg.id}`;
+  const videoTitle = msg.title || msg.revealedContent?.title || 'Featured Premiere';
+  const episode = msg.episode !== undefined ? msg.episode : (25400 + Number(episodeNumber || 1));
+  const views = msg.views || msg.duration || '1M';
+  const desc = msg.description || cleanBackup;
+
+  const raw = msg.preview?.message || msg.message;
+  let template = '';
+  if (raw && raw.trim() !== '') {
+    template = raw;
+  } else {
+    template = `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄BOTLink࿐ ━━━━━━━\n<blockquote>{bot_link}</blockquote>`;
+  }
+
+  return template
+    .replace(/{bot_name}/g, botName || 'FANBase')
+    .replace(/{bot_name_upper}/g, (botName || 'FANBase').toUpperCase())
+    .replace(/{description}/g, desc)
+    .replace(/{title}/g, videoTitle)
+    .replace(/{video_title}/g, videoTitle)
+    .replace(/{episode}/g, episode)
+    .replace(/{views}/g, views)
+    .replace(/{bot_link}/g, deepLink)
+    .replace(/{deep_link}/g, deepLink)
+    .replace(/{username}/g, username || 'Friend')
+    .replace(/{timer_text}/g, timerText || '60 sec');
+}
+
+async function sendSingleListPreview(ctx, msg, list, username, botName, showNextBtn = false, episodeIndex = 1) {
   const preview = msg.preview || {};
   const timerConfig = preview.timer || { enabled: false, seconds: 60 };
   const isTemporary = preview.type === 'temporary' || timerConfig.enabled;
   const timerSeconds = Number(timerConfig.seconds) || 60;
   const timerText = formatFreeTimerText(timerSeconds);
 
-  let caption = (preview.message || msg.message || '✨ *Exclusive Content Drop*')
-    .replace(/{username}/g, username)
-    .replace(/{bot_name}/g, botName)
-    .replace(/{timer_text}/g, timerText);
+  let caption = formatDropCardCaption(msg, {
+    botName,
+    username,
+    timerText,
+    targetUsername: list.targetBot || 'bot2',
+    episodeNumber: episodeIndex
+  });
 
   if (isTemporary && timerConfig.warningMessage && !caption.includes(timerConfig.warningMessage)) {
     const warning = timerConfig.warningMessage.replace(/{timer_text}/g, timerText);
@@ -1698,7 +1892,7 @@ async function sendSingleMembershipBanner(ctx, title = 'VIP Membership') {
 
   const text = `👑 *Want unlimited content with zero limits?*\n\nUpgrade to our **VIP Membership** to unlock unrestricted streaming, full drop libraries, and direct access to our exclusive **Premium Bot** without auto-delete!`;
   const keyboard = Markup.inlineKeyboard([
-    [Markup.button.url(`💎 View VIP Membership Plans${priceTag}`, 'https://t.me/avnifanbasepaybot?start=plans')]
+    [Markup.button.callback(`💎 View VIP Membership Plans${priceTag}`, 'open_vip_plans')]
   ]);
 
   try {
@@ -1712,13 +1906,19 @@ async function sendSingleMembershipBanner(ctx, title = 'VIP Membership') {
 
 async function executeMessageList(ctx, listId, botKey = 'bot1') {
   const config = getConfig();
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+
+  // Check Backup Channel Gate
+  const memCheck = await checkBackupChannelMembership(ctx, userId);
+  if (!memCheck.allowed) {
+    return await sendBackupChannelRestrictedMessage(ctx, memCheck.gate);
+  }
 
   // Check if this list / bottom button requires a paid subscription pass!
   const matchingBtn = (config.bot1?.welcome?.bottomButtons || []).find(
     (b) => b.listId === listId || b.id === listId
   );
   const accessType = matchingBtn?.accessType || 'free';
-  const userId = ctx.from?.id ? String(ctx.from.id) : null;
   const contentType = matchingBtn?.planId || matchingBtn?.category || matchingBtn?.contentType || matchingBtn?.id || listId;
   const accessCheck = checkUserVipSubscription(userId, contentType);
 
@@ -1868,7 +2068,7 @@ async function sendBot2LimitExceededMessage(ctx, limitCfg) {
     .replace(/{max_drops}/g, maxDrops);
 
   const rows = [];
-  rows.push([Markup.button.url('💎 Upgrade to VIP (Unlimited Drops)', 'https://t.me/avnifanbasepaybot?start=plans')]);
+  rows.push([Markup.button.url('💎 Upgrade to VIP (Unlimited Drops)', 'https://t.me/avniffanbasebot?start=plans')]);
   if (limitCfg.buttons && Array.isArray(limitCfg.buttons)) {
     limitCfg.buttons
       .filter((b) => b.text && b.text.trim() !== '')
@@ -1889,6 +2089,12 @@ async function sendBot2LimitExceededMessage(ctx, limitCfg) {
 
 // Function executed on Bot 2 to deliver unlocked content from any Message List, Free, or Today
 async function deliverRevealedDropOnBot2(ctx, dropId) {
+  // Check Backup Channel Gate
+  const memCheck = await checkBackupChannelMembership(ctx, ctx.from?.id);
+  if (!memCheck.allowed) {
+    return await sendBackupChannelRestrictedMessage(ctx, memCheck.gate);
+  }
+
   const config = getConfig();
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
   const botName = config.bot2?.bot_name || 'Avni Fanbase Demo';
@@ -1957,9 +2163,30 @@ async function deliverRevealedDropOnBot2(ctx, dropId) {
   const timerSeconds = Number(timerConfig.seconds) || 60;
   const timerText = formatFreeTimerText(timerSeconds);
 
-  let caption = (revealed.message || foundDrop.message || '🎬 *Here is your unlocked exclusive content!*')
+  const backupCfg = config.bot1?.backupChannel || {};
+  const backupHandle = backupCfg.handle || backupCfg.inviteLink || '@ShanayaBackupTG';
+  const cleanBackup = backupHandle.startsWith('https://t.me/+') ? backupHandle : (backupHandle.startsWith('@') ? backupHandle : `@${backupHandle}`);
+  const videoTitle = foundDrop.title || foundDrop.revealedContent?.title || 'Featured Premiere';
+  const episode = foundDrop.episode !== undefined ? foundDrop.episode : 25406;
+  const views = foundDrop.views || foundDrop.duration || '1M';
+  const desc = foundDrop.description || cleanBackup;
+
+  let caption = '';
+  if (revealed.message && revealed.message.trim() !== '') {
+    caption = revealed.message;
+  } else {
+    caption = `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄Exclusive Video࿐ ━━━━━━━\n<blockquote>🎬 Unlocked Video Drop</blockquote>`;
+  }
+
+  caption = caption
+    .replace(/{bot_name}/g, botName || 'FANBase')
+    .replace(/{bot_name_upper}/g, (botName || 'FANBase').toUpperCase())
+    .replace(/{description}/g, desc)
+    .replace(/{title}/g, videoTitle)
+    .replace(/{video_title}/g, videoTitle)
+    .replace(/{episode}/g, episode)
+    .replace(/{views}/g, views)
     .replace(/{username}/g, username)
-    .replace(/{bot_name}/g, botName)
     .replace(/{timer_text}/g, timerText);
 
   if (isTemporary && timerConfig.warningMessage && !caption.includes(timerConfig.warningMessage)) {
@@ -1968,6 +2195,15 @@ async function deliverRevealedDropOnBot2(ctx, dropId) {
   }
 
   const rows = [];
+  const uId = ctx.from?.id ? String(ctx.from.id) : null;
+  const isSaved = uId && isUserContentSaved(uId, foundDrop.id);
+  rows.push([
+    Markup.button.callback(isSaved ? '✅ Saved in Library' : '⭐ Save Video', `b2_save_${foundDrop.id}`)
+  ]);
+  rows.push([
+    Markup.button.url('✨ More Drops in Main Bot', 'https://t.me/avniffanbasebot')
+  ]);
+
   if (revealed.buttons && Array.isArray(revealed.buttons)) {
     revealed.buttons
       .filter((b) => b.text && b.text.trim() !== '')
@@ -2023,27 +2259,32 @@ function formatTodayTimerText(seconds) {
   return `${sec} sec`;
 }
 
-async function sendSingleTodayPreview(ctx, msg, username, botName, showNextBtn = false) {
+async function sendSingleTodayPreview(ctx, msg, username, botName, showNextBtn = false, episodeIndex = 1) {
   const preview = msg.preview || {};
   const timerConfig = preview.timer || { enabled: false, seconds: 60 };
   const isTemporary = preview.type === 'temporary' || timerConfig.enabled;
   const timerSeconds = Number(timerConfig.seconds) || 60;
   const timerText = formatTodayTimerText(timerSeconds);
 
-  let caption = (preview.message || msg.message || "✨ *Today's Content Drop*")
-    .replace(/{username}/g, username)
-    .replace(/{bot_name}/g, botName)
-    .replace(/{timer_text}/g, timerText);
+  let caption = formatDropCardCaption(msg, {
+    botName,
+    username,
+    timerText,
+    targetUsername: 'bot2',
+    episodeNumber: episodeIndex
+  });
 
   if (isTemporary && timerConfig.warningMessage && !caption.includes(timerConfig.warningMessage)) {
     const warning = timerConfig.warningMessage.replace(/{timer_text}/g, timerText);
     caption = `${caption}\n\n${warning}`;
   }
 
-  // Row 1: Unique View Content button that reveals the hidden content for this drop
+  // Row 1: View Content button redirects to Demo Bot (@avnifanbbot) for content detail
   const viewButtonText = msg.viewButtonText || '👁️ View Content';
+  const targetUsername = getTargetBotUsername('bot2');
+  const deepLinkUrl = `https://t.me/${targetUsername}?start=${msg.id}`;
   const rows = [
-    [Markup.button.callback(viewButtonText, `reveal_today_${msg.id}`)]
+    [Markup.button.url(viewButtonText, deepLinkUrl)]
   ];
 
   // If in Mode 2 (sequential) and there are multiple active drops, add Next Today Drop button
@@ -2099,13 +2340,19 @@ async function sendSingleTodayPreview(ctx, msg, username, botName, showNextBtn =
 
 async function executeTodayCommand(ctx, botKey = 'bot1') {
   const config = getConfig();
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+
+  // Check Backup Channel Gate
+  const memCheck = await checkBackupChannelMembership(ctx, userId);
+  if (!memCheck.allowed) {
+    return await sendBackupChannelRestrictedMessage(ctx, memCheck.gate);
+  }
 
   // Check access mode: 'free', 'drops_then_paywall', or 'locked' / 'paid'
   const todayBtn = (config.bot1?.welcome?.bottomButtons || []).find(
     (b) => b.type === 'today' || b.id === 'bbtn_today'
   );
   const accessType = todayBtn?.accessType || 'free';
-  const userId = ctx.from?.id ? String(ctx.from.id) : null;
   const contentType = todayBtn?.contentType || 'today';
   const accessCheck = checkUserVipSubscription(userId, contentType);
 
@@ -2146,8 +2393,9 @@ async function executeTodayCommand(ctx, botKey = 'bot1') {
 
   if (deliveryMode === 'all_in_one') {
     // Mode 1: Send all active messages in one go, each with its unique View Content button
+    let ep = 1;
     for (const msg of deliveryMessages) {
-      await sendSingleTodayPreview(ctx, msg, username, botName, false);
+      await sendSingleTodayPreview(ctx, msg, username, botName, false, ep++);
     }
   } else {
     // Mode 2: Sequential (send one by one, cycles on "Next Today's Drop")
@@ -2157,14 +2405,18 @@ async function executeTodayCommand(ctx, botKey = 'bot1') {
     todayUserCursors.set(userId, nextCursor);
     const chosen = deliveryMessages[nextCursor];
     const showNextBtn = deliveryMessages.length > 1;
-    await sendSingleTodayPreview(ctx, chosen, username, botName, showNextBtn);
+    await sendSingleTodayPreview(ctx, chosen, username, botName, showNextBtn, nextCursor + 1);
   }
 
   // Show ONLY ONE membership message for this drop session (never on every single drop message):
-  if ((accessType === 'drops_then_paywall' || accessType === 'teaser') && !accessCheck.active) {
-    await sendContentLockedPaywall(ctx, todayBtn || { text: "✨ Today's Content" }, contentType, getConfig, formatTelegramHtml);
-  } else if (!accessCheck.active) {
-    await sendSingleMembershipBanner(ctx, "✨ Today's Content");
+  try {
+    if ((accessType === 'drops_then_paywall' || accessType === 'teaser') && !accessCheck.active) {
+      await sendContentLockedPaywall(ctx, todayBtn || { text: "✨ Today's Content" }, contentType, getConfig, formatTelegramHtml);
+    } else if (!accessCheck.active) {
+      await sendSingleMembershipBanner(ctx, "✨ Today's Content");
+    }
+  } catch (err) {
+    console.warn('Membership banner error:', err.message);
   }
 }
 
@@ -2300,7 +2552,7 @@ async function handleNextTodayDropAction(ctx, botKey = 'bot1') {
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
   const botName = config[botKey]?.bot_name || 'Bot';
   const showNextBtn = activeMessages.length > 1;
-  await sendSingleTodayPreview(ctx, chosen, username, botName, showNextBtn);
+  await sendSingleTodayPreview(ctx, chosen, username, botName, showNextBtn, nextCursor + 1);
 }
 
 // ----------------------------------------------------
@@ -2316,27 +2568,32 @@ function formatFreeTimerText(seconds) {
   return `${sec} sec`;
 }
 
-async function sendSingleFreePreview(ctx, msg, username, botName, showNextBtn = false) {
+async function sendSingleFreePreview(ctx, msg, username, botName, showNextBtn = false, episodeIndex = 1) {
   const preview = msg.preview || {};
   const timerConfig = preview.timer || { enabled: false, seconds: 60 };
   const isTemporary = preview.type === 'temporary' || timerConfig.enabled;
   const timerSeconds = Number(timerConfig.seconds) || 60;
   const timerText = formatFreeTimerText(timerSeconds);
 
-  let caption = (preview.message || msg.message || '🎁 *Free Content Drop*')
-    .replace(/{username}/g, username)
-    .replace(/{bot_name}/g, botName)
-    .replace(/{timer_text}/g, timerText);
+  let caption = formatDropCardCaption(msg, {
+    botName,
+    username,
+    timerText,
+    targetUsername: 'bot2',
+    episodeNumber: episodeIndex
+  });
 
   if (isTemporary && timerConfig.warningMessage && !caption.includes(timerConfig.warningMessage)) {
     const warning = timerConfig.warningMessage.replace(/{timer_text}/g, timerText);
     caption = `${caption}\n\n${warning}`;
   }
 
-  // Row 1: Unique View Content button that reveals the hidden content for this drop
+  // Row 1: View Content button redirects to Demo Bot (@avnifanbbot) for content delivery
   const viewButtonText = msg.viewButtonText || '👁️ View Content';
+  const targetUsername = getTargetBotUsername('bot2');
+  const deepLinkUrl = `https://t.me/${targetUsername}?start=${msg.id}`;
   const rows = [
-    [Markup.button.callback(viewButtonText, `reveal_free_${msg.id}`)]
+    [Markup.button.url(viewButtonText, deepLinkUrl)]
   ];
 
   // If in Mode 2 (sequential) and there are multiple active drops, add Next Free Content button
@@ -2421,8 +2678,9 @@ async function executeFreeCommand(ctx, botKey = 'bot1') {
 
   if (deliveryMode === 'all_in_one') {
     // Mode 1: Send all active messages in one go, each with its unique View Content button
+    let ep = 1;
     for (const msg of activeMessages) {
-      await sendSingleFreePreview(ctx, msg, username, botName, false);
+      await sendSingleFreePreview(ctx, msg, username, botName, false, ep++);
     }
   } else {
     // Mode 2: Sequential (send one by one, cycles on "Next Free Content")
@@ -2432,7 +2690,7 @@ async function executeFreeCommand(ctx, botKey = 'bot1') {
     freeUserCursors.set(userId, nextCursor);
     const chosen = activeMessages[nextCursor];
     const showNextBtn = activeMessages.length > 1;
-    await sendSingleFreePreview(ctx, chosen, username, botName, showNextBtn);
+    await sendSingleFreePreview(ctx, chosen, username, botName, showNextBtn, nextCursor + 1);
   }
 
   // Show ONLY ONE membership message for this free drop session:
@@ -2572,11 +2830,14 @@ async function handleNextFreeDropAction(ctx, botKey = 'bot1') {
   const username = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || 'Friend');
   const botName = config[botKey]?.bot_name || 'Bot';
   const showNextBtn = activeMessages.length > 1;
-  await sendSingleFreePreview(ctx, chosen, username, botName, showNextBtn);
+  await sendSingleFreePreview(ctx, chosen, username, botName, showNextBtn, nextCursor + 1);
 }
 
 // Bot 1 Commands
 bot1.start(async (ctx) => {
+  try {
+    sendAdminAlert('user_join', { botLabel: 'Bot 1: Avni FanBase (@Avniffanbasebot)', user: ctx.from });
+  } catch (_) {}
   await sendBot1Welcome(ctx);
 });
 
@@ -2640,6 +2901,66 @@ bot1.action(/^reveal_free_(.+)$/, async (ctx) => {
 
 bot1.action('next_free_drop', async (ctx) => {
   await handleNextFreeDropAction(ctx, 'bot1');
+});
+
+// Backup Channel Membership Verification Actions
+bot1.action('verify_backup_membership', async (ctx) => {
+  try { await ctx.answerCbQuery('Checking channel membership...'); } catch (_) {}
+  const memCheck = await checkBackupChannelMembership(ctx, ctx.from?.id);
+  if (memCheck.allowed) {
+    try {
+      await ctx.reply('✅ <b>Membership Verified! Welcome back!</b>\n\nYour access has been restored. Explore content drops below:', { parse_mode: 'HTML' });
+    } catch (_) {}
+    return await sendBot1Welcome(ctx);
+  } else {
+    try {
+      await ctx.reply('❌ <b>You are not a member of the backup channel yet!</b>\nPlease click the button below to join, then tap verify:', {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([
+          [Markup.button.url('🔒 Join Backup Channel', memCheck.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1')],
+          [Markup.button.callback('🔄 Verify Membership', 'verify_backup_membership')]
+        ])
+      });
+    } catch (_) {}
+  }
+});
+
+bot2.action('verify_backup_membership', async (ctx) => {
+  try { await ctx.answerCbQuery('Checking channel membership...'); } catch (_) {}
+  const memCheck = await checkBackupChannelMembership(ctx, ctx.from?.id);
+  if (memCheck.allowed) {
+    try {
+      await ctx.reply('✅ <b>Membership Verified! Welcome back!</b>\n\nYour access has been restored.', { parse_mode: 'HTML' });
+    } catch (_) {}
+    return await sendBot2TimedMessage(ctx);
+  } else {
+    try {
+      await ctx.reply('❌ <b>You are not a member of the backup channel yet!</b>\nPlease click the button below to join, then tap verify:', {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([
+          [Markup.button.url('🔒 Join Backup Channel', memCheck.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1')],
+          [Markup.button.callback('🔄 Verify Membership', 'verify_backup_membership')]
+        ])
+      });
+    } catch (_) {}
+  }
+});
+
+// Auto-detect Backup Channel ID when Bot 1 is added as Admin to the Channel
+bot1.on(['my_chat_member', 'chat_member'], async (ctx) => {
+  const chat = ctx.chat;
+  if (chat && (chat.type === 'channel' || chat.type === 'supergroup')) {
+    const cfg = getConfig();
+    if (!cfg.bot1) cfg.bot1 = {};
+    if (!cfg.bot1.backupChannel) cfg.bot1.backupChannel = {};
+    cfg.bot1.backupChannel.channelId = String(chat.id);
+    cfg.bot1.backupChannel.channelTitle = chat.title || 'Backup Channel';
+    try {
+      const configPath = path.join(ROOT, 'config.json');
+      fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2), 'utf8');
+      console.log(`🔒 [Backup Channel Gate] Auto-detected and saved Backup Channel ID: ${chat.id} ("${chat.title}")`);
+    } catch (_) {}
+  }
 });
 
 // Terms Command & Action (Cleaned: No "Back to Main" button)
@@ -2765,14 +3086,21 @@ bot1.on('text', async (ctx) => {
     return await executeTodayCommand(ctx, 'bot1');
   }
 
-  if (text.toLowerCase() === 'button 1' || text === '/btn1') {
-    return await executeMessageList(ctx, 'list_btn1', 'bot1');
+  if (
+    text.toLowerCase() === 'most viewed' ||
+    text.toLowerCase() === '🔥 most viewed' ||
+    text === '/mostviewed' ||
+    text === '/btn1' ||
+    text.toLowerCase() === 'button 1'
+  ) {
+    return await executeMessageList(ctx, 'list_1795573154998', 'bot1');
   }
-  if (text.toLowerCase() === 'button 2' || text === '/btn2') {
+  if (
+    text.toLowerCase() === 'button 2' ||
+    text.toLowerCase() === '⭐ button 2' ||
+    text === '/btn2'
+  ) {
     return await executeMessageList(ctx, 'list_btn2', 'bot1');
-  }
-  if (text.toLowerCase() === 'button 3' || text === '/btn3') {
-    return await executeMessageList(ctx, 'list_btn3', 'bot1');
   }
   if (text === '/today' || text.startsWith('/today ') || text === '/todayscontent' || text.startsWith('/todayscontent ') || text === '/todays_content') {
     return await executeTodayCommand(ctx, 'bot1');
@@ -2780,21 +3108,25 @@ bot1.on('text', async (ctx) => {
   if (text === '/free' || text.startsWith('/free ')) {
     return await executeFreeCommand(ctx, 'bot1');
   }
-  if (text === '/terms') {
-    const config = getConfig();
-    const terms = config.bot1?.terms || {};
-    return await ctx.reply(`📜 *${terms.title || 'Terms & Policy'}*\n\n${terms.content || ''}`);
-  }
-  if (text === '/help') {
-    const config = getConfig();
-    const help = config.bot1?.help || {};
-    return await ctx.replyWithMarkdown(help.message || '🤖 Bot Help:\n• /start\n• /free\n• /terms\n• /help');
-  }
-  if (text.startsWith('/')) {
-    await ctx.reply('❓ Unknown command.\nAvailable commands are:\n• /start - Welcome greeting\n• /free - Free content links\n• /terms - Community guidelines\n• /help - Bot support');
-  } else {
-    const name = ctx.from?.first_name || 'Friend';
-    await ctx.reply(`👋 Hello ${name}! Type /start or /free to explore our community!`);
+  try {
+    if (text === '/terms') {
+      const config = getConfig();
+      const terms = config.bot1?.terms || {};
+      return await ctx.reply(`📜 *${terms.title || 'Terms & Policy'}*\n\n${terms.content || ''}`);
+    }
+    if (text === '/help') {
+      const config = getConfig();
+      const help = config.bot1?.help || {};
+      return await ctx.replyWithMarkdown(help.message || '🤖 Bot Help:\n• /start\n• /free\n• /terms\n• /help');
+    }
+    if (text.startsWith('/')) {
+      await ctx.reply('❓ Unknown command.\nAvailable commands are:\n• /start - Welcome greeting\n• /free - Free content links\n• /terms - Community guidelines\n• /help - Bot support');
+    } else {
+      const name = ctx.from?.first_name || 'Friend';
+      await ctx.reply(`👋 Hello ${name}! Type /start or /free to explore our community!`);
+    }
+  } catch (err) {
+    console.warn('[Bot 1] Message reply error:', err.message);
   }
 });
 
@@ -2804,6 +3136,12 @@ bot1.on('text', async (ctx) => {
 const userCursors = new Map();
 
 async function sendBot2TimedMessage(ctx, targetMsgId = null) {
+  // Check Backup Channel Gate
+  const memCheck = await checkBackupChannelMembership(ctx, ctx.from?.id);
+  if (!memCheck.allowed) {
+    return await sendBackupChannelRestrictedMessage(ctx, memCheck.gate);
+  }
+
   const config = getConfig();
   const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
   const allMessages = bot2Config.messages || [];
@@ -2856,9 +3194,27 @@ async function sendBot2TimedMessage(ctx, targetMsgId = null) {
   const timerSeconds = Number(timerConfig.seconds) || 60;
   const timerText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
 
-  let caption = (chosen.message || '🎬 Exclusive Video Drop!\n\n⚠️ Self-destructs in {timer_text}!')
-    .replace(/{username}/g, username)
+  const videoTitle = chosen.title || 'Featured Premiere';
+  const episode = chosen.episode !== undefined ? chosen.episode : 25406;
+  const views = chosen.views || chosen.duration || '1M';
+  const desc = chosen.description || '@ShanayaBackupTG';
+
+  let caption = '';
+  if (chosen.message && chosen.message.trim() !== '') {
+    caption = chosen.message;
+  } else {
+    caption = `━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄Exclusive Video࿐ ━━━━━━━\n<blockquote>🎬 Unlocked Video Drop</blockquote>`;
+  }
+
+  caption = caption
     .replace(/{bot_name}/g, botName)
+    .replace(/{bot_name_upper}/g, botName.toUpperCase())
+    .replace(/{description}/g, desc)
+    .replace(/{title}/g, videoTitle)
+    .replace(/{video_title}/g, videoTitle)
+    .replace(/{episode}/g, episode)
+    .replace(/{views}/g, views)
+    .replace(/{username}/g, username)
     .replace(/{timer_text}/g, timerText)
     .replace(/{timer}/g, timerText);
 
@@ -2869,11 +3225,18 @@ async function sendBot2TimedMessage(ctx, targetMsgId = null) {
     caption = `${caption}\n\n${warning}`;
   }
 
-  let extraRow = null;
+  const uId = ctx.from?.id ? String(ctx.from.id) : null;
+  const isSaved = uId && isUserContentSaved(uId, chosen.id);
+  const saveBtnRow = [
+    Markup.button.callback(isSaved ? '✅ Saved in Library' : '⭐ Save Video', `b2_save_${chosen.id}`)
+  ];
+
+  const extraRows = [saveBtnRow];
   if (activeMessages.length > 1) {
-    extraRow = [Markup.button.callback('▶️ Next Video Drop', 'next_drop')];
+    extraRows.push([Markup.button.callback('▶️ Next Video Drop', 'next_drop')]);
   }
-  const keyboard = buildInlineKeyboard(chosen.buttons, extraRow);
+  extraRows.push([Markup.button.url('✨ More Drops in Main Bot', 'https://t.me/avniffanbasebot')]);
+  const keyboard = buildInlineKeyboard(chosen.buttons, extraRows);
 
   const videoPath = chosen.videoPath ? path.join(ROOT, chosen.videoPath) : null;
   const isVideo = Boolean((videoPath && fs.existsSync(videoPath)) || (chosen.videoUrl && chosen.videoUrl.trim() !== ''));
@@ -2906,6 +3269,9 @@ async function sendBot2TimedMessage(ctx, targetMsgId = null) {
 
 // Bot 2 Commands (CONFIGURABLE WELCOME GREETING)
 bot2.start(async (ctx) => {
+  try {
+    sendAdminAlert('user_join', { botLabel: 'Bot 2: Video Drops (@avnifanbbot)', user: ctx.from });
+  } catch (_) {}
   const name = ctx.from?.first_name || 'there';
   const username = ctx.from?.username ? `@${ctx.from.username}` : name;
   const config = getConfig();
@@ -2967,12 +3333,16 @@ bot2.start(async (ctx) => {
   }
 
   if (payload && payload.trim() !== '') {
+    const cleanP = payload.trim();
+    if (cleanP === 'vip' || cleanP === 'start' || cleanP === 'plans') {
+      return await sendBot2TimedMessage(ctx);
+    }
     // 1. Check if this is a cross-bot revealed content request (from Bot 1 /free or Button 1)
-    const delivered = await deliverRevealedDropOnBot2(ctx, payload.trim());
+    const delivered = await deliverRevealedDropOnBot2(ctx, cleanP);
     if (delivered) return;
 
     // 2. Native Bot 2 timed drop
-    await sendBot2TimedMessage(ctx, payload.trim());
+    await sendBot2TimedMessage(ctx, cleanP);
   } else {
     await sendBot2TimedMessage(ctx);
   }
@@ -3072,6 +3442,103 @@ bot2.action(/view_drop_(.+)/, async (ctx) => {
   try { await ctx.answerCbQuery(); } catch (_) {}
   const targetId = ctx.match[1];
   await sendBot2TimedMessage(ctx, targetId);
+});
+
+async function handleBot2SaveAction(ctx, dropId) {
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  if (!userId) return;
+
+  const config = getConfig();
+  let dropTitle = 'Exclusive Video';
+  const lists = config.bot1?.messageLists || config.messageLists || [];
+  for (const l of lists) {
+    const d = (l.messages || []).find((m) => m.id === dropId);
+    if (d) { dropTitle = d.title || d.revealedContent?.title || dropTitle; break; }
+  }
+  if (dropTitle === 'Exclusive Video' && config.bot2?.messages) {
+    const d = config.bot2.messages.find((m) => m.id === dropId);
+    if (d) dropTitle = d.title || dropTitle;
+  }
+  if (dropTitle === 'Exclusive Video' && config.bot1?.today?.messages) {
+    const d = config.bot1.today.messages.find((m) => m.id === dropId);
+    if (d) dropTitle = d.title || dropTitle;
+  }
+
+  const { saved, count } = toggleUserSavedContent(userId, dropId, { title: dropTitle });
+
+  if (saved) {
+    try { await ctx.answerCbQuery(`⭐ Saved to your Library! (${count} total)`, { show_alert: true }); } catch (_) {}
+  } else {
+    try { await ctx.answerCbQuery(`Removed from your Library. (${count} remaining)`, { show_alert: true }); } catch (_) {}
+  }
+}
+
+async function sendBot2SavedContent(ctx, page = 0) {
+  const memCheck = await checkBackupChannelMembership(ctx, ctx.from?.id);
+  if (!memCheck.allowed) {
+    return await sendBackupChannelRestrictedMessage(ctx, memCheck.gate);
+  }
+
+  const userId = ctx.from?.id ? String(ctx.from.id) : null;
+  const savedList = getUserSavedContent(userId);
+
+  if (!savedList || savedList.length === 0) {
+    const emptyMsg = `⭐ *Your Saved Content Vault is Empty*\n\nYou haven't bookmarked any video drops yet!\n\nWhen viewing video drops in this bot, simply tap the *'⭐ Save Video'* button on any drop to save it here for instant retrieval anytime.`;
+    return await ctx.reply(formatTelegramHtml(emptyMsg), { parse_mode: 'HTML' });
+  }
+
+  const limit = 5;
+  const totalPages = Math.ceil(savedList.length / limit);
+  const currentPage = Math.max(0, Math.min(Number(page) || 0, totalPages - 1));
+  const startIdx = currentPage * limit;
+  const currentBatch = savedList.slice(startIdx, startIdx + limit);
+
+  let text = `⭐ *Your Saved Video Library* (${savedList.length} total saved):\n\n`;
+
+  const inlineButtons = [];
+
+  currentBatch.forEach((item, idx) => {
+    const dropId = typeof item === 'string' ? item : item.id;
+    const title = typeof item === 'object' && item.title ? item.title : `Saved Video #${startIdx + idx + 1}`;
+    text += `${startIdx + idx + 1}. *${title}*\n`;
+    inlineButtons.push([
+      Markup.button.callback(`🎬 Watch: ${title.slice(0, 20)}`, `b2_rev_${dropId}`),
+      Markup.button.callback(`❌ Remove`, `b2_unsave_${dropId}`)
+    ]);
+  });
+
+  const navRow = [];
+  if (currentPage > 0) {
+    navRow.push(Markup.button.callback('⬅️ Previous', `b2_saved_page_${currentPage - 1}`));
+  }
+  if (currentPage < totalPages - 1) {
+    navRow.push(Markup.button.callback('Next Page ➡️', `b2_saved_page_${currentPage + 1}`));
+  }
+  if (navRow.length > 0) inlineButtons.push(navRow);
+
+  const keyboard = Markup.inlineKeyboard(inlineButtons);
+  await ctx.reply(formatTelegramHtml(text), { parse_mode: 'HTML', ...keyboard });
+}
+
+bot2.command('saved', async (ctx) => sendBot2SavedContent(ctx, 0));
+bot2.action('b2_show_saved', async (ctx) => {
+  try { await ctx.answerCbQuery(); } catch (_) {}
+  await sendBot2SavedContent(ctx, 0);
+});
+bot2.action(/^b2_save_(.+)$/, async (ctx) => handleBot2SaveAction(ctx, ctx.match[1]));
+bot2.action(/^b2_unsave_(.+)$/, async (ctx) => {
+  toggleUserSavedContent(String(ctx.from?.id), ctx.match[1]);
+  try { await ctx.answerCbQuery('Removed from saved library.'); } catch (_) {}
+  await sendBot2SavedContent(ctx, 0);
+});
+bot2.action(/^b2_saved_page_(\d+)$/, async (ctx) => {
+  try { await ctx.answerCbQuery(); } catch (_) {}
+  await sendBot2SavedContent(ctx, Number(ctx.match[1]));
+});
+bot2.action(/^b2_rev_(.+)$/, async (ctx) => {
+  try { await ctx.answerCbQuery('Loading saved drop...'); } catch (_) {}
+  const res = await deliverRevealedDropOnBot2(ctx, ctx.match[1]);
+  if (!res) await sendBot2TimedMessage(ctx, ctx.match[1]);
 });
 
 bot2.on('video', async (ctx) => {
@@ -3178,6 +3645,9 @@ bot2.on('text', async (ctx) => {
 // 5. BOT 3: @avnifanbasepaybot (Payment Confirmation & VIP Checkout Bot)
 // ----------------------------------------------------
 bot3.start(async (ctx) => {
+  try {
+    sendAdminAlert('user_join', { botLabel: 'Bot 3: VIP Payment (@avnifanbasepaybot)', user: ctx.from });
+  } catch (_) {}
   return await handlePlansCommand(ctx, getConfig, formatTelegramHtml);
 });
 
@@ -3774,26 +4244,63 @@ function startExpiryReminderScheduler() {
           [Markup.button.url('👑 Renew VIP Pass Now', 'https://t.me/avnifanbasepaybot?start=plans')]
         ]);
 
+        let sent = null;
+        let deliveredBy = null;
+
+        // Try Bot 4 first (VIP Bot)
         try {
-          const sent = await bot4.telegram.sendMessage(userId, formatTelegramHtml(reminderText), {
+          sent = await bot4.telegram.sendMessage(userId, formatTelegramHtml(reminderText), {
             parse_mode: 'HTML',
             ...keyboard
           });
-
-          const autoDeleteSec = Number(expCfg.reminderAutoDeleteSeconds) || 0;
-          if (autoDeleteSec > 0 && sent) {
-            setTimeout(async () => {
-              try { await bot4.telegram.deleteMessage(userId, sent.message_id); } catch (_) {}
-            }, autoDeleteSec * 1000);
-          }
-        } catch (sendErr) {
+          deliveredBy = 'Bot 4 (Premium)';
+        } catch (b4Err) {
+          // Fallback to Bot 3 (Payment Bot where user interacted)
           try {
-            await bot1.telegram.sendMessage(userId, formatTelegramHtml(reminderText), {
+            sent = await bot3.telegram.sendMessage(userId, formatTelegramHtml(reminderText), {
               parse_mode: 'HTML',
               ...keyboard
             });
-          } catch (_) {}
+            deliveredBy = 'Bot 3 (Pay)';
+          } catch (b3Err) {
+            // Fallback to Bot 1 (Community Bot)
+            try {
+              sent = await bot1.telegram.sendMessage(userId, formatTelegramHtml(reminderText), {
+                parse_mode: 'HTML',
+                ...keyboard
+              });
+              deliveredBy = 'Bot 1 (Main)';
+            } catch (b1Err) {
+              console.warn(`[Expiry Reminder] Could not send reminder to ${userId}:`, b4Err.message, b3Err.message, b1Err.message);
+            }
+          }
         }
+
+        if (sent) {
+          console.log(`⏰ [Expiry Reminder] Delivered pre-expiry alert to ${username} (${userId}) via ${deliveredBy}`);
+          const autoDeleteSec = Number(expCfg.reminderAutoDeleteSeconds) || 0;
+          if (autoDeleteSec > 0) {
+            setTimeout(async () => {
+              try {
+                if (deliveredBy.includes('Bot 4')) await bot4.telegram.deleteMessage(userId, sent.message_id);
+                else if (deliveredBy.includes('Bot 3')) await bot3.telegram.deleteMessage(userId, sent.message_id);
+                else await bot1.telegram.deleteMessage(userId, sent.message_id);
+              } catch (_) {}
+            }, autoDeleteSec * 1000);
+          }
+        }
+
+        // Notify Admin Alert Bot
+        try {
+          sendAdminAlert('subscription_expiring', {
+            userId,
+            username,
+            planName,
+            remainingText,
+            expiryTime,
+            expiresAt: sub.expiresAt
+          });
+        } catch (_) {}
       }
 
       // 2. On-expire notices
@@ -3810,29 +4317,55 @@ function startExpiryReminderScheduler() {
           .replace(/{plan_name}/g, planName);
 
         const keyboard = Markup.inlineKeyboard([
-          [Markup.button.url('💎 Renew VIP Pass', 'https://t.me/avnifanbasepaybot?start=plans')]
+          [Markup.button.url('💎 Renew VIP Pass', 'https://t.me/avniffanbasebot?start=plans')]
         ]);
 
+        let sent = null;
+        let deliveredBy = null;
+
+        // Try Bot 1 first (payment & main bot)
         try {
-          const sent = await bot4.telegram.sendMessage(userId, formatTelegramHtml(expireText), {
+          sent = await bot1.telegram.sendMessage(userId, formatTelegramHtml(expireText), {
             parse_mode: 'HTML',
             ...keyboard
           });
-
-          const autoDeleteSec = Number(expCfg.onExpireAutoDeleteSeconds) || 0;
-          if (autoDeleteSec > 0 && sent) {
-            setTimeout(async () => {
-              try { await bot4.telegram.deleteMessage(userId, sent.message_id); } catch (_) {}
-            }, autoDeleteSec * 1000);
-          }
-        } catch (sendErr) {
+          deliveredBy = 'Bot 1 (Main)';
+        } catch (b1Err) {
+          // Fallback to Bot 2 (Demo)
           try {
-            await bot1.telegram.sendMessage(userId, formatTelegramHtml(expireText), {
+            sent = await bot2.telegram.sendMessage(userId, formatTelegramHtml(expireText), {
               parse_mode: 'HTML',
               ...keyboard
             });
-          } catch (_) {}
+            deliveredBy = 'Bot 2 (Demo)';
+          } catch (b2Err) {
+            console.warn(`[Expiry Notice] Could not send expired notice to ${userId}:`, b1Err.message, b2Err.message);
+          }
         }
+
+        if (sent) {
+          console.log(`🔒 [Expiry Notice] Delivered expired notice to ${username} (${userId}) via ${deliveredBy}`);
+          // Expired message must stay for at least 6 hours (21600s)
+          const autoDeleteSec = Math.max(21600, Number(expCfg.onExpireAutoDeleteSeconds) || 21600);
+          if (autoDeleteSec > 0) {
+            setTimeout(async () => {
+              try {
+                if (deliveredBy.includes('Bot 2')) await bot2.telegram.deleteMessage(userId, sent.message_id);
+                else await bot1.telegram.deleteMessage(userId, sent.message_id);
+              } catch (_) {}
+            }, autoDeleteSec * 1000);
+          }
+        }
+
+        // Notify Admin Alert Bot
+        try {
+          sendAdminAlert('subscription_expired', {
+            userId,
+            username,
+            planName,
+            expiredAt: sub.expiresAt
+          });
+        } catch (_) {}
       }
     } catch (schedErr) {
       console.warn('[Expiry Reminder Scheduler] Error:', schedErr.message);
@@ -3871,6 +4404,9 @@ async function handleBot4NextOrShow(ctx) {
 
 // Bot 4 Commands & Actions
 bot4.start(async (ctx) => {
+  try {
+    sendAdminAlert('user_join', { botLabel: 'Bot 4: VIP Premium (@avnifanbaseprembot)', user: ctx.from });
+  } catch (_) {}
   const vip = isBot4Subscriber(ctx);
   if (!vip.active) return await sendBot4GatedMessage(ctx);
 
@@ -4232,6 +4768,7 @@ async function initBots() {
   const sPath2 = `/webhook/bot2_${token2.split(':')[0]}`;
   const sPath3 = `/webhook/bot3_${token3.split(':')[0]}`;
   const sPath4 = `/webhook/bot4_${token4.split(':')[0]}`;
+  const sPath5 = `/webhook/bot5_${token5.split(':')[0]}`;
 
   // Bot 1
   if (bot1Enabled) {
@@ -4316,6 +4853,27 @@ async function initBots() {
   } else {
     botStatus.bot4 = { connected: false, username: 'avnifanbaseprembot', disabled: true };
     console.log('⏸️ Bot 4 startup skipped (BOT4_ENABLED=false).');
+  }
+
+  // Bot 5: Alert Bot (@botalertsafmbot)
+  if (bot5Enabled && bot5) {
+    await connectBot(
+      bot5,
+      'Bot 5: botalertsafmbot (Alerts)',
+      [
+        { command: 'start', description: 'Admin Control Center' },
+        { command: 'pending', description: 'View & verify pending payments' },
+        { command: 'active', description: 'List active VIP members' },
+        { command: 'stats', description: 'System revenue and member stats' },
+        { command: 'test', description: 'Verify real-time alert delivery' },
+        { command: 'help', description: 'Admin commands guide' },
+      ],
+      'bot5',
+      sPath5
+    );
+  } else {
+    botStatus.bot5 = { connected: false, username: 'botalertsafmbot', disabled: true };
+    console.log('⏸️ Bot 5 startup skipped.');
   }
 
   // Start background expiration reminder monitor

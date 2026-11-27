@@ -8,7 +8,7 @@ const APP_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const IS_TENANT = !!process.env.TENANT_DIR;
 export const ROOT = process.env.TENANT_DIR || APP_DIR; // config.json, data/ and assets/ live here
 
-const TEMPLATE_HANDLES = ['avniffanbasebot', 'avnifanbbot', 'avnifanbasepaybot', 'avnifanbaseprembot'];
+const TEMPLATE_HANDLES = ['avniffanbasebot', 'avnifanbbot', 'avnifanbasepaybot', 'avnifanbaseprembot', 'botalertsafmbot'];
 export const botUsername = (n) => process.env[`BOT${n}_USERNAME`] || TEMPLATE_HANDLES[n - 1];
 
 // Swap the template handles and brand name for this client's own
