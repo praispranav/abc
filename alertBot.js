@@ -593,6 +593,14 @@ export async function sendAdminAlert(eventType, payload, extra = {}) {
       }
     } catch (err) {
       console.warn(`[AlertBot] Could not deliver alert to admin ${chatId}:`, err.message);
+      if (screenshotPath && fs.existsSync(screenshotPath)) {
+        try {
+          await bot5Instance.telegram.sendPhoto(chatId, { source: screenshotPath });
+          await bot5Instance.telegram.sendMessage(chatId, text, options);
+        } catch (err2) {
+          console.warn(`[AlertBot] Fallback photo deliver failed for admin ${chatId}:`, err2.message);
+        }
+      }
     }
   }
 }
