@@ -89,9 +89,9 @@ config.bot1.welcome.bottomButtons = [
 // Backup Channel Gate
 if (!config.bot1.backupChannel) config.bot1.backupChannel = {};
 config.bot1.backupChannel.enabled = true;
-config.bot1.backupChannel.channelId = config.bot1.backupChannel.channelId || '@ShanayaBackupTG';
-config.bot1.backupChannel.handle = config.bot1.backupChannel.handle || '@ShanayaBackupTG';
-config.bot1.backupChannel.channelTitle = config.bot1.backupChannel.channelTitle || 'Shanaya Backup TG';
+config.bot1.backupChannel.channelId = config.bot1.backupChannel.channelId || '@Avniffanbasebot';
+config.bot1.backupChannel.handle = config.bot1.backupChannel.handle || '@Avniffanbasebot';
+config.bot1.backupChannel.channelTitle = config.bot1.backupChannel.channelTitle || 'Avni FanBase Backup';
 config.bot1.backupChannel.inviteLink = config.bot1.backupChannel.inviteLink || 'https://t.me/+Gn_BIdByihZhZmI1';
 config.bot1.backupChannel.restrictedMessage = config.bot1.backupChannel.restrictedMessage || [
   '⛔ <b>ACCESS RESTRICTED!</b>\n',
@@ -109,7 +109,7 @@ if (!config.bot1.today.messages || config.bot1.today.messages.length === 0) {
       title: 'Wah',
       episode: 25406,
       views: '1M',
-      description: '@ShanayaBackupTG',
+      description: '@Avniffanbasebot',
       status: 'active',
       viewButtonText: '👁️ View Content',
       preview: {
@@ -132,7 +132,7 @@ if (!config.bot1.today.messages || config.bot1.today.messages.length === 0) {
       title: 'Summer Special Premiere',
       episode: 25407,
       views: '850K',
-      description: '@ShanayaBackupTG',
+      description: '@Avniffanbasebot',
       status: 'active',
       viewButtonText: '👁️ View Content',
       preview: {
@@ -162,7 +162,7 @@ if (!config.bot1.free.messages || config.bot1.free.messages.length === 0) {
       title: 'Exclusive Community Teaser',
       episode: 25408,
       views: '1.2M',
-      description: '@ShanayaBackupTG',
+      description: '@Avniffanbasebot',
       status: 'active',
       viewButtonText: '👁️ View Content',
       preview: {
@@ -230,23 +230,24 @@ config.subscriptions.plans = [
   }
 ];
 
-// FinalBot Settings (Demo Bot)
+// FinalBot Settings (Premium Service Confirmation)
 config.subscriptions.finalBot = {
   enabled: true,
-  username: 'avnifanbbot',
-  url: 'https://t.me/avnifanbbot?start=vip',
-  buttonText: '🎬 Access Content in Demo Bot (@avnifanbbot)',
+  username: 'avniffanbasebot',
+  url: 'https://t.me/avniffanbasebot',
+  buttonText: '👑 Access Premium Service (@avniffanbasebot)',
   message: [
-    '🎉 <b>Payment approved. Your VIP access is active!</b>\n',
-    'Plan: <b>{plan_name}</b>',
-    'Unlocks: <b>{content_title}</b>',
-    'Added: <b>{duration}</b>',
-    'Valid until: <b>{expiry_date}</b>\n',
-    '🎬 <b>Demo Content Bot:</b> <a href="https://t.me/avnifanbbot?start=vip">@avnifanbbot</a>\n',
-    '👇 Tap below to launch your exclusive content in Demo Bot:'
+    '🎉 <b>Payment Approved! Your VIP Access is Active</b> 👑\n',
+    'Hello <b>{username}</b>! Your payment for <b>{plan_name}</b> has been verified and approved.\n',
+    '✨ <b>Unlocked:</b> {content_title}',
+    '⏳ <b>Duration:</b> {duration}',
+    '📅 <b>Valid Until:</b> {expiry_date}\n',
+    '🚀 <b>You can now access the Premium VIP service!</b>',
+    'All exclusive content drops and VIP features are now unlocked for your account.\n',
+    '👇 <b>Tap below to access your Premium Service:</b>'
   ].join('\n'),
   shareBot1: true,
-  bot1ButtonText: '✨ Explore Drops in Bot 1',
+  bot1ButtonText: '✨ Open Main Bot',
   bot1Url: 'https://t.me/avniffanbasebot'
 };
 
