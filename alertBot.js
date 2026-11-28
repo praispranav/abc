@@ -7,7 +7,8 @@ import {
   rejectSubscriptionPayment,
   getSubscriptionsData,
   formatDurationLabel,
-  escapeHtml
+  escapeHtml,
+  registerSubscriptionBot
 } from './subscriptions.js';
 
 let bot5Instance = null;
@@ -76,6 +77,7 @@ export function initAlertBot({
 
   const bot = new Telegraf(token, telegrafOptions);
   bot5Instance = bot;
+  registerSubscriptionBot(bot, 'botalertsafmbot');
 
   bot.botInfo = {
     id: parseInt(token.split(':')[0], 10),

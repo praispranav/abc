@@ -10,6 +10,7 @@ import {
   checkUserVipSubscription,
   sendContentLockedPaywall,
   setupSubscriptionBotHandlers,
+  registerSubscriptionBot,
   sendPlanQrAndInstructions,
   handlePaymentTextSubmission,
   handlePaymentPhotoSubmission,
@@ -87,6 +88,46 @@ function ensureTelegramImageSafe(filePath) {
   } catch (_) {}
 }
 
+function ensureTelegramVideoSafe(filePath) {
+  if (!filePath || !fs.existsSync(filePath)) return filePath;
+  try {
+    const stats = fs.statSync(filePath);
+    const sizeMB = stats.size / (1024 * 1024);
+    if (sizeMB <= 48) return filePath;
+
+    console.log(`🎬 [Video Auto-Compressor] File "${path.basename(filePath)}" (${sizeMB.toFixed(1)}MB) exceeds Telegram 50MB Bot API limit. Auto-optimizing...`);
+    const dir = path.dirname(filePath);
+    const base = path.basename(filePath, path.extname(filePath));
+    const compressedPath = path.join(dir, `${base}_tgopt.mp4`);
+
+    if (fs.existsSync(compressedPath) && fs.statSync(compressedPath).size < 49 * 1024 * 1024) {
+      return compressedPath;
+    }
+
+    execFileSync('ffmpeg', [
+      '-y',
+      '-i', filePath,
+      '-vf', 'scale=-2:720',
+      '-c:v', 'libx264',
+      '-crf', '28',
+      '-preset', 'fast',
+      '-c:a', 'aac',
+      '-b:a', '128k',
+      '-movflags', '+faststart',
+      compressedPath
+    ], { stdio: 'ignore', timeout: 180000 });
+
+    if (fs.existsSync(compressedPath) && fs.statSync(compressedPath).size < stats.size) {
+      const optSizeMB = (fs.statSync(compressedPath).size / (1024 * 1024)).toFixed(1);
+      console.log(`✅ [Video Auto-Compressor] Successfully optimized to ${optSizeMB}MB! Delivering to user.`);
+      return compressedPath;
+    }
+  } catch (err) {
+    console.warn('⚠️ [Video Auto-Compressor] Could not optimize video:', err.message);
+  }
+  return filePath;
+}
+
 async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType = 'none', mediaPath = null, mediaUrl = null, extra = {} }) {
   const content = caption || text || '';
   const htmlContent = formatTelegramHtml(content);
@@ -134,17 +175,22 @@ async function sendSafeTelegramMessage(ctx, { caption = '', text = '', mediaType
 
   // 3. Video from Local File
   if (mediaType === 'video' && mediaPath && fs.existsSync(mediaPath)) {
+    const finalMediaPath = ensureTelegramVideoSafe(mediaPath);
     try {
-      return await ctx.replyWithVideo({ source: mediaPath }, { caption: htmlContent, parse_mode: 'HTML', ...(extra || {}) });
+      return await ctx.replyWithVideo({ source: finalMediaPath }, { caption: htmlContent, parse_mode: 'HTML', ...(extra || {}) });
     } catch (_) {
       try {
-        return await ctx.replyWithVideo({ source: mediaPath }, { caption: content, parse_mode: 'Markdown', ...(extra || {}) });
+        return await ctx.replyWithVideo({ source: finalMediaPath }, { caption: content, parse_mode: 'Markdown', ...(extra || {}) });
       } catch (_) {
         try {
-          return await ctx.replyWithVideo({ source: mediaPath }, { caption: content, ...(extra || {}) });
-        } catch (e) {
-          console.warn('[Telegram] Could not send local video:', e.message);
-          return null;
+          return await ctx.replyWithVideo({ source: finalMediaPath }, { caption: content, ...(extra || {}) });
+        } catch (_) {
+          try {
+            return await ctx.replyWithDocument({ source: finalMediaPath }, { caption: content, ...(extra || {}) });
+          } catch (e) {
+            console.warn('[Telegram] Could not send local video:', e.message);
+            return null;
+          }
         }
       }
     }
@@ -767,6 +813,10 @@ setupSubscriptionBotHandlers(bot1, 'Bot 1: Avniffanbasebot', getConfig, formatTe
 setupSubscriptionBotHandlers(bot2, 'Bot 2: avnifanbbot', getConfig, formatTelegramHtml);
 setupSubscriptionBotHandlers(bot3, 'Bot 3: avnifanbasepaybot', getConfig, formatTelegramHtml);
 setupSubscriptionBotHandlers(bot4, 'Bot 4: avnifanbaseprembot', getConfig, formatTelegramHtml);
+registerSubscriptionBot(bot1, botUsername(1));
+registerSubscriptionBot(bot2, botUsername(2));
+registerSubscriptionBot(bot3, botUsername(3));
+registerSubscriptionBot(bot4, botUsername(4));
 
 // ====================================================
 // MOUNT WEBHOOK HANDLERS IMMEDIATELY (if configured)
@@ -1766,7 +1816,7 @@ function getTargetBotUsername(targetBotKey = 'bot2') {
 function formatDropCardCaption(msg, { botName, username, timerText, targetUsername = 'avnifanbbot', episodeNumber = 1 }) {
   const config = getConfig();
   const backupCfg = config.bot1?.backupChannel || {};
-  const backupHandle = backupCfg.handle || backupCfg.inviteLink || '@ShanayaBackupTG';
+  const backupHandle = backupCfg.handle || backupCfg.inviteLink || '@Avniffanbasebot';
   const cleanBackup = backupHandle.startsWith('https://t.me/+') ? backupHandle : (backupHandle.startsWith('@') ? backupHandle : `@${backupHandle}`);
 
   const target = targetUsername || getTargetBotUsername('bot2') || 'avnifanbbot';
@@ -2164,7 +2214,7 @@ async function deliverRevealedDropOnBot2(ctx, dropId) {
   const timerText = formatFreeTimerText(timerSeconds);
 
   const backupCfg = config.bot1?.backupChannel || {};
-  const backupHandle = backupCfg.handle || backupCfg.inviteLink || '@ShanayaBackupTG';
+  const backupHandle = backupCfg.handle || backupCfg.inviteLink || '@Avniffanbasebot';
   const cleanBackup = backupHandle.startsWith('https://t.me/+') ? backupHandle : (backupHandle.startsWith('@') ? backupHandle : `@${backupHandle}`);
   const videoTitle = foundDrop.title || foundDrop.revealedContent?.title || 'Featured Premiere';
   const episode = foundDrop.episode !== undefined ? foundDrop.episode : 25406;
@@ -3197,7 +3247,7 @@ async function sendBot2TimedMessage(ctx, targetMsgId = null) {
   const videoTitle = chosen.title || 'Featured Premiere';
   const episode = chosen.episode !== undefined ? chosen.episode : 25406;
   const views = chosen.views || chosen.duration || '1M';
-  const desc = chosen.description || '@ShanayaBackupTG';
+  const desc = chosen.description || '@Avniffanbasebot';
 
   let caption = '';
   if (chosen.message && chosen.message.trim() !== '') {
@@ -3232,9 +3282,6 @@ async function sendBot2TimedMessage(ctx, targetMsgId = null) {
   ];
 
   const extraRows = [saveBtnRow];
-  if (activeMessages.length > 1) {
-    extraRows.push([Markup.button.callback('▶️ Next Video Drop', 'next_drop')]);
-  }
   extraRows.push([Markup.button.url('✨ More Drops in Main Bot', 'https://t.me/avniffanbasebot')]);
   const keyboard = buildInlineKeyboard(chosen.buttons, extraRows);
 
@@ -3267,7 +3314,7 @@ async function sendBot2TimedMessage(ctx, targetMsgId = null) {
   }
 }
 
-// Bot 2 Commands (CONFIGURABLE WELCOME GREETING)
+// Bot 2 Commands (Clean Demo Bot: Only saved video or redirected from Bot 1)
 bot2.start(async (ctx) => {
   try {
     sendAdminAlert('user_join', { botLabel: 'Bot 2: Video Drops (@avnifanbbot)', user: ctx.from });
@@ -3275,17 +3322,34 @@ bot2.start(async (ctx) => {
   const name = ctx.from?.first_name || 'there';
   const username = ctx.from?.username ? `@${ctx.from.username}` : name;
   const config = getConfig();
-  const botName = config.bot2?.bot_name || 'Avni Fanbase Drops';
+  const botName = config.bot2?.bot_name || 'Avni Fanbase Demo';
   const payload = ctx.startPayload;
   const b2Welcome = config.bot2?.welcome || {};
 
-  // Configurable Welcome Greeting on Bot 2:
+  // If payload is present, deliver the requested video drop or saved library:
+  if (payload && payload.trim() !== '') {
+    const cleanP = payload.trim();
+    if (cleanP === 'saved') {
+      return await sendBot2SavedContent(ctx, 0);
+    }
+    // 1. Check if this is a cross-bot revealed content request (from Bot 1 /free or Button 1)
+    const delivered = await deliverRevealedDropOnBot2(ctx, cleanP);
+    if (delivered) return;
+
+    // 2. Native Bot 2 timed drop (only if matching a valid drop ID)
+    if (cleanP !== 'start' && cleanP !== 'vip' && cleanP !== 'plans') {
+      const timedDelivered = await sendBot2TimedMessage(ctx, cleanP);
+      if (timedDelivered !== false) return;
+    }
+  }
+
+  // Plain /start without a drop ID: ONLY show clean welcome greeting with navigation buttons
   if (b2Welcome.enabled !== false) {
     const isTemporary = b2Welcome.type === 'temporary' || b2Welcome.timer?.enabled;
     const timerSeconds = Number(b2Welcome.timer?.seconds) || 120;
     const timerText = formatFreeTimerText(timerSeconds);
 
-    let caption = (b2Welcome.message || '👋 *Welcome to {bot_name}, {username}!* 🎬\n\nAll exclusive content drops and unlocked releases from our main bot are delivered here below.')
+    let caption = (b2Welcome.message || '👋 <b>Welcome to {bot_name}, {username}!</b> 🎬\n\nThis is the dedicated video delivery bot for <b>@Avniffanbasebot</b>.\n\n<blockquote>✨ Video drops are unlocked from our main bot or accessed from your saved library below.</blockquote>\n\n👇 Tap below to explore:')
       .replace(/{username}/g, username)
       .replace(/{bot_name}/g, botName)
       .replace(/{timer_text}/g, timerText);
@@ -3296,9 +3360,15 @@ bot2.start(async (ctx) => {
     }
 
     const rows = [];
+    rows.push([
+      Markup.button.url('✨ Open Main Bot (@Avniffanbasebot)', 'https://t.me/avniffanbasebot')
+    ]);
+    rows.push([
+      Markup.button.callback('⭐ View Saved Videos', 'b2_show_saved')
+    ]);
     if (b2Welcome.buttons && Array.isArray(b2Welcome.buttons)) {
       b2Welcome.buttons
-        .filter((b) => b.text && b.text.trim() !== '')
+        .filter((b) => b.text && b.text.trim() !== '' && !b.text.includes('Main Bot') && !b.text.includes('Saved'))
         .forEach((b) => {
           let url = (b.url || '').trim();
           if (!url || url === 'https://t.me/' || url === 'https://t.me') url = 'https://t.me/avniffanbasebot';
@@ -3306,7 +3376,7 @@ bot2.start(async (ctx) => {
           rows.push([Markup.button.url(b.text, url)]);
         });
     }
-    const inlineKeyboard = rows.length > 0 ? Markup.inlineKeyboard(rows) : undefined;
+    const inlineKeyboard = Markup.inlineKeyboard(rows);
     const mediaPath = b2Welcome.mediaPath ? path.join(ROOT, b2Welcome.mediaPath) : null;
     const mediaType = b2Welcome.mediaType || 'none';
 
@@ -3315,7 +3385,7 @@ bot2.start(async (ctx) => {
       mediaType,
       mediaPath,
       mediaUrl: b2Welcome.mediaUrl,
-      extra: inlineKeyboard ? inlineKeyboard : {}
+      extra: inlineKeyboard
     });
 
     if (isTemporary && timerSeconds > 0 && sentWelMsg) {
@@ -3325,123 +3395,26 @@ bot2.start(async (ctx) => {
         try {
           await ctx.telegram.deleteMessage(chatId, messageId);
           console.log(`🗑️ [Bot 2] Auto-deleted temporary welcome greeting (${messageId}) after ${timerSeconds}s.`);
-        } catch (delErr) {
-          console.warn(`[Bot 2] Could not delete welcome greeting ${messageId}:`, delErr.message);
-        }
+        } catch (_) {}
       }, timerSeconds * 1000);
     }
   }
-
-  if (payload && payload.trim() !== '') {
-    const cleanP = payload.trim();
-    if (cleanP === 'vip' || cleanP === 'start' || cleanP === 'plans') {
-      return await sendBot2TimedMessage(ctx);
-    }
-    // 1. Check if this is a cross-bot revealed content request (from Bot 1 /free or Button 1)
-    const delivered = await deliverRevealedDropOnBot2(ctx, cleanP);
-    if (delivered) return;
-
-    // 2. Native Bot 2 timed drop
-    await sendBot2TimedMessage(ctx, cleanP);
-  } else {
-    await sendBot2TimedMessage(ctx);
-  }
-});
-
-bot2.command('video', async (ctx) => {
-  await sendBot2TimedMessage(ctx);
-});
-
-bot2.command('list', async (ctx) => {
-  const config = getConfig();
-  const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
-  const activeMessages = (bot2Config.messages || []).filter((m) => m.status === 'active');
-
-  if (activeMessages.length === 0) {
-    return ctx.reply('📭 There are currently no active video drops.');
-  }
-
-  let text = `🎬 *Active Video Drops (${activeMessages.length})*\n\nSelect a drop below to view:\n`;
-  const buttons = activeMessages.map((m, idx) => {
-    const tSec = m.timer?.seconds || 60;
-    const isTemp = m.type === 'temporary' || m.timer?.enabled;
-    const tText = isTemp ? (tSec >= 60 ? `${Math.round(tSec / 60)}m` : `${tSec}s`) : 'Permanent';
-    return [Markup.button.callback(`▶️ ${idx + 1}. ${m.title || 'Drop'} (${tText})`, `view_drop_${m.id}`)];
-  });
-
-  await ctx.replyWithMarkdown(text, Markup.inlineKeyboard(buttons));
-});
-
-bot2.command('timer', async (ctx) => {
-  const config = getConfig();
-  const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
-  const defTimer = bot2Config.defaultTimer || { seconds: 60 };
-  const timerSeconds = Number(defTimer.seconds) || 60;
-  const timerText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
-  await ctx.reply(`⏱️ *Default Auto-Delete Timer:* ${timerText}\nTemporary video drops will vanish after this duration.`);
-});
-
-bot2.command('today', async (ctx) => {
-  await executeTodayCommand(ctx, 'bot2');
-});
-
-bot2.action('view_today', async (ctx) => {
-  try { await ctx.answerCbQuery("Opening Today's Content..."); } catch (_) {}
-  await executeTodayCommand(ctx, 'bot2');
-});
-
-bot2.action(/^reveal_today_(.+)$/, async (ctx) => {
-  await handleRevealTodayAction(ctx, ctx.match[1]);
-});
-
-bot2.action('next_today_drop', async (ctx) => {
-  await handleNextTodayDropAction(ctx, 'bot2');
-});
-
-bot2.command('free', async (ctx) => {
-  await executeFreeCommand(ctx, 'bot2');
-});
-
-bot2.action(/^reveal_free_(.+)$/, async (ctx) => {
-  await handleRevealFreeAction(ctx, ctx.match[1]);
-});
-
-bot2.action('next_free_drop', async (ctx) => {
-  await handleNextFreeDropAction(ctx, 'bot2');
 });
 
 bot2.command('help', async (ctx) => {
   const config = getConfig();
   const bot2Config = config.bot2 || DEFAULT_CONFIG.bot2;
-  const defTimer = bot2Config.defaultTimer || { seconds: 60 };
-  const timerSeconds = Number(defTimer.seconds) || 60;
-  const timerText = timerSeconds >= 60 ? `${Math.round(timerSeconds / 60)} min` : `${timerSeconds} sec`;
-
   const help = bot2Config.help || {};
   const text = (
     help.message ||
-    '🤖 *Bot 2 (@avnifanbbot) Help & Information*\n\nAvailable commands:\n• /start - Receive video drop\n• /video - Get next video drop\n• /list - Browse all active drops\n• /timer - View timer\n• /help - Bot information\n\n⏱ Default Timer: {timer_text}'
-  )
-    .replace(/{timer_text}/g, timerText)
-    .replace(/{timer}/g, timerText)
-    .replace(/{bot_name}/g, bot2Config.bot_name || 'Avni Fanbase Demo');
+    '🤖 <b>Bot 2 (@avnifanbbot) Help & Guide</b>\n\nThis bot delivers special video messages unlocked from <b>@Avniffanbasebot</b>.\n\n📌 <b>Available Commands:</b>\n• /start - Welcome greeting & links\n• /saved - Open your bookmarked video library\n• /help - Show this guide\n\n💡 <i>To watch new drops, select them in @Avniffanbasebot!</i>'
+  ).replace(/{bot_name}/g, bot2Config.bot_name || 'Avni Fanbase Demo');
 
   try {
-    await ctx.replyWithMarkdown(text);
+    await ctx.reply(formatTelegramHtml(text), { parse_mode: 'HTML' });
   } catch (err) {
     await ctx.reply(text);
   }
-});
-
-bot2.action('next_drop', async (ctx) => {
-  try { await ctx.answerCbQuery('Fetching next drop...'); } catch (_) {}
-  await sendBot2TimedMessage(ctx);
-});
-
-bot2.action(/view_drop_(.+)/, async (ctx) => {
-  try { await ctx.answerCbQuery(); } catch (_) {}
-  const targetId = ctx.match[1];
-  await sendBot2TimedMessage(ctx, targetId);
 });
 
 async function handleBot2SaveAction(ctx, dropId) {
@@ -4778,6 +4751,7 @@ async function initBots() {
       [
         { command: 'start', description: 'Welcome greeting & community links' },
         { command: 'today', description: "View Today's fresh content drop" },
+        { command: 'myplan', description: 'Check your active VIP pass status' },
         { command: 'free', description: 'Access free content and channels' },
         { command: 'terms', description: 'View Terms & Policy' },
         { command: 'help', description: 'Bot commands and support' },
@@ -4797,11 +4771,10 @@ async function initBots() {
       bot2,
       'Bot 2: avnifanbbot',
       [
-        { command: 'start', description: 'Receive video drop (auto-deletes)' },
-        { command: 'video', description: 'Get next video drop' },
-        { command: 'list', description: 'View all active video drops' },
-        { command: 'timer', description: 'View auto-delete timer' },
-        { command: 'help', description: 'Bot information and commands' },
+        { command: 'start', description: 'Start Demo Bot' },
+        { command: 'myplan', description: 'Check your active VIP pass status' },
+        { command: 'saved', description: 'Your Saved Videos Library' },
+        { command: 'help', description: 'Help & Information' },
       ],
       'bot2',
       sPath2

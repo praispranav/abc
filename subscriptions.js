@@ -771,8 +771,27 @@ export async function handlePlansCommand(ctx, getConfig, formatTelegramHtml) {
 }
 
 // Setup Bot Handlers for Subscriptions
+export function registerSubscriptionBot(bot, username) {
+  if (!bot) return;
+  if (username) {
+    const clean = String(username).replace(/^@/, '').toLowerCase().trim();
+    botRegistry.set(clean, bot);
+  }
+  if (bot.botInfo?.username) {
+    botRegistry.set(bot.botInfo.username.toLowerCase(), bot);
+  }
+}
+
 export function setupSubscriptionBotHandlers(bot, botLabel, getConfig, formatTelegramHtml) {
-  if (bot.botInfo?.username) botRegistry.set(bot.botInfo.username, bot);
+  if (bot) {
+    const labelMatch = (botLabel || '').match(/@?([a-zA-Z0-9_]+bot)/i);
+    if (labelMatch) {
+      botRegistry.set(labelMatch[1].toLowerCase(), bot);
+    }
+    if (bot.botInfo?.username) {
+      botRegistry.set(bot.botInfo.username.toLowerCase(), bot);
+    }
+  }
 
   // 1. /subscribe, /vip, /plans, /pay, /qr commands
   const onPlans = async (ctx) => handlePlansCommand(ctx, getConfig, formatTelegramHtml);
@@ -991,35 +1010,53 @@ export function getFinalBotConfig(config = readConfigFile()) {
 function accessButtons(includeBot4, config = readConfigFile()) {
   const fb = getFinalBotConfig(config);
   const rows = [];
+  const b1 = (config?.bot1?.username || 'avniffanbasebot').replace(/^@/, '');
+  const b2 = (config?.bot2?.username || 'avnifanbbot').replace(/^@/, '');
 
-  // Final Bot / Premium VIP Subscription button (no Bot 4 or Bot 1 mention)
-  if (includeBot4 && fb.enabled && fb.url) {
-    let u = fb.url.trim();
-    if (!u.startsWith('http://') && !u.startsWith('https://')) u = `https://${u}`;
-    rows.push([Markup.button.url(fb.buttonText || '👑 Access VIP Premium Subscription', u)]);
+  // 1. Direct Premium Service button
+  let premiumUrl = `https://t.me/${b1}`;
+  let premiumText = '👑 Access Premium Service';
+  if (fb.enabled && fb.url) {
+    premiumUrl = fb.url.trim();
+    if (!premiumUrl.startsWith('http://') && !premiumUrl.startsWith('https://')) premiumUrl = `https://${premiumUrl}`;
+    premiumText = fb.buttonText || '👑 Access Premium Service';
   }
+  rows.push([Markup.button.url(premiumText, premiumUrl)]);
 
-  // Bot 1 Open button: only included if explicitly enabled by admin (disabled by default)
-  if (fb.shareBot1) {
-    let b1Url = (fb.bot1Url || 'https://t.me/avniffanbasebot').trim();
+  // 2. Open Main Bot button
+  if (fb.shareBot1 !== false) {
+    let b1Url = (fb.bot1Url || `https://t.me/${b1}`).trim();
     if (!b1Url.startsWith('http://') && !b1Url.startsWith('https://')) b1Url = `https://${b1Url}`;
-    rows.push([Markup.button.url(fb.bot1ButtonText || '🎬 Open VIP Portal', b1Url)]);
+    rows.push([Markup.button.url(fb.bot1ButtonText || `✨ Open Main Bot (@${b1})`, b1Url)]);
   }
+
+  // 3. Saved Library in Demo Bot
+  rows.push([Markup.button.url('⭐ View Saved Library', `https://t.me/${b2}?start=saved`)]);
 
   return rows;
 }
 
 // Try the bot the member paid in first, then the others, and stop at the first success.
 async function notifyMember(payment, html, extra = {}) {
-  const order = [payment.sourceBot, PAY_BOT_USERNAME, ...botRegistry.keys()];
-  for (const username of new Set(order)) {
+  const candidateKeys = [];
+  if (payment.sourceBot) candidateKeys.push(String(payment.sourceBot).replace(/^@/, '').toLowerCase().trim());
+  if (PAY_BOT_USERNAME) candidateKeys.push(String(PAY_BOT_USERNAME).replace(/^@/, '').toLowerCase().trim());
+  for (const k of botRegistry.keys()) {
+    if (!candidateKeys.includes(k)) candidateKeys.push(k);
+  }
+
+  for (const username of candidateKeys) {
     const bot = botRegistry.get(username);
-    if (!bot) continue;
+    if (!bot || !bot.telegram) continue;
     try {
       const msg = await bot.telegram.sendMessage(payment.userId, html, { parse_mode: 'HTML', ...extra });
+      console.log(`✅ [Subscriptions] Successfully sent payment approval notification to user ${payment.userId} via @${username}`);
       return { success: true, bot, msg };
-    } catch (_) {}
+    } catch (err) {
+      console.warn(`[Subscriptions] Could not notify user ${payment.userId} via @${username}: ${err.message}`);
+    }
   }
+  console.error(`❌ [Subscriptions] Failed to notify user ${payment.userId} across all bots in registry.`);
   return { success: false };
 }
 
@@ -1257,16 +1294,17 @@ export async function approveSubscriptionPayment(paymentId, approverName = 'Admi
       .replace(/{bot_link}/g, `<a href="${fb.url}">@${escapeHtml(fb.username)}</a>`);
   } else {
     html = [
-      '🎉 <b>Payment approved. Your VIP access is active!</b>',
+      '🎉 <b>Payment Approved! Your VIP Access is Active</b> 👑',
       '',
-      `Plan: <b>${escapeHtml(payment.planName)}</b>`,
-      `Unlocks: <b>${escapeHtml(contentTitle)}</b>`,
-      `Added: <b>${formatDurationLabel(durationHours)}</b>`,
-      `Valid until: <b>${expiryDate}</b>`,
+      `Hello <b>${escapeHtml(payment.username || 'VIP Member')}</b>! Your payment for <b>${escapeHtml(payment.planName)}</b> has been approved.`,
       '',
-      `🎬 <b>Demo Content Bot:</b> <a href="${fb.url}">@${escapeHtml(fb.username)}</a>`,
+      `✨ Unlocks: <b>${escapeHtml(contentTitle)}</b>`,
+      `⏳ Added: <b>${formatDurationLabel(durationHours)}</b>`,
+      `📅 Valid until: <b>${expiryDate}</b>`,
       '',
-      `👇 Tap below to launch your exclusive content in Demo Bot (@${escapeHtml(fb.username)}):`
+      `🚀 <b>You can now access the Premium VIP service!</b> All exclusive features and content drops are unlocked.`,
+      '',
+      `👇 Tap below to start enjoying your Premium service:`
     ].join('\n');
   }
 

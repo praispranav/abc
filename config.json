@@ -10,7 +10,7 @@
           "id": "btn_1",
           "text": "📢 Alerts Channel",
           "type": "url",
-          "url": "https://t.me/+TxsqlGdFOvk2MzNl "
+          "url": "https://t.me/avniffanbasebot"
         },
         {
           "id": "btn_2",
@@ -30,24 +30,14 @@
           "id": "bbtn_today",
           "text": "✨ Today's Content",
           "type": "today",
-          "fullWidth": true,
-          "accessType": "drops_then_paywall",
-          "contentType": "today",
-          "contentTitle": "✨ Today's Content",
-          "planId": "plan_6h",
-          "category": "today"
+          "fullWidth": true
         },
         {
           "id": "bbtn_1",
           "text": "🔥 Most Viewed",
           "type": "list",
           "listId": "list_1795573154998",
-          "fullWidth": false,
-          "accessType": "locked",
-          "contentType": "list_1795573154998",
-          "contentTitle": "Most Viewed",
-          "planId": "plan_1w",
-          "category": "bbtn_1"
+          "fullWidth": false
         },
         {
           "id": "bbtn_2",
@@ -56,10 +46,7 @@
           "listId": "list_btn2",
           "fullWidth": false,
           "accessType": "locked",
-          "contentType": "list_btn2",
-          "contentTitle": "Button 2",
-          "planId": "plan_1w",
-          "category": "bbtn_1"
+          "planId": "plan_1w"
         }
       ],
       "enabled": true,
@@ -72,11 +59,11 @@
     },
     "backupChannel": {
       "enabled": true,
-      "channelId": "@ShanayaBackupTG",
-      "channelTitle": "Shanaya Backup TG",
+      "channelId": "@Avniffanbasebot",
+      "channelTitle": "Avni FanBase Backup",
       "inviteLink": "https://t.me/+Gn_BIdByihZhZmI1",
       "restrictedMessage": "⛔ <b>ACCESS RESTRICTED!</b>\n\nHey {username}! You must be an active member of our official <b>Backup Channel</b> to use this bot and access content drops.\n\n⚠️ <i>If you leave the backup channel, your bot access is immediately restricted!</i>\n\n👇 Please join our backup channel below, then tap <b>\"🔄 Verify Membership\"</b> to continue:",
-      "handle": "@ShanayaBackupTG"
+      "handle": "@Avniffanbasebot"
     },
     "free": {
       "deliveryMode": "all_in_one",
@@ -245,6 +232,74 @@
             "buttons": []
           },
           "createdAt": "2026-11-25T01:26:01.464Z"
+        },
+        {
+          "id": "today_msg_3",
+          "title": "Midnight Spotlight Drop #3",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "episode": 25412,
+          "views": "1.5M",
+          "description": "@Avniffanbasebot",
+          "preview": {
+            "message": "✨ *Today's Drop #3 - Midnight Spotlight*\n\nHey {username}! Fresh drop updated today. Tap below to reveal!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Unlocked Midnight Spotlight Drop #3*\n\nEnjoy this fresh release, {username}!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-28T05:00:00.000Z"
+        },
+        {
+          "id": "today_msg_4",
+          "title": "Weekend Special Release #4",
+          "status": "active",
+          "viewButtonText": "👁️ View Content",
+          "episode": 25413,
+          "views": "2.1M",
+          "description": "@Avniffanbasebot",
+          "preview": {
+            "message": "✨ *Today's Drop #4 - Weekend Special*\n\nExclusive high-speed release. Tap below to watch!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "permanent",
+            "timer": {
+              "enabled": false,
+              "seconds": 60
+            },
+            "buttons": []
+          },
+          "revealedContent": {
+            "message": "🎬 *Unlocked Weekend Special Drop #4*\n\nEnjoy this premiere release, {username}!",
+            "mediaType": "none",
+            "mediaPath": "",
+            "mediaUrl": "",
+            "type": "temporary",
+            "timer": {
+              "enabled": true,
+              "seconds": 120
+            },
+            "buttons": []
+          },
+          "createdAt": "2026-11-28T05:30:00.000Z"
         }
       ]
     },
@@ -293,7 +348,7 @@
             "accessType": "normal",
             "episode": 25410,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
           },
           {
             "id": "free_msg_2",
@@ -339,7 +394,7 @@
             "accessType": "limited",
             "episode": 25411,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
           }
         ]
       },
@@ -381,7 +436,7 @@
             "createdAt": "2026-11-25T02:12:45.955Z",
             "episode": 25410,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
           },
           {
             "id": "drop_btn1_1",
@@ -427,16 +482,18 @@
             "accessType": "normal",
             "episode": 25411,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
           }
         ]
       },
       {
         "id": "list_btn2",
-        "title": "⭐ Button 2 Drops",
+        "title": "⭐ Button 2 (VIP Premium)",
         "command": "btn2",
         "deliveryMode": "all_in_one",
         "targetBot": "bot2",
+        "accessType": "locked",
+        "planId": "plan_1w",
         "messages": [
           {
             "id": "drop_btn2_1",
@@ -475,7 +532,77 @@
             "accessType": "normal",
             "episode": 25410,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
+          },
+          {
+            "id": "drop_btn2_2",
+            "title": "Drop #2 - VIP Crown Release",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "episode": 25416,
+            "views": "4.5M",
+            "description": "@Avniffanbasebot",
+            "preview": {
+              "message": "👑 *Button 2 - VIP Crown Release #2*\n\nExclusive high-tier drop. Unlocked for VIP members!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 *Unlocked VIP Crown Release #2*\n\nEnjoy this VIP release, {username}!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-28T05:40:00.000Z",
+            "accessType": "normal"
+          },
+          {
+            "id": "drop_btn2_3",
+            "title": "Drop #3 - Ultra Platinum Exclusive",
+            "status": "active",
+            "viewButtonText": "👁️ View Content",
+            "episode": 25417,
+            "views": "6.1M",
+            "description": "@Avniffanbasebot",
+            "preview": {
+              "message": "👑 *Button 2 - Ultra Platinum Drop #3*\n\nTop quality master release. Tap below to watch!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 *Unlocked Ultra Platinum Drop #3*\n\nEnjoy this high-definition release, {username}!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-28T05:45:00.000Z",
+            "accessType": "normal"
           }
         ]
       },
@@ -523,13 +650,13 @@
             "accessType": "normal",
             "episode": 25410,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
           }
         ]
       },
       {
         "id": "list_1795573154998",
-        "title": "New Content",
+        "title": "🔥 Most Viewed Drops",
         "deliveryMode": "all_in_one",
         "targetBot": "bot2",
         "messages": [
@@ -564,7 +691,7 @@
             "createdAt": "2026-11-25T02:27:18.977Z",
             "episode": 25410,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
           },
           {
             "id": "drop_1795573169649",
@@ -597,7 +724,77 @@
             "createdAt": "2026-11-25T02:19:29.649Z",
             "episode": 25411,
             "views": "1M",
-            "description": "@ShanayaBackupTG"
+            "description": "@Avniffanbasebot"
+          },
+          {
+            "id": "drop_mv_3",
+            "title": "Most Viewed Drop #3 - Viral Phenomenon",
+            "status": "active",
+            "accessType": "limited",
+            "viewButtonText": "👁️ View Content",
+            "episode": 25414,
+            "views": "3.8M",
+            "description": "@Avniffanbasebot",
+            "preview": {
+              "message": "🔥 *Most Viewed Drop #3 - Viral Sensation*\n\nTrending with 3.8M views! Tap below to unlock on Bot 2.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 *Unlocked Most Viewed Drop #3*\n\nEnjoy this viral classic on Bot 2!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-28T05:50:00.000Z"
+          },
+          {
+            "id": "drop_mv_4",
+            "title": "Most Viewed Drop #4 - Hall of Fame Classic",
+            "status": "active",
+            "accessType": "limited",
+            "viewButtonText": "👁️ View Content",
+            "episode": 25415,
+            "views": "5.2M",
+            "description": "@Avniffanbasebot",
+            "preview": {
+              "message": "🔥 *Most Viewed Drop #4 - All-Time Top Ranked*\n\nOver 5.2M views! Tap below to watch on Bot 2.",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "permanent",
+              "timer": {
+                "enabled": false,
+                "seconds": 60
+              },
+              "buttons": []
+            },
+            "revealedContent": {
+              "message": "🎬 *Unlocked Most Viewed Drop #4*\n\nEnjoy this top-tier release on Bot 2!",
+              "mediaType": "none",
+              "mediaPath": "",
+              "mediaUrl": "",
+              "type": "temporary",
+              "timer": {
+                "enabled": true,
+                "seconds": 120
+              },
+              "buttons": []
+            },
+            "createdAt": "2026-11-28T05:55:00.000Z"
           }
         ]
       }
@@ -615,12 +812,15 @@
     "messages": [
       {
         "id": "msg_1",
-        "title": "Drop #1 - Featured Video",
+        "title": "Special Featured Premiere #1",
         "status": "active",
         "type": "temporary",
         "videoPath": "",
         "videoUrl": "",
-        "message": "🎬 Hello {username}!\n\nHere is your requested video message #1.\n\n⚠️ *ATTENTION*: This video message will self-destruct in {timer_text}! Please watch or save it before time runs out.",
+        "message": "━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄Exclusive Video࿐ ━━━━━━━\n<blockquote>🎬 Unlocked Video Drop</blockquote>",
+        "episode": 25406,
+        "views": "1.2M",
+        "description": "@Avniffanbasebot",
         "timer": {
           "enabled": true,
           "seconds": 60,
@@ -630,9 +830,9 @@
         "buttons": [
           {
             "id": "b2_btn_1",
-            "text": "📢 Alerts & Updates Channel",
+            "text": "✨ More Drops in Main Bot",
             "type": "url",
-            "url": "https://t.me/avnifanbbot"
+            "url": "https://t.me/avniffanbasebot"
           }
         ],
         "createdAt": "2026-11-24T08:00:00.000Z",
@@ -640,12 +840,15 @@
       },
       {
         "id": "msg_2",
-        "title": "Drop #2 - Special Release",
+        "title": "Exclusive Spotlight Release #2",
         "status": "active",
         "type": "temporary",
         "videoPath": "",
         "videoUrl": "",
-        "message": "🔥 Exclusive Content Drop #2 for {username}!\n\nEnjoy this video before the timer expires.\n\n⏳ Disappears in {timer_text}!",
+        "message": "━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄Exclusive Video࿐ ━━━━━━━\n<blockquote>🎬 Unlocked Video Drop</blockquote>",
+        "episode": 25407,
+        "views": "850K",
+        "description": "@Avniffanbasebot",
         "timer": {
           "enabled": true,
           "seconds": 120,
@@ -655,9 +858,9 @@
         "buttons": [
           {
             "id": "b2_btn_2",
-            "text": "🔒 Backup Channel",
+            "text": "✨ More Drops in Main Bot",
             "type": "url",
-            "url": "https://t.me/avnifanbbot"
+            "url": "https://t.me/avniffanbasebot"
           }
         ],
         "createdAt": "2026-11-24T08:05:00.000Z",
@@ -665,12 +868,15 @@
       },
       {
         "id": "msg_3",
-        "title": "Drop #3 - Permanent Welcome Drop",
+        "title": "Community Classic Release #3",
         "status": "active",
         "type": "permanent",
         "videoPath": "",
         "videoUrl": "",
-        "message": "✨ Permanent Community Drop #3 for {username}!\n\nThis drop does not self-destruct and will stay in your chat permanently.",
+        "message": "━━━━━━━ ༄ᶦᶰᵈ᭄{bot_name}࿐ ━━━━━━━\n:- Description : {description}\n\n{title}\n:- episode : {episode} <::> {views}\n━━━━━━━ ༄ᶦᶰᵈ᭄Exclusive Video࿐ ━━━━━━━\n<blockquote>🎬 Unlocked Video Drop</blockquote>",
+        "episode": 25408,
+        "views": "2.4M",
+        "description": "@Avniffanbasebot",
         "timer": {
           "enabled": false,
           "seconds": 0,
@@ -680,9 +886,9 @@
         "buttons": [
           {
             "id": "b2_btn_3",
-            "text": "📢 Main Community",
+            "text": "✨ More Drops in Main Bot",
             "type": "url",
-            "url": "https://t.me/avnifanbbot"
+            "url": "https://t.me/avniffanbasebot"
           }
         ],
         "createdAt": "2026-11-24T07:30:00.000Z",
@@ -690,7 +896,7 @@
       }
     ],
     "help": {
-      "message": "🤖 *Bot 2 (@avnifanbbot) Help & Information*\n\nWelcome to @avnifanbbot!\nThis bot delivers special video messages with optional self-destruction timers.\n\n📌 *Available Commands:*\n• /start - Receive video message\n• /video - Fetch the next video message\n• /list - View all active drops\n• /timer - Check current self-destruct timer\n• /help - Show this information\n\n⏱ *Default Timer:* {timer_text}"
+      "message": "🤖 <b>Bot 2 (@avnifanbbot) Help & Guide</b>\n\nThis bot delivers special video messages unlocked from <b>@Avniffanbasebot</b>.\n\n📌 <b>Available Commands:</b>\n• /start - Welcome greeting & links\n• /myplan - Check your active VIP subscription pass\n• /saved - Open your bookmarked video library\n• /help - Show this guide\n\n💡 <i>To watch new drops, select them in @Avniffanbasebot!</i>"
     },
     "userLimit": {
       "enabled": true,
@@ -706,7 +912,7 @@
       ]
     },
     "welcome": {
-      "message": "👋 *Welcome to {bot_name}, {username}!* 🎬\n\nAll exclusive content drops and unlocked releases from our main bot are delivered here below.",
+      "message": "👋 <b>Welcome to {bot_name}!</b> 🎬\n\nThis is the dedicated video delivery bot for <b>@Avniffanbasebot</b>.\n\n<blockquote>✨ Video drops are unlocked from our main bot or accessed from your saved library below.</blockquote>\n\n👇 Tap below to explore:",
       "enabled": true,
       "type": "permanent",
       "timer": {
@@ -714,7 +920,21 @@
         "warningMessage": "⚠️ This welcome greeting self-destructs in {timer_text}!",
         "enabled": false
       },
-      "mediaType": "none"
+      "mediaType": "none",
+      "buttons": [
+        {
+          "id": "btn_b2_main",
+          "text": "✨ Open Main Bot (@Avniffanbasebot)",
+          "type": "url",
+          "url": "https://t.me/avniffanbasebot"
+        },
+        {
+          "id": "btn_b2_backup",
+          "text": "🔒 Backup Channel",
+          "type": "url",
+          "url": "https://t.me/+Gn_BIdByihZhZmI1"
+        }
+      ]
     },
     "username": "avnifanbbot"
   },
@@ -743,12 +963,12 @@
     },
     "finalBot": {
       "enabled": true,
-      "username": "avnifanbbot",
-      "url": "https://t.me/avnifanbbot?start=vip",
-      "buttonText": "🎬 Access Content in Demo Bot (@avnifanbbot)",
-      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n🎬 <b>Demo Content Bot:</b> <a href=\"https://t.me/avnifanbbot?start=vip\">@avnifanbbot</a>\n\n👇 Tap below to launch your exclusive content in Demo Bot:",
+      "username": "avniffanbasebot",
+      "url": "https://t.me/avniffanbasebot",
+      "buttonText": "👑 Access Premium Service (@avniffanbasebot)",
+      "message": "🎉 <b>Payment Approved! Your VIP Access is Active</b> 👑\n\nHello <b>{username}</b>! Your payment for <b>{plan_name}</b> has been verified and approved.\n\n✨ <b>Unlocked:</b> {content_title}\n⏳ <b>Duration:</b> {duration}\n📅 <b>Valid Until:</b> {expiry_date}\n\n🚀 <b>You can now access the Premium VIP service!</b>\nAll exclusive content drops and VIP features are now unlocked for your account.\n\n👇 <b>Tap below to access your Premium Service:</b>",
       "shareBot1": true,
-      "bot1ButtonText": "✨ Explore Drops in Bot 1",
+      "bot1ButtonText": "✨ Open Main Bot",
       "bot1Url": "https://t.me/avniffanbasebot"
     }
   },
@@ -758,8 +978,8 @@
     "bot5": "https://2269-106-222-251-164.ngrok-free.app/webhook/bot5_9014426568#s1"
   },
   "_commandsSet": {
-    "bot1": "[{\"command\":\"start\",\"description\":\"Welcome greeting & community links\"},{\"command\":\"today\",\"description\":\"View Today's fresh content drop\"},{\"command\":\"free\",\"description\":\"Access free content and channels\"},{\"command\":\"terms\",\"description\":\"View Terms & Policy\"},{\"command\":\"help\",\"description\":\"Bot commands and support\"}]",
-    "bot2": "[{\"command\":\"start\",\"description\":\"Receive video drop (auto-deletes)\"},{\"command\":\"video\",\"description\":\"Get next video drop\"},{\"command\":\"list\",\"description\":\"View all active video drops\"},{\"command\":\"timer\",\"description\":\"View auto-delete timer\"},{\"command\":\"help\",\"description\":\"Bot information and commands\"}]",
+    "bot1": "[{\"command\":\"start\",\"description\":\"Welcome greeting & community links\"},{\"command\":\"today\",\"description\":\"View Today's fresh content drop\"},{\"command\":\"myplan\",\"description\":\"Check your active VIP pass status\"},{\"command\":\"free\",\"description\":\"Access free content and channels\"},{\"command\":\"terms\",\"description\":\"View Terms & Policy\"},{\"command\":\"help\",\"description\":\"Bot commands and support\"}]",
+    "bot2": "[{\"command\":\"start\",\"description\":\"Start Demo Bot\"},{\"command\":\"myplan\",\"description\":\"Check your active VIP pass status\"},{\"command\":\"saved\",\"description\":\"Your Saved Videos Library\"},{\"command\":\"help\",\"description\":\"Help & Information\"}]",
     "bot3": "[{\"command\":\"start\",\"description\":\"Welcome & VIP Subscription Plans\"},{\"command\":\"plans\",\"description\":\"View VIP Plans & Payment QR Code\"},{\"command\":\"myplan\",\"description\":\"Check your active VIP pass status\"},{\"command\":\"help\",\"description\":\"Payment instructions & support\"}]",
     "bot4": "[{\"command\":\"next\",\"description\":\"Load Next 10 Drops\"},{\"command\":\"renew\",\"description\":\"Renew or Extend Pass\"},{\"command\":\"myplan\",\"description\":\"Check VIP Subscription Status\"},{\"command\":\"saved\",\"description\":\"View Your Saved Content\"},{\"command\":\"show\",\"description\":\"Show / Load Unlocked Content\"},{\"command\":\"drops\",\"description\":\"Browse Unlocked VIP Drops\"},{\"command\":\"start\",\"description\":\"VIP Premium Welcome & Portal\"},{\"command\":\"help\",\"description\":\"VIP Support & Help\"}]",
     "bot5": "[{\"command\":\"start\",\"description\":\"Admin Control Center\"},{\"command\":\"pending\",\"description\":\"View & verify pending payments\"},{\"command\":\"active\",\"description\":\"List active VIP members\"},{\"command\":\"stats\",\"description\":\"System revenue and member stats\"},{\"command\":\"test\",\"description\":\"Verify real-time alert delivery\"},{\"command\":\"help\",\"description\":\"Admin commands guide\"}]"
@@ -774,7 +994,7 @@
         "id": "btn_1",
         "text": "📢 Alerts Channel",
         "type": "url",
-        "url": "https://t.me/+TxsqlGdFOvk2MzNl "
+        "url": "https://t.me/avniffanbasebot"
       },
       {
         "id": "btn_2",
@@ -794,24 +1014,14 @@
         "id": "bbtn_today",
         "text": "✨ Today's Content",
         "type": "today",
-        "fullWidth": true,
-        "accessType": "drops_then_paywall",
-        "contentType": "today",
-        "contentTitle": "✨ Today's Content",
-        "planId": "plan_6h",
-        "category": "today"
+        "fullWidth": true
       },
       {
         "id": "bbtn_1",
         "text": "🔥 Most Viewed",
         "type": "list",
         "listId": "list_1795573154998",
-        "fullWidth": false,
-        "accessType": "locked",
-        "contentType": "list_1795573154998",
-        "contentTitle": "Most Viewed",
-        "planId": "plan_1w",
-        "category": "bbtn_1"
+        "fullWidth": false
       },
       {
         "id": "bbtn_2",
@@ -820,10 +1030,7 @@
         "listId": "list_btn2",
         "fullWidth": false,
         "accessType": "locked",
-        "contentType": "list_btn2",
-        "contentTitle": "Button 2",
-        "planId": "plan_1w",
-        "category": "bbtn_1"
+        "planId": "plan_1w"
       }
     ],
     "enabled": true,
@@ -1049,7 +1256,7 @@
           "accessType": "normal",
           "episode": 25410,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         },
         {
           "id": "free_msg_2",
@@ -1095,7 +1302,7 @@
           "accessType": "limited",
           "episode": 25411,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         }
       ]
     },
@@ -1137,7 +1344,7 @@
           "createdAt": "2026-11-25T02:12:45.955Z",
           "episode": 25410,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         },
         {
           "id": "drop_btn1_1",
@@ -1183,7 +1390,7 @@
           "accessType": "normal",
           "episode": 25411,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         }
       ]
     },
@@ -1231,7 +1438,7 @@
           "accessType": "normal",
           "episode": 25410,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         }
       ]
     },
@@ -1279,7 +1486,7 @@
           "accessType": "normal",
           "episode": 25410,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         }
       ]
     },
@@ -1320,7 +1527,7 @@
           "createdAt": "2026-11-25T02:27:18.977Z",
           "episode": 25410,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         },
         {
           "id": "drop_1795573169649",
@@ -1353,7 +1560,7 @@
           "createdAt": "2026-11-25T02:19:29.649Z",
           "episode": 25411,
           "views": "1M",
-          "description": "@ShanayaBackupTG"
+          "description": "@Avniffanbasebot"
         }
       ]
     }
@@ -1376,43 +1583,38 @@
         "name": "⚡ 6 Hours Flash VIP",
         "price": 11,
         "durationHours": 6,
-        "description": "Instant 6-hour unlimited access to all exclusive content drops.",
         "badge": "Popular",
-        "linkedContent": "today",
-        "contentTitle": "✨ Today's Content"
+        "description": "Instant 6-hour unlimited access to all exclusive content drops."
       },
       {
         "id": "plan_1w",
         "name": "🌟 1 Week Full VIP",
         "price": 99,
         "durationHours": 168,
-        "description": "Full 7-day unrestricted access to all premium drops.",
-        "badge": "Best Value",
-        "linkedContent": "bbtn_1",
-        "contentTitle": "Most Viewed Vault"
+        "badge": "HOT",
+        "description": "7-day full access pass for all active drops with zero limits."
       },
       {
         "id": "plan_1m",
         "name": "👑 1 Month VIP Pass",
         "price": 299,
         "durationHours": 720,
-        "description": "Full 30-day VIP pass with unlimited streaming & downloads.",
         "badge": "VIP Club",
-        "linkedContent": "all",
-        "contentTitle": "All Content (Full VIP)"
+        "description": "Full 30-day VIP pass with unlimited streaming & downloads."
       }
     ],
     "finalBot": {
       "enabled": true,
-      "username": "avnifanbbot",
-      "url": "https://t.me/avnifanbbot?start=vip",
-      "buttonText": "🎬 Access Content in Demo Bot (@avnifanbbot)",
-      "message": "🎉 <b>Payment approved. Your VIP access is active!</b>\n\nPlan: <b>{plan_name}</b>\nUnlocks: <b>{content_title}</b>\nAdded: <b>{duration}</b>\nValid until: <b>{expiry_date}</b>\n\n🎬 <b>Demo Content Bot:</b> <a href=\"https://t.me/avnifanbbot?start=vip\">@avnifanbbot</a>\n\n👇 Tap below to launch your exclusive content in Demo Bot:",
+      "username": "avniffanbasebot",
+      "url": "https://t.me/avniffanbasebot",
+      "buttonText": "👑 Access Premium Service (@avniffanbasebot)",
+      "message": "🎉 <b>Payment Approved! Your VIP Access is Active</b> 👑\n\nHello <b>{username}</b>! Your payment for <b>{plan_name}</b> has been verified and approved.\n\n✨ <b>Unlocked:</b> {content_title}\n⏳ <b>Duration:</b> {duration}\n📅 <b>Valid Until:</b> {expiry_date}\n\n🚀 <b>You can now access the Premium VIP service!</b>\nAll exclusive content drops and VIP features are now unlocked for your account.\n\n👇 <b>Tap below to access your Premium Service:</b>",
       "shareBot1": true,
-      "bot1ButtonText": "✨ Explore Drops in Bot 1",
+      "bot1ButtonText": "✨ Open Main Bot",
       "bot1Url": "https://t.me/avniffanbasebot"
     },
-    "adminChatId": "5459778091"
+    "adminChatId": "5459778091",
+    "onExpireAutoDeleteSeconds": 21600
   },
   "bot4": {
     "bot_name": "Avni FanBase Premium",
@@ -3394,7 +3596,7 @@
         "phone": "6203902842",
         "name": "Pranav Kumar",
         "role": "Super Admin",
-        "verifiedAt": "2026-11-26T20:30:00.000Z"
+        "verifiedAt": "2026-11-27T00:26:57.596Z"
       }
     ],
     "notifications": {
